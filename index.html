@@ -1,62 +1,90 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CardsZoneClub Store</title>
-    <!-- टेलीग्राम वेब ऐप की ऑफिशियल स्क्रिप्ट -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #0f172a;
+            background-color: #0d1b2a;
             color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
             padding: 20px;
             text-align: center;
         }
-        h1 { color: #38bdf8; }
-        .product-card {
-            background: #1e293b;
-            padding: 15px;
+        .header {
+            margin-top: 20px;
+        }
+        .header h1 {
+            color: #38b000;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #adb5bd;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background-color: #1b263b;
+            border: 1px solid #415a77;
+            border-radius: 10px;
+            padding: 20px;
             margin: 15px auto;
-            max-width: 400px;
-            border-radius: 8px;
-            border: 1px solid #334155;
+            max-width: 450px;
             text-align: left;
         }
+        .card h3 {
+            margin-top: 0;
+            color: #ffb703;
+        }
         .btn {
-            background: #0284c7;
+            background-color: #0077b6;
             color: white;
-            padding: 10px 20px;
             border: none;
+            padding: 12px 20px;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
             width: 100%;
+            font-weight: bold;
             margin-top: 10px;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background-color: #023e8a;
         }
     </style>
 </head>
 <body>
 
-    <h1>🚀 CardsZoneClub Store</h1>
-    <p>अपने प्रोडक्ट्स यहाँ देखें और खरीदें</p>
-
-    <div class="product-card">
-        <h3>📦 CC & Dumps Pack</h3>
-        <p>Category: Global Premier</p>
-        <p>Price: $25.00 USD</p>
-        <button class="btn" onclick="openStore()">खरीदें</button>
+    <div class="header">
+        <h1>🚀 CardsZoneClub Store</h1>
+        <div class="subtitle">Official Verified Marketplace</div>
     </div>
 
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand(); // ऐप को फुल स्क्रीन करने के लिए
+    <div class="card">
+        <h3>💳 CC Stock Market</h3>
+        <p><b>Category:</b> Global Premier CC Stock</p>
+        <p><b>Price:</b> From $5.00 USD / Card</p>
+        <p style="font-size: 12px; color: #a0aec0;">Fresh stock updated regularly via secure channels.</p>
+        <button class="btn" onclick="alert('Please open our Telegram Bot to buy live CC stock!')">Access CC Market</button>
+    </div>
 
-        function openStore() {
-            alert("यह वेब ऐप टेलीग्राम के जरिए सफलतापूर्वक खुल गया है!");
-        }
-    </script>
+    <div class="card">
+        <h3>🛍️ Dumps Stock Market</h3>
+        <p><b>Category:</b> High Balance Dumps</p>
+        <p><b>Price:</b> From $25.00 USD / Item</p>
+        <p style="font-size: 12px; color: #a0aec0;">High success rate verified dumps available.</p>
+        <button class="btn" onclick="alert('Please open our Telegram Bot to buy live Dumps stock!')">Access Dumps Market</button>
+    </div>
+
+    <div class="card">
+        <h3>🌍 Global BINs Store</h3>
+        <p><b>Category:</b> Worldwide Country Bins Packs</p>
+        <p><b>Price:</b> From $25.00 USD</p>
+        <p style="font-size: 12px; color: #a0aec0;">Includes Airlines, Restaurants, Food, Hotels & A-Z Countries.</p>
+        <button class="btn" onclick="alert('Please open our Telegram Bot to explore BINs packs!')">Explore BINs Store</button>
+    </div>
 
 </body>
 </html>
