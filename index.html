@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardsZoneClub Store</title>
+    <!-- टेलीग्राम वेब ऐप की ऑफिशियल स्क्रिप्ट -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 { color: #38bdf8; }
+        .product-card {
+            background: #1e293b;
+            padding: 15px;
+            margin: 15px auto;
+            max-width: 400px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            text-align: left;
+        }
+        .btn {
+            background: #0284c7;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 CardsZoneClub Store</h1>
+    <p>अपने प्रोडक्ट्स यहाँ देखें और खरीदें</p>
+
+    <div class="product-card">
+        <h3>📦 CC & Dumps Pack</h3>
+        <p>Category: Global Premier</p>
+        <p>Price: $25.00 USD</p>
+        <button class="btn" onclick="openStore()">खरीदें</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // ऐप को फुल स्क्रीन करने के लिए
+
+        function openStore() {
+            alert("यह वेब ऐप टेलीग्राम के जरिए सफलतापूर्वक खुल गया है!");
+        }
+    </script>
+
+</body>
+</html>
