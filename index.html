@@ -19,8 +19,18 @@
             width: 100%; max-width: 380px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8); text-align: center;
         }
         .login-box h2 {
-            color: #00ff66; font-size: 15px; margin-top: 0; margin-bottom: 20px;
+            color: #00ff66; font-size: 15px; margin-top: 0; margin-bottom: 15px;
             font-family: monospace; text-shadow: 0 0 10px rgba(0,255,102,0.5); text-transform: uppercase;
+        }
+        .tab-buttons {
+            display: flex; margin-bottom: 20px; border-bottom: 1px solid #1c2541;
+        }
+        .tab-btn {
+            flex: 1; background: none; border: none; color: #a0aec0; padding: 10px;
+            cursor: pointer; font-weight: bold; font-size: 13px;
+        }
+        .tab-btn.active {
+            color: #00ff66; border-bottom: 2px solid #00ff66;
         }
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 12px; color: #a0aec0; margin-bottom: 4px; }
@@ -48,56 +58,66 @@
             background-color: rgba(217, 4, 41, 0.2); border: 1px solid #d90429;
             color: #ffb703; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;
         }
-        .nav-links { display: flex; justify-content: space-between; margin-top: 15px; font-size: 13px; }
-        .nav-links a { color: #38b000; text-decoration: none; }
-        .nav-links a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="login-box">
         <h2>WELCOME TO CARD ZONE CLUB</h2>
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" id="btn-login-tab" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" id="btn-signup-tab" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+
         <div id="error-msg" class="error" style="display:none;"></div>
 
-        <div id="step1-container">
-            <form onsubmit="handleStep1(event)">
+        <!-- LOGIN FORM (नाम, ईमेल और 36-char Private Key) -->
+        <div id="login-section">
+            <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Name:</label>
-                    <input type="text" id="name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" id="username" class="form-control" required>
+                    <input type="text" id="login-name" class="form-control" placeholder="Enter your name" required>
                 </div>
                 <div class="form-group">
                     <label>Gmail:</label>
-                    <input type="email" id="email" class="form-control" required>
+                    <input type="email" id="login-email" class="form-control" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label>36-character Private Key:</label>
+                    <input type="text" id="login-key" class="form-control" placeholder="Enter 36-char Private Key" required>
+                </div>
+                <button type="submit" class="btn">Login to Dashboard</button>
+            </form>
+        </div>
+
+        <!-- SIGN UP FORM (पूरा विवरण और कैप्चा) -->
+        <div id="signup-section" style="display:none;">
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="signup-name" class="form-control" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="signup-username" class="form-control" placeholder="Choose username" required>
+                </div>
+                <div class="form-group">
+                    <label>Gmail:</label>
+                    <input type="email" id="signup-email" class="form-control" placeholder="Enter email" required>
                 </div>
                 <div class="form-group">
                     <label>Captcha Code:</label>
                     <div id="captcha-code" class="captcha-display"></div>
                     <input type="text" id="captcha-input" class="form-control" placeholder="Enter code shown above" required>
                 </div>
-                <button type="submit" class="btn">Verify & Continue</button>
-            </form>
-            <div class="nav-links">
-                <a href="store.html">Buyer Store</a>
-                <a href="seller.html">Seller Portal →</a>
-            </div>
-        </div>
-
-        <div id="step2-container" style="display:none;">
-            <p style="font-size: 13px; color: #adb5bd;">Account found! Enter your <b>36-character Private Key</b> to login:</p>
-            <form onsubmit="handleStep2(event)">
-                <div class="form-group">
-                    <input type="text" id="entered-key" class="form-control" placeholder="Enter 36-char Private Key" required>
-                </div>
-                <button type="submit" class="btn">Login to Dashboard</button>
+                <button type="submit" class="btn">Register Account</button>
             </form>
         </div>
 
-        <div id="step3-container" style="display:none;">
+        <!-- SUCCESS PRIVATE KEY DISPLAY MODAL -->
+        <div id="success-section" style="display:none;">
             <p style="font-size: 13px; color: #38b000;"><b>Account Registered Successfully!</b></p>
-            <p style="font-size: 12px; color: #adb5bd;">Save this 36-character Private Key securely:</p>
+            <p style="font-size: 12px; color: #adb5bd;">Save this 36-character Private Key securely to login later:</p>
             <div id="new-key-display" class="key-display"></div>
             <button onclick="window.location.href='store.html'" class="btn">Proceed to Store</button>
         </div>
@@ -105,13 +125,16 @@
 
     <script>
         let currentCaptcha = '';
+
         function generateCaptcha() {
             const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz';
             let res = '';
             for (let i = 0; i < 4; i++) res += chars[Math.floor(Math.random() * chars.length)];
             currentCaptcha = res;
-            document.getElementById('captcha-code').innerText = res;
+            const capEl = document.getElementById('captcha-code');
+            if (capEl) capEl.innerText = res;
         }
+
         function generatePrivateKey() {
             const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -119,13 +142,34 @@
             for (let i = 0; i < 35; i++) key += chars[Math.floor(Math.random() * chars.length)];
             return key;
         }
-        window.onload = generateCaptcha;
 
-        function handleStep1(e) {
+        window.onload = function() {
+            generateCaptcha();
+        };
+
+        function switchTab(tab) {
+            document.getElementById('error-msg').style.display = 'none';
+            if (tab === 'login') {
+                document.getElementById('login-section').style.display = 'block';
+                document.getElementById('signup-section').style.display = 'none';
+                document.getElementById('success-section').style.display = 'none';
+                document.getElementById('btn-login-tab').classList.add('active');
+                document.getElementById('btn-signup-tab').classList.remove('active');
+            } else {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('signup-section').style.display = 'block';
+                document.getElementById('success-section').style.display = 'none';
+                document.getElementById('btn-signup-tab').classList.add('active');
+                document.getElementById('btn-login-tab').classList.remove('active');
+                generateCaptcha();
+            }
+        }
+
+        function handleSignup(e) {
             e.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const username = document.getElementById('username').value.trim();
-            const email = document.getElementById('email').value.trim();
+            const name = document.getElementById('signup-name').value.trim();
+            const username = document.getElementById('signup-username').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
             const captchaInput = document.getElementById('captcha-input').value.trim();
             const errorDiv = document.getElementById('error-msg');
 
@@ -140,36 +184,40 @@
             let existingUser = users.find(u => u.email === email || u.username === username);
 
             if (existingUser) {
-                localStorage.setItem('czc_pending_user', existingUser.username);
-                document.getElementById('step1-container').style.display = 'none';
-                document.getElementById('step2-container').style.display = 'block';
-            } else {
-                const privateKey = generatePrivateKey();
-                const newUser = { name, username, email, privateKey, is_activated: 0, balance_usd: 0.00 };
-                users.push(newUser);
-                localStorage.setItem('czc_users', JSON.stringify(users));
-                localStorage.setItem('czc_current_user', username);
-
-                document.getElementById('step1-container').style.display = 'none';
-                document.getElementById('step3-container').style.display = 'block';
-                document.getElementById('new-key-display').innerText = privateKey;
+                errorDiv.style.display = 'block';
+                errorDiv.innerText = "Username or Email already exists! Please login.";
+                generateCaptcha();
+                return;
             }
+
+            const privateKey = generatePrivateKey();
+            const newUser = { name, username, email, privateKey, is_activated: 0, balance_usd: 0.00 };
+            users.push(newUser);
+            localStorage.setItem('czc_users', JSON.stringify(users));
+            localStorage.setItem('czc_current_user', username);
+
+            document.getElementById('signup-section').style.display = 'none';
+            document.querySelector('.tab-buttons').style.display = 'none';
+            document.getElementById('success-section').style.display = 'block';
+            document.getElementById('new-key-display').innerText = privateKey;
         }
 
-        function handleStep2(e) {
+        function handleLogin(e) {
             e.preventDefault();
-            const enteredKey = document.getElementById('entered-key').value.trim();
-            const pendingUsername = localStorage.getItem('czc_pending_user');
+            const name = document.getElementById('login-name').value.trim();
+            const email = document.getElementById('login-email').value.trim();
+            const enteredKey = document.getElementById('login-key').value.trim();
+            const errorDiv = document.getElementById('error-msg');
+
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
-            let user = users.find(u => u.username === pendingUsername && u.privateKey === enteredKey);
+            let user = users.find(u => u.name.toLowerCase() === name.toLowerCase() && u.email.toLowerCase() === email.toLowerCase() && u.privateKey === enteredKey);
 
             if (user) {
                 localStorage.setItem('czc_current_user', user.username);
                 window.location.href = 'store.html';
             } else {
-                const errorDiv = document.getElementById('error-msg');
                 errorDiv.style.display = 'block';
-                errorDiv.innerText = "Invalid Private Key! Access Denied.";
+                errorDiv.innerText = "Invalid Name, Email or Private Key! Access Denied.";
             }
         }
     </script>
