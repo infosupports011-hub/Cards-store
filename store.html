@@ -58,7 +58,7 @@
         <ul id="sidebar-menu">
             <li><a onclick="switchPage('account_management')" id="nav-account_management">Account Management</a></li>
             <li><a onclick="switchPage('account_balance')" id="nav-account_balance">Account Balance & Deposit</a></li>
-            <li><a onclick="switchPage('card_checker')" id="nav-card_checker" style="color: #00ff66;">💳 Precise Card & BIN Checker</a></li>
+            <li><a onclick="switchPage('card_checker')" id="nav-card_checker" style="color: #00ff66;">💳 Binlist.net API Card Checker</a></li>
             <li><a onclick="switchPage('cc')" id="nav-cc">CC Market</a></li>
             <li><a onclick="switchPage('dumps')" id="nav-dumps">Dumps Market</a></li>
             <li><a onclick="switchPage('fullz')" id="nav-fullz">Fullz Market</a></li>
@@ -204,12 +204,12 @@
                 </div>`;
             } else if (page === 'card_checker') {
                 content.innerHTML = `
-                    <h2>💳Precise Cards & BINs Checkers (PREMIUM$ BIN$ CHECKER$)🧾</h2>
-                    <p style="color:#adb5bd; font-size:13px;">Enter exact card number or BIN to view verified global issuer and country details.</p>
+                    <h2>💳 binlist.net API Card & BIN Checker</h2>
+                    <p style="color:#adb5bd; font-size:13px;">Enter exact card number or BIN to fetch verified details directly from binlist.net API.</p>
                     <div class="deposit-form">
                         <label>Enter Full Card Number / BIN:</label>
-                        <textarea id="check-card-input" rows="3" placeholder="533317xxxxxxxxxx|MM|YY|CVV"></textarea>
-                        <button onclick="performCardCheck()" class="btn-buy" style="padding:10px; width:100%;">Check Card Details</button>
+                        <textarea id="check-card-input" rows="3" placeholder="529638xxxxxxxxxx|MM|YY|CVV"></textarea>
+                        <button onclick="performCardCheck()" class="btn-buy" style="padding:10px; width:100%;">Check Card Details via binlist.net</button>
                     </div>
                     <div id="card-result-box" style="margin-top:20px;"></div>
                 `;
@@ -351,7 +351,7 @@
             document.getElementById('table-container').innerHTML = renderProductTable(filtered, activeTab);
         }
 
-        function performCardCheck() {
+        async function performCardCheck() {
             let inputVal = document.getElementById('check-card-input').value.trim();
             let resultBox = document.getElementById('card-result-box');
             if (inputVal.length < 6) {
@@ -359,105 +359,49 @@
                 return;
             }
             let bin = inputVal.replace(/[^0-9]/g, '').substring(0, 6);
-            let p1 = bin.substring(0, 1);
-            let p2 = parseInt(bin.substring(0, 2));
-            let p4 = parseInt(bin.substring(0, 4));
 
-            // सटीक और वेरीफाइड एग्जैक्ट डेटाबेस
-            const exactBinDatabase = {
-                "590017": { bank: "SUMITOMO MITSUI CARD (SMBC)", country: "JAPAN [JP]", type: "MASTERCARD DEBIT", level: "WORLD" },
-                "533317": { bank: "POSTPAY / ATOME FINANCIAL SERVICES", country: "SINGAPORE [SG]", type: "MASTERCARD DEBIT", level: "WORLD" },
-                "385365": { bank: "BBVA MEXICO (BANCOMER)", country: "MEXICO [MX]", type: "AMERICAN EXPRESS CREDIT", level: "PLATINUM" },
-                "453211": { bank: "CHASE BANK", country: "UNITED STATES [US]", type: "VISA CREDIT", level: "PLATINUM" },
-                "541333": { bank: "BARCLAYS BANK", country: "UNITED KINGDOM [GB]", type: "MASTERCARD DEBIT", level: "WORLD" },
-                "378282": { bank: "AMERICAN EXPRESS", country: "UNITED STATES [US]", type: "AMEX CREDIT", level: "CENTURION" },
-                "414720": { bank: "WELLS FARGO", country: "UNITED STATES [US]", type: "VISA DEBIT", level: "CLASSIC" }
-            };
+            resultBox.innerHTML = `<div style="background:#0d1b2a; border:1px solid #ffb703; padding:15px; border-radius:6px; color:#ffb703; font-size:13px;">🔄 Fetching details from binlist.net for <b>${bin}</b>...</div>`;
 
-            if (exactBinDatabase[bin]) {
-                let info = exactBinDatabase[bin];
+            try {
+                let response = await fetch(`https://lookup.binlist.net/${bin}`, {
+                    headers: { 'Accept-Version': '3' }
+                });
+
+                if (response.ok) {
+                    let data = await response.json();
+                    let bankName = data.bank && data.bank.name ? data.bank.name.toUpperCase() : 'UNKNOWN BANK';
+                    let countryName = data.country && data.country.name ? `${data.country.name.toUpperCase()} [${data.country.alpha2}]` : 'INTERNATIONAL [INT]';
+                    let scheme = data.scheme ? data.scheme.toUpperCase() : 'CARD';
+                    let type = data.type ? data.type.toUpperCase() : 'CREDIT / DEBIT';
+                    let brand = data.brand ? data.brand.toUpperCase() : scheme;
+                    let level = data.prepaid !== undefined ? (data.prepaid ? 'PREPAID' : 'STANDARD / GOLD') : 'STANDARD';
+
+                    resultBox.innerHTML = `
+                        <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
+                            <h3 style="color:#38b000; margin-top:0;">💳 binlist.net API Verified Details for: ${bin}</h3>
+                            <p><b>Card Type:</b> ${type} (${brand})</p>
+                            <p><b>Bank Name:</b> ${bankName}</p>
+                            <p><b>Country:</b> ${countryName}</p>
+                            <p><b>Card Level:</b> ${level}</p>
+                            <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% BINLIST.NET API VERIFIED</p>
+                        </div>
+                    `;
+                } else {
+                    resultBox.innerHTML = `
+                        <div style="background:#0d1b2a; border:1px solid #d90429; padding:15px; border-radius:6px; font-size:13px; line-height:1.6; color:#ffb703;">
+                            <h3 style="color:#d90429; margin-top:0;">⚠️ BIN Not Found or API Limit Exceeded</h3>
+                            <p>binlist.net पर यह BIN उपलब्ध नहीं है या एपीआई लिमिट समाप्त हो गई है।</p>
+                        </div>
+                    `;
+                }
+            } catch (e) {
                 resultBox.innerHTML = `
-                    <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
-                        <h3 style="color:#38b000; margin-top:0;">💳 Verified Card & BIN Details for: ${bin}</h3>
-                        <p><b>Card Type:</b> ${info.type}</p>
-                        <p><b>Bank Name:</b> ${info.bank}</p>
-                        <p><b>Country:</b> ${info.country}</p>
-                        <p><b>Card Level:</b> ${info.level}</p>
-                        <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% ACCURATE & VERIFIED</p>
+                    <div style="background:#0d1b2a; border:1px solid #d90429; padding:15px; border-radius:6px; font-size:13px; line-height:1.6; color:#ffb703;">
+                        <h3 style="color:#d90429; margin-top:0;">⚠️ Connection Error</h3>
+                        <p>इंटरनेट कनेक्शन या binlist.net एपीआई से संपर्क करने में समस्या आई है।</p>
                     </div>
                 `;
-                return;
             }
-
-            // सटीक ग्लोबल रेंज डिटेक्टर (यूएसए और अन्य देशों के लिए पूर्ण सटीकता)
-            let brand = "GLOBAL CARD";
-            let type = "CREDIT";
-            let bank = "MAJOR ISSUING FINANCIAL INSTITUTION";
-            let country = "UNITED STATES [US]";
-            let level = "STANDARD / PLATINUM";
-
-            if (p1 === '4') {
-                brand = "VISA";
-                type = (parseInt(bin.substring(2, 4)) % 2 === 0) ? "VISA DEBIT" : "VISA CREDIT";
-                if (p2 >= 40 && p2 <= 43) { country = "UNITED KINGDOM [GB]"; bank = "BARCLAYS / LLOYDS BANK"; }
-                else if (p2 >= 44 && p2 <= 49) { country = "UNITED STATES [US]"; bank = "JPMORGAN CHASE / BANK OF AMERICA"; }
-                else if (p2 >= 50 && p2 <= 59) { country = "CANADA [CA]"; bank = "RBC / TD BANK CANADA"; }
-                else if (p2 >= 60 && p2 <= 69) { country = "AUSTRALIA [AU]"; bank = "COMMONWEALTH BANK OF AUSTRALIA"; }
-                else if (p2 >= 70 && p2 <= 79) { country = "FRANCE [FR]"; bank = "BNP PARIBAS / SOCIETE GENERALE"; }
-                else if (p2 >= 80 && p2 <= 89) { country = "JAPAN [JP]"; bank = "SUMITOMO MITSUI BANKING CORP"; }
-                else { country = "UNITED STATES [US]"; bank = "VISA US ISSUING BANK"; }
-                level = "PLATINUM / SIGNATURE";
-            } else if ((p1 === '5' && p2 >= 51 && p2 <= 55) || (p4 >= 2221 && p4 <= 2720)) {
-                brand = "MASTERCARD";
-                type = (p2 % 2 === 0) ? "MASTERCARD DEBIT" : "MASTERCARD CREDIT";
-                if (p4 >= 2221 && p4 <= 23) { country = "GERMANY [DE]"; bank = "DEUTSCHE BANK AG"; }
-                else if (p2 === 51 || p2 === 52) { country = "UNITED STATES [US]"; bank = "CITIBANK N.A. / US ISSUER"; }
-                else if (p2 === 53 || p2 === 54) { country = "UNITED KINGDOM [GB]"; bank = "HSBC BANK UK"; }
-                else if (p2 === 55) { country = "UNITED STATES [US]"; bank = "US BANK / MASTERCARD ISSUER"; }
-                else { country = "UNITED STATES [US]"; bank = "MASTERCARD US FINANCIAL INSTITUTION"; }
-                level = "WORLD / WORLD ELITE";
-            } else if (p2 === 34 || p2 === 37) {
-                brand = "AMERICAN EXPRESS";
-                type = "AMEX CREDIT";
-                country = "UNITED STATES [US]";
-                bank = "AMERICAN EXPRESS BANK";
-                level = "CENTURION / PLATINUM";
-            } else if (p2 === 35 || (p4 >= 3528 && p4 <= 3589)) {
-                brand = "JCB";
-                type = "JCB CREDIT";
-                country = "JAPAN [JP]";
-                bank = "JCB CO., LTD / SUMITOMO";
-                level = "JCB PREMIER";
-            } else if (p2 === 60 || p2 === 64 || p2 === 65 || p4 === 6011) {
-                brand = "DISCOVER";
-                type = "DISCOVER CREDIT";
-                country = "UNITED STATES [US]";
-                bank = "DISCOVER BANK";
-                level = "DISCOVER IT";
-            } else if (p2 === 62 || p2 === 81) {
-                brand = "UNIONPAY";
-                type = "UNIONPAY DEBIT";
-                country = "CHINA [CN]";
-                bank = "CHINA UNIONPAY / ICBC";
-                level = "DIAMOND / PLATINUM";
-            } else {
-                brand = "INTERNATIONAL CARD";
-                type = "CREDIT";
-                country = "UNITED STATES [US]";
-                bank = "MAJOR ISSUING FINANCIAL INSTITUTION";
-                level = "GOLD / STANDARD";
-            }
-
-            resultBox.innerHTML = `
-                <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
-                    <h3 style="color:#38b000; margin-top:0;">💳 Verified Card & BIN Details for: ${bin}</h3>
-                    <p><b>Card Type:</b> ${type} (${brand})</p>
-                    <p><b>Bank Name:</b> ${bank}</p>
-                    <p><b>Country:</b> ${country}</p>
-                    <p><b>Card Level:</b> ${level}</p>
-                    <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% ACCURATE & VERIFIED</p>
-                </div>
-            `;
         }
 
         function toggleTFA() {
