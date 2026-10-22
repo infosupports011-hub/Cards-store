@@ -2,32 +2,97 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Seller Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Portal - Card Zone Club</title>
     <style>
-        body { background: #0d1b2a; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: #1b263b; padding: 30px; border-radius: 8px; width: 380px; border: 1px solid #415a77; }
-        input { width: 100%; padding: 10px; margin: 10px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #38b000; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #2d8a00; }
-        .msg { color: #ffb703; font-size: 13px; text-align: center; margin-bottom: 10px; }
+        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .box { background: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; max-width: 500px; }
+        h2 { color: #38b000; text-align: center; margin-top: 0; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 13px; color: #a0aec0; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; background: #38b000; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn:hover { background: #2d8a00; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #1a73e8; text-decoration: none; font-size: 13px; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>Seller Registration</h2>
-        <div id="msg" class="msg"></div>
-        <form onsubmit="registerSeller(event)">
-            <input type="text" id="name" placeholder="Real Full Name (Hidden)" required>
-            <input type="text" id="nickname" placeholder="Public Display Nickname" required>
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="email" id="email" placeholder="Email Address" required>
-            <button type="submit">Register as Seller</button>
+        <h2>Seller / Vendor Portal</h2>
+        <form onsubmit="addProduct(event)">
+            <div class="form-group">
+                <label>Seller Nickname:</label>
+                <input type="text" id="seller-name" placeholder="CryptoKing" required>
+            </div>
+            <div class="form-group">
+                <label>Category Market:</label>
+                <select id="prod-cat">
+                    <option value="cc">CC Market</option>
+                    <option value="dumps">Dumps Market</option>
+                    <option value="fullz">Fullz Market</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Bins (First 6 digits):</label>
+                <input type="text" id="prod-bins" placeholder="453211" required>
+            </div>
+            <div class="form-group">
+                <label>Card Type:</label>
+                <input type="text" id="prod-type" placeholder="Visa / Mastercard" required>
+            </div>
+            <div class="form-group">
+                <label>Expiry (MM/YY):</label>
+                <input type="text" id="prod-expiry" placeholder="12/28" required>
+            </div>
+            <div class="form-group">
+                <label>Holder Name:</label>
+                <input type="text" id="prod-holder" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Country & State:</label>
+                <input type="text" id="prod-country" placeholder="US / NY" required>
+            </div>
+            <div class="form-group">
+                <label>Full Address:</label>
+                <input type="text" id="prod-address" placeholder="123 Main St, Zip: 10001" required>
+            </div>
+            <div class="form-group">
+                <label>Bank Name:</label>
+                <input type="text" id="prod-bank" placeholder="Chase Bank" required>
+            </div>
+            <div class="form-group">
+                <label>Price ($ USD):</label>
+                <input type="number" step="0.01" id="prod-price" placeholder="15.00" required>
+            </div>
+            <button type="submit" class="btn">Upload Product to Live Market</button>
         </form>
+        <a href="store.html" class="back-link">← Go to Buyer Store Dashboard</a>
     </div>
+
     <script>
-        function registerSeller(e) {
+        function addProduct(e) {
             e.preventDefault();
-            document.getElementById('msg').innerText = "Seller registration submitted successfully! Awaiting admin approval.";
+            let newProduct = {
+                id: Date.now(),
+                seller: document.getElementById('seller-name').value.trim(),
+                category: document.getElementById('prod-cat').value,
+                bins: document.getElementById('prod-bins').value.trim(),
+                type: document.getElementById('prod-type').value.trim(),
+                expiry: document.getElementById('prod-expiry').value.trim(),
+                name: document.getElementById('prod-holder').value.trim(),
+                country: document.getElementById('prod-country').value.trim(),
+                address: document.getElementById('prod-address').value.trim(),
+                bank: document.getElementById('prod-bank').value.trim(),
+                price: parseFloat(document.getElementById('prod-price').value),
+                rating: 5.0
+            };
+
+            let products = JSON.parse(localStorage.getItem('czc_products') || '[]');
+            products.push(newProduct);
+            localStorage.setItem('czc_products', JSON.stringify(products));
+
+            alert('Product successfully listed on the live market!');
+            e.target.reset();
         }
     </script>
 </body>
