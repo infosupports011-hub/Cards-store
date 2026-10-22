@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WELCOME TO CARD ZONE CLUB</title>
+    <title>WELCOME TO CARDS ZONE CLUB</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -22,42 +22,17 @@
             color: #00ff66; font-size: 15px; margin-top: 0; margin-bottom: 15px;
             font-family: monospace; text-shadow: 0 0 10px rgba(0,255,102,0.5); text-transform: uppercase;
         }
-        .tab-buttons {
-            display: flex; margin-bottom: 20px; border-bottom: 1px solid #1c2541;
-        }
-        .tab-btn {
-            flex: 1; background: none; border: none; color: #a0aec0; padding: 10px;
-            cursor: pointer; font-weight: bold; font-size: 13px;
-        }
-        .tab-btn.active {
-            color: #00ff66; border-bottom: 2px solid #00ff66;
-        }
+        .tab-buttons { display: flex; margin-bottom: 20px; border-bottom: 1px solid #1c2541; }
+        .tab-btn { flex: 1; background: none; border: none; color: #a0aec0; padding: 10px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .tab-btn.active { color: #00ff66; border-bottom: 2px solid #00ff66; }
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 12px; color: #a0aec0; margin-bottom: 4px; }
-        .form-control {
-            width: 100%; padding: 10px; background-color: #0b132b;
-            border: 1px solid #1c2541; color: #fff; border-radius: 6px; font-size: 13px;
-        }
-        .captcha-display {
-            background-color: #050b14; border: 1px dashed #22b573;
-            color: #00ff66; padding: 10px; font-size: 20px; font-weight: bold;
-            letter-spacing: 6px; border-radius: 6px; margin: 8px 0; text-align: center; font-family: monospace;
-        }
-        .key-display {
-            background-color: #050b14; border: 1px solid #ffb703;
-            color: #ffb703; padding: 12px; font-size: 11px; font-weight: bold;
-            border-radius: 6px; margin: 15px 0; word-break: break-all; font-family: monospace;
-        }
-        .btn {
-            background-color: #1a73e8; color: white; border: none;
-            padding: 12px; border-radius: 6px; cursor: pointer; width: 100%;
-            font-weight: bold; font-size: 14px; margin-top: 10px;
-        }
+        .form-control { width: 100%; padding: 10px; background-color: #0b132b; border: 1px solid #1c2541; color: #fff; border-radius: 6px; font-size: 13px; }
+        .captcha-display { background-color: #050b14; border: 1px dashed #22b573; color: #00ff66; padding: 10px; font-size: 20px; font-weight: bold; letter-spacing: 6px; border-radius: 6px; margin: 8px 0; text-align: center; font-family: monospace; }
+        .key-display { background-color: #050b14; border: 1px solid #ffb703; color: #ffb703; padding: 12px; font-size: 11px; font-weight: bold; border-radius: 6px; margin: 15px 0; word-break: break-all; font-family: monospace; }
+        .btn { background-color: #1a73e8; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-top: 10px; }
         .btn:hover { background-color: #1557b0; }
-        .error {
-            background-color: rgba(217, 4, 41, 0.2); border: 1px solid #d90429;
-            color: #ffb703; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;
-        }
+        .error { background-color: rgba(217, 4, 41, 0.2); border: 1px solid #d90429; color: #ffb703; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -114,7 +89,7 @@
             </form>
         </div>
 
-        <!-- SUCCESS PRIVATE KEY DISPLAY MODAL -->
+        <!-- SUCCESS PRIVATE KEY DISPLAY -->
         <div id="success-section" style="display:none;">
             <p style="font-size: 13px; color: #38b000;"><b>Account Registered Successfully!</b></p>
             <p style="font-size: 12px; color: #adb5bd;">Save this 36-character Private Key securely to login later:</p>
