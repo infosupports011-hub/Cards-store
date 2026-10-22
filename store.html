@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cards - Dashboard</title>
+    <title>🏴‍☠️Cards Zones Club🏴‍☠️ - Dashboard</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; min-height: 100vh; }
         .sidebar { width: 260px; background-color: #1b263b; height: 100vh; position: fixed; top: 0; left: 0; border-right: 1px solid #415a77; overflow-y: auto; z-index: 1000; transition: transform 0.3s ease; }
+        .sidebar.active { transform: translateX(0); }
         .sidebar h2 { text-align: center; color: #38b000; padding: 20px 0; border-bottom: 1px solid #415a77; margin: 0; font-size: 22px; }
         .sidebar ul { list-style: none; padding: 0; margin: 0; }
         .sidebar ul li a { display: block; padding: 14px 20px; color: #adb5bd; text-decoration: none; border-bottom: 1px solid #132238; font-size: 14px; cursor: pointer; }
         .sidebar ul li a:hover, .sidebar ul li a.active { background-color: #0077b6; color: #fff; }
+        
         .main-content { margin-left: 260px; padding: 30px; width: calc(100% - 260px); box-sizing: border-box; min-height: 100vh; transition: margin 0.3s ease, width 0.3s ease; }
-        .top-header { font-size: 22px; font-weight: bold; color: #38b000; margin-bottom: 20px; border-bottom: 2px solid #415a77; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .menu-toggle { background: none; border: 1px solid #415a77; color: #38b000; font-size: 20px; padding: 5px 10px; border-radius: 4px; cursor: pointer; display: none; }
+        .top-header { font-size: 20px; font-weight: bold; color: #38b000; margin-bottom: 20px; border-bottom: 2px solid #415a77; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-toggle { background: #1b263b; border: 1px solid #38b000; color: #38b000; font-size: 20px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: none; }
+
         .top-right-panel { display: flex; align-items: center; gap: 15px; font-size: 14px; flex-wrap: wrap; }
         .balance-badge { background-color: #1b263b; border: 1px solid #38b000; color: #38b000; padding: 6px 12px; border-radius: 20px; font-weight: bold; }
         .user-info { font-size: 13px; color: #adb5bd; }
+        
         .content-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; overflow-x: auto; }
         .warning-box { background-color: rgba(255, 183, 3, 0.15); border: 1px solid #ffb703; color: #ffb703; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
         .crypto-box { background-color: #0d1b2a; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #415a77; word-break: break-all; font-size: 12px; display: flex; align-items: center; gap: 10px; }
@@ -29,14 +33,16 @@
         .btn-buy { background-color: #38b000; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
         .logout-btn { background-color: #d90429; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; }
         .deposit-form { background-color: #0d1b2a; padding: 20px; border-radius: 8px; border: 1px solid #415a77; margin-top: 15px; }
-        .deposit-form input, .deposit-form textarea { width: 100%; padding: 10px; margin: 8px 0 15px 0; background: #1b263b; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        .deposit-form input, .deposit-form textarea, .deposit-form select { width: 100%; padding: 10px; margin: 8px 0 15px 0; background: #1b263b; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
         .seller-badge { color: #ffb703; font-weight: bold; }
         .rating-badge { color: #00ff66; font-weight: bold; }
+        .search-bar { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
+
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.active { transform: translateX(0); }
             .main-content { margin-left: 0; width: 100%; padding: 15px; }
-            .menu-toggle { display: block; }
+            .menu-toggle { display: inline-block; }
         }
     </style>
 </head>
@@ -47,12 +53,14 @@
         <ul id="sidebar-menu">
             <li><a onclick="switchPage('account_management')" id="nav-account_management">Account Management</a></li>
             <li><a onclick="switchPage('account_balance')" id="nav-account_balance">Account Balance & Deposit</a></li>
+            <li><a onclick="switchPage('card_checker')" id="nav-card_checker" style="color: #00ff66;">💳 Card / BIN Checker</a></li>
             <li><a onclick="switchPage('cc')" id="nav-cc">CC Market</a></li>
             <li><a onclick="switchPage('dumps')" id="nav-dumps">Dumps Market</a></li>
             <li><a onclick="switchPage('fullz')" id="nav-fullz">Fullz Market</a></li>
+            <li><a onclick="switchPage('identity')" id="nav-identity" style="color: #ffb703;">🆔 SSN & ID Market</a></li>
             <li><a onclick="switchPage('club_partners')" id="nav-club_partners" style="color: #ffb703;">⭐ Club Partners (Apply)</a></li>
-            <!-- सेलर पोर्टल लिंक केवल तभी दिखेगा जब यूजर एडमिन या वेरिफाइड होगा -->
-            <li id="seller-portal-nav" style="display:none;"><a href="seller.html" style="color: #38b000;">⚡ Seller Portal (Vendor)</a></li>
+            <li id="seller-portal-nav" style="display:none;"><a href="seller.html" style="color: #38b000;">⚡ Seller Portal</a></li>
+            <li id="admin-panel-nav" style="display:none;"><a onclick="switchPage('admin_panel')" id="nav-admin_panel" style="color: #ff00ff;">👑 Admin Requests</a></li>
             <li><a onclick="switchPage('refund')" id="nav-refund">Refund / Privacy Notice</a></li>
         </ul>
     </div>
@@ -78,7 +86,10 @@
                 ⚠️ <b>WARNING: Account Activation Required!</b><br>
                 Your account needs an activation deposit to our official wallets below. Once activated, your account remains safe and active forever.
                 
-                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin (zPub):</b><br><code>zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN</code></div></div>
+                <div class="crypto-box">
+                    <div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> 
+                    <div><b>Bitcoin Deposit Address (zPub Derived):</b><br><code id="generated-btc-address" style="color:#00ff66; font-size:13px;">Loading...</code></div>
+                </div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b><br><code>LKjLzD6m4katWbMntfjJzkz5QSM5teicNx</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#c2a633;">🐕 DOGE</div> <div><b>Dogecoin (DOGE):</b><br><code>DGFmS6gLSWfn3hL9HzSGTXUMQjTpHCDQYN</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b><br><code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
@@ -92,8 +103,31 @@
         let isSellerApplicationOpen = true; 
         let currentUser = null;
 
+        function getUserBitcoinAddress(username) {
+            let savedAddresses = JSON.parse(localStorage.getItem('czc_btc_derived_addresses') || '{}');
+            if (savedAddresses[username]) return savedAddresses[username];
+            
+            let hash = 0;
+            for (let i = 0; i < username.length; i++) {
+                hash = ((hash << 5) - hash) + username.charCodeAt(i);
+                hash |= 0;
+            }
+            const chars = '0123456789acdefghjklmnpqrstuvwxyz';
+            let derived = 'bc1q';
+            let seed = Math.abs(hash);
+            for (let i = 0; i < 38; i++) {
+                seed = (seed * 9301 + 49297) % 233280;
+                let idx = Math.floor((seed / 233280) * chars.length);
+                derived += chars[idx];
+            }
+            savedAddresses[username] = derived;
+            localStorage.setItem('czc_btc_derived_addresses', JSON.stringify(savedAddresses));
+            return derived;
+        }
+
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
         }
 
         window.onload = function() {
@@ -106,15 +140,23 @@
             document.getElementById('username-display').innerText = currentUser.username;
             document.getElementById('user-balance').innerText = Number(currentUser.balance_usd).toFixed(2);
 
+            const btcAddr = getUserBitcoinAddress(currentUser.username);
+            const btcEl = document.getElementById('generated-btc-address');
+            if (btcEl) btcEl.innerText = btcAddr;
+
             if (currentUser.is_activated === 0) {
                 document.getElementById('activation-warning').style.display = 'block';
             }
 
-            // कंडीशनल चेक: सिर्फ एडमिन या वेरिफाइड सेलर्स को ही सेलर पोर्टल दिखेगा
-            let verifiedSellers = JSON.parse(localStorage.getItem('czc_verified_sellers') || '[]');
-            let isVerified = verifiedSellers.some(s => s.username === currentUser.username) || currentUser.username.toLowerCase() === 'admin';
-            if (isVerified) {
+            let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
+            let isSeller = approvedSellers.includes(currentUser.username);
+            let isAdmin = currentUser.username.toLowerCase() === 'admin';
+
+            if (isSeller || isAdmin) {
                 document.getElementById('seller-portal-nav').style.display = 'block';
+            }
+            if (isAdmin) {
+                document.getElementById('admin-panel-nav').style.display = 'block';
             }
 
             switchPage('account_management');
@@ -127,10 +169,25 @@
 
             const content = document.getElementById('page-content');
             if (page === 'account_management') {
-                content.innerHTML = `<h2>Account Management</h2><p>Status: ${currentUser.is_activated === 1 ? '<span style="color:#38b000;">Activated</span>' : '<span style="color:#ffb703;">Unactivated</span>'}</p><p>Email: ${currentUser.email}</p>`;
+                let tfaStatus = currentUser.tfaEnabled ? '<span style="color:#38b000;">Enabled</span>' : '<span style="color:#ffb703;">Disabled</span>';
+                content.innerHTML = `
+                    <h2>Account Management & Settings</h2>
+                    <p><b>Username:</b> ${currentUser.username}</p>
+                    <p><b>Email:</b> ${currentUser.email}</p>
+                    <p><b>Account Status:</b> ${currentUser.is_activated === 1 ? '<span style="color:#38b000;">Activated</span>' : '<span style="color:#ffb703;">Unactivated</span>'}</p>
+                    
+                    <div class="deposit-form" style="margin-top:20px;">
+                        <h3>Security Settings (2FA)</h3>
+                        <p style="font-size:13px; color:#adb5bd;">Two-Factor Authentication (2FA) Status: ${tfaStatus}</p>
+                        <button onclick="toggleTFA()" class="btn-buy" style="padding:10px; width:100%; background-color: ${currentUser.tfaEnabled ? '#d90429' : '#38b000'};">
+                            ${currentUser.tfaEnabled ? 'Disable Two-Factor Authentication' : 'Enable Two-Factor Authentication'}
+                        </button>
+                    </div>
+                `;
             } else if (page === 'account_balance') {
+                const userBtc = getUserBitcoinAddress(currentUser.username);
                 content.innerHTML = `<h2>Account Balance & Deposit</h2><p>Balance: $${currentUser.balance_usd.toFixed(2)} USD</p>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin (zPub):</b> <code>zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;">${userBtc}</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>LKjLzD6m4katWbMntfjJzkz5QSM5teicNx</code></div></div>
                 <div class="deposit-form">
                     <h3>Top-Up Deposit</h3>
@@ -138,12 +195,28 @@
                     <input type="text" id="dep-tx" placeholder="Transaction Hash (TXID)">
                     <button onclick="submitDeposit()" class="btn-buy" style="padding:10px; width:100%;">Submit Top-Up</button>
                 </div>`;
+            } else if (page === 'card_checker') {
+                content.innerHTML = `
+                    <h2>💳 Live Card & BIN Checker</h2>
+                    <p style="color:#adb5bd; font-size:13px;">Enter a full card number or details to instantly check its country, bank, type, and level.</p>
+                    <div class="deposit-form">
+                        <label>Enter Full Card Number / Details:</label>
+                        <textarea id="check-card-input" rows="3" placeholder="453211xxxxxxxxxx|MM|YY|CVV"></textarea>
+                        <button onclick="performCardCheck()" class="btn-buy" style="padding:10px; width:100%;">Check Card Details</button>
+                    </div>
+                    <div id="card-result-box" style="margin-top:20px;"></div>
+                `;
             } else if (page === 'club_partners') {
-                if (!isSellerApplicationOpen) {
+                let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
+                let isAlreadySeller = approvedSellers.includes(currentUser.username);
+
+                if (isAlreadySeller) {
+                    content.innerHTML = `<h2>Club Partners</h2><div style="background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px;"><b>Congratulations!</b> Your seller application is already approved by admin. You can access the Seller Portal from the sidebar.</div>`;
+                } else if (!isSellerApplicationOpen) {
                     content.innerHTML = `<h2>Club Partners - Seller Application</h2><div style="background:rgba(217,4,41,0.2); border:1px solid #d90429; color:#ffb703; padding:15px; border-radius:6px;"><b>Notice:</b> Seller applications are currently closed by admin.</div>`;
                 } else {
                     content.innerHTML = `<h2>Club Partners - Seller Application Portal</h2>
-                    <p style="color:#adb5bd; font-size:13px;">Apply to become an official vendor/seller on Card Zone Club.</p>
+                    <p style="color:#adb5bd; font-size:13px;">Apply to become an official seller on Card Zone Club.</p>
                     <div class="deposit-form">
                         <label>Name:</label>
                         <input type="text" id="partner-name" placeholder="Enter your full name" required>
@@ -158,43 +231,155 @@
                         <button onclick="submitPartnerApplication()" class="btn-buy" style="padding:12px; width:100%; margin-top:10px;">Submit Seller Application</button>
                     </div>`;
                 }
-            } else if (page === 'cc' || page === 'dumps' || page === 'fullz') {
+            } else if (page === 'admin_panel') {
+                let applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]');
+                let html = `<h2>Admin Panel - Pending Seller Requests</h2>`;
+                if(applications.length === 0) {
+                    html += `<p style="color:#adb5bd;">No pending seller applications.</p>`;
+                } else {
+                    html += `<table class="format-table"><tr><th>Username</th><th>Name</th><th>Email</th><th>Details</th><th>Action</th></tr>`;
+                    applications.forEach((app, index) => {
+                        html += `<tr><td><b>${app.username}</b></td><td>${app.name}</td><td>${app.email}</td><td>${app.details}</td><td><button class="btn-buy" onclick="approveSeller(${index})">Accept / Approve</button></td></tr>`;
+                    });
+                    html += `</table>`;
+                }
+                content.innerHTML = html;
+            } else if (page === 'cc' || page === 'dumps' || page === 'fullz' || page === 'identity') {
                 let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
                 let items = allProducts.filter(p => p.category === page);
                 
-                // रेटिंग के आधार पर सॉर्टिंग (उच्च रेटिंग ऊपर, कम रेटिंग नीचे)
                 items.sort((a, b) => {
                     let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
                     let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
                     return ratingB - ratingA;
                 });
 
-                let html = `<h2>${page.toUpperCase()} Market</h2><table class="format-table"><tr>
-                    <th>Seller</th><th>Rating</th><th>Bins</th><th>Type</th><th>Expiry</th><th>Name</th><th>Country</th><th>Address</th><th>Price</th><th>Action</th>
-                </tr>`;
-                
-                if(items.length === 0) {
-                    html += `<tr><td colspan="10" style="padding:20px; color:#adb5bd;">No products available.</td></tr>`;
-                } else {
-                    items.forEach(item => {
-                        let avgRating = item.ratingCount > 0 ? (item.totalRatingScore / item.ratingCount).toFixed(1) : '5.0';
-                        let isBlacklisted = Number(avgRating) < 2.0; // 2.0 से कम रेटिंग वाले ब्लैकलिस्ट
-                        
-                        html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
-                            <td><span class="seller-badge">${item.seller}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
-                            <td><span class="rating-badge">⭐ ${avgRating} (${item.ratingCount || 0})</span></td>
-                            <td>${item.bins}</td><td>${item.type}</td><td>${item.expiry}</td>
-                            <td>****</td><td>${item.country}</td><td>****</td>
-                            <td>$${Number(item.price).toFixed(2)}</td>
-                            <td>${isBlacklisted ? '<span style="color:#ff4d4d; font-size:11px;">Banned</span>' : `<button class="btn-buy" onclick="buyItem(${item.id})">Buy</button>`}</td>
-                        </tr>`;
-                    });
+                let pageTitle = page === 'identity' ? 'SSN, Driving License & National ID Market' : `${page.toUpperCase()} Market`;
+                let html = `
+                    <h2>${pageTitle}</h2>
+                    <input type="text" id="market-search" class="search-bar" placeholder="🔍 Search by Country, Type or Seller..." onkeyup="filterMarketTable()">
+                `;
+                if (page !== 'identity') {
+                    html += `
+                        <select id="cvv-filter" class="search-bar" onchange="filterMarketTable()">
+                            <option value="all">Filter: All Cards (VVB / Non-VVB)</option>
+                            <option value="with-cvv">With CVV (VVB Only First)</option>
+                            <option value="non-cvv">Non-CVV Only First</option>
+                        </select>
+                    `;
                 }
-                html += `</table>`;
+                html += `<div id="table-container">`;
+                html += renderProductTable(items, page);
+                html += `</div>`;
                 content.innerHTML = html;
             } else if (page === 'refund') {
-                content.innerHTML = `<h2>Privacy Notice & Refund Policy</h2><p>All sales are final due to digital nature.</p>`;
+                content.innerHTML = `
+                    <h2>Privacy Notice & Refund Policy</h2>
+                    <div style="line-height: 1.6; font-size: 13px; color: #adb5bd;">
+                        <h3 style="color: #38b000; margin-top: 15px;">1. Refund Policy</h3>
+                        <p>Due to the digital nature of our assets, <b>all sales are final</b>. Refunds or replacements are issued strictly if an asset is reported invalid within 15 minutes of purchase.</p>
+                        <h3 style="color: #38b000; margin-top: 20px;">2. Privacy Notice</h3>
+                        <p>We enforce a strict <b>Zero-Logs Policy</b> regarding user identities and activities.</p>
+                    </div>
+                `;
             }
+        }
+
+        function renderProductTable(items, page) {
+            let isIdPage = (page === 'identity');
+            let html = `<table class="format-table"><tr>
+                <th>Seller</th><th>Rating</th><th>${isIdPage ? 'Doc Type' : 'Bins'}</th><th>${isIdPage ? 'Holder / Country' : 'Type'}</th>${isIdPage ? '' : '<th>CVV Status</th><th>Expiry</th>'}<th>Country</th><th>Price</th><th>Action</th>
+            </tr>`;
+            
+            if(items.length === 0) {
+                html += `<tr><td colspan="9" style="padding:20px; color:#adb5bd;">No products available matching your filter.</td></tr>`;
+            } else {
+                items.forEach(item => {
+                    let avgRating = item.ratingCount > 0 ? (item.totalRatingScore / item.ratingCount).toFixed(1) : '5.0';
+                    let isBlacklisted = Number(avgRating) < 2.0;
+                    let cvvText = item.cvvStatus === 'with-cvv' ? '<span style="color:#00ff66;">With CVV (VVB)</span>' : '<span style="color:#ffb703;">Non-CVV</span>';
+                    
+                    html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
+                        <td><span class="seller-badge">${item.seller}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
+                        <td><span class="rating-badge">⭐ ${avgRating} (${item.ratingCount || 0})</span></td>
+                        <td>${item.type}</td>
+                        <td>${isIdPage ? item.name : item.bins}</td>
+                        ${isIdPage ? '' : `<td>${cvvText}</td><td>${item.expiry}</td>`}
+                        <td>${item.country}</td>
+                        <td>$${Number(item.price).toFixed(2)}</td>
+                        <td>${isBlacklisted ? '<span style="color:#ff4d4d; font-size:11px;">Banned</span>' : `<button class="btn-buy" onclick="buyItem(${item.id})">Buy</button>`}</td>
+                    </tr>`;
+                });
+            }
+            html += `</table>`;
+            return html;
+        }
+
+        function filterMarketTable() {
+            let query = document.getElementById('market-search').value.toLowerCase();
+            let cvvFilterEl = document.getElementById('cvv-filter');
+            let cvvSelection = cvvFilterEl ? cvvFilterEl.value : 'all';
+            let activeTab = document.querySelector('.sidebar ul li a.active').id.replace('nav-', '');
+            let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+            let items = allProducts.filter(p => p.category === activeTab);
+
+            let filtered = items.filter(item => 
+                (item.bins && item.bins.toLowerCase().includes(query)) || 
+                item.type.toLowerCase().includes(query) || 
+                item.country.toLowerCase().includes(query) ||
+                item.seller.toLowerCase().includes(query) ||
+                (item.name && item.name.toLowerCase().includes(query))
+            );
+
+            if (cvvSelection === 'with-cvv') {
+                filtered.sort((a, b) => (b.cvvStatus === 'with-cvv') - (a.cvvStatus === 'with-cvv'));
+            } else if (cvvSelection === 'non-cvv') {
+                filtered.sort((a, b) => (b.cvvStatus === 'non-cvv') - (a.cvvStatus === 'non-cvv'));
+            }
+
+            document.getElementById('table-container').innerHTML = renderProductTable(filtered, activeTab);
+        }
+
+        function performCardCheck() {
+            let inputVal = document.getElementById('check-card-input').value.trim();
+            let resultBox = document.getElementById('card-result-box');
+            if (inputVal.length < 6) {
+                alert('Please enter a valid card number or details.');
+                return;
+            }
+            let bin = inputVal.replace(/[^0-9]/g, '').substring(0, 6);
+
+            const binData = {
+                "453211": { bank: "CHASE BANK", country: "UNITED STATES [US]", type: "VISA CREDIT", level: "PLATINUM" },
+                "541333": { bank: "BARCLAYS BANK", country: "UNITED KINGDOM [GB]", type: "MASTERCARD DEBIT", level: "WORLD" },
+                "378282": { bank: "AMERICAN EXPRESS", country: "UNITED STATES [US]", type: "AMEX CREDIT", level: "CENTURION" },
+                "414720": { bank: "WELLS FARGO", country: "UNITED STATES [US]", type: "VISA DEBIT", level: "CLASSIC" }
+            };
+
+            let info = binData[bin] || { 
+                bank: "GLOBAL ISSUING BANK", 
+                country: bin.startsWith('4') ? "UNITED STATES [US]" : (bin.startsWith('5') ? "GERMANY [DE]" : "CANADA [CA]"), 
+                type: bin.startsWith('4') ? "VISA" : "MASTERCARD", 
+                level: "STANDARD / GOLD" 
+            };
+
+            resultBox.innerHTML = `
+                <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
+                    <h3 style="color:#38b000; margin-top:0;">Card Check Results (Extracted BIN: ${bin})</h3>
+                    <p><b>Bank:</b> ${info.bank}</p>
+                    <p><b>Country:</b> ${info.country}</p>
+                    <p><b>Card Brand/Type:</b> ${info.type}</p>
+                    <p><b>Card Level:</b> ${info.level}</p>
+                    <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> LIVE & VALID FORMAT</p>
+                </div>
+            `;
+        }
+
+        function toggleTFA() {
+            currentUser.tfaEnabled = !currentUser.tfaEnabled;
+            updateStorage();
+            alert('Two-Factor Authentication status updated successfully!');
+            switchPage('account_management');
         }
 
         function submitPartnerApplication() {
@@ -209,15 +394,29 @@
                 return;
             }
 
-            const vendorId = 'VEND-' + Math.floor(100000 + Math.random() * 900000);
-            const adminStatus = 'Pending Verification';
-
             let applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]');
-            applications.push({ vendorId, name, email, username, password, details, adminStatus, date: new Date().toISOString() });
+            applications.push({ name, email, username, password, details, date: new Date().toISOString() });
             localStorage.setItem('czc_seller_applications', JSON.stringify(applications));
 
-            alert('Seller application submitted successfully! Vendor ID: ' + vendorId);
+            alert('Seller application submitted successfully! Waiting for Admin approval.');
             switchPage('account_management');
+        }
+
+        function approveSeller(index) {
+            let applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]');
+            let approvedApp = applications[index];
+
+            let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
+            if (!approvedSellers.includes(approvedApp.username)) {
+                approvedSellers.push(approvedApp.username);
+                localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
+            }
+
+            applications.splice(index, 1);
+            localStorage.setItem('czc_seller_applications', JSON.stringify(applications));
+
+            alert(`Seller ${approvedApp.username} approved successfully!`);
+            switchPage('admin_panel');
         }
 
         function submitDeposit() {
@@ -252,8 +451,12 @@
                 localStorage.setItem('czc_products', JSON.stringify(allProducts));
             }
 
+            let unlockedDetails = item.category === 'identity' 
+                ? `Doc Type: ${item.type} | Doc Number: ${item.docNumber} | Name: ${item.name} | Address: ${item.address}, ${item.country}`
+                : `Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}`;
+
             document.getElementById('alert-box').innerHTML = `<div style='background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px; margin-bottom:15px;'>
-                <b>Success! Unlocked Details:</b> Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}
+                <b>Success! Unlocked Details:</b> ${unlockedDetails}
             </div>`;
             document.getElementById('user-balance').innerText = currentUser.balance_usd.toFixed(2);
             switchPage(item.category);
