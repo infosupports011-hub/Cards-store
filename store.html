@@ -5,28 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cards - Dashboard</title>
     <style>
-        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; }
-        .sidebar { width: 260px; background-color: #1b263b; height: 100vh; position: fixed; border-right: 1px solid #415a77; overflow-y: auto; }
+        * { box-sizing: border-box; }
+        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background-color: #1b263b; height: 100vh; position: fixed; top: 0; left: 0; border-right: 1px solid #415a77; overflow-y: auto; z-index: 100; }
         .sidebar h2 { text-align: center; color: #38b000; padding: 20px 0; border-bottom: 1px solid #415a77; margin: 0; font-size: 22px; }
         .sidebar ul { list-style: none; padding: 0; margin: 0; }
         .sidebar ul li a { display: block; padding: 14px 20px; color: #adb5bd; text-decoration: none; border-bottom: 1px solid #132238; font-size: 14px; cursor: pointer; }
         .sidebar ul li a:hover, .sidebar ul li a.active { background-color: #0077b6; color: #fff; }
         .main-content { margin-left: 260px; padding: 30px; width: calc(100% - 260px); box-sizing: border-box; min-height: 100vh; }
-        .top-header { font-size: 24px; font-weight: bold; color: #38b000; margin-bottom: 20px; border-bottom: 2px solid #415a77; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .top-right-panel { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .top-header { font-size: 22px; font-weight: bold; color: #38b000; margin-bottom: 20px; border-bottom: 2px solid #415a77; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .top-right-panel { display: flex; align-items: center; gap: 15px; font-size: 14px; flex-wrap: wrap; }
         .balance-badge { background-color: #1b263b; border: 1px solid #38b000; color: #38b000; padding: 6px 12px; border-radius: 20px; font-weight: bold; }
         .user-info { font-size: 13px; color: #adb5bd; }
-        .content-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; box-sizing: border-box; overflow-x: auto; }
-        .warning-box { background-color: rgba(255, 183, 3, 0.15); border: 1px solid #ffb703; color: #ffb703; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; line-height: 1.5; }
+        .content-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; overflow-x: auto; }
+        .warning-box { background-color: rgba(255, 183, 3, 0.15); border: 1px solid #ffb703; color: #ffb703; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
         .crypto-box { background-color: #0d1b2a; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #415a77; word-break: break-all; font-size: 12px; display: flex; align-items: center; gap: 10px; }
         .crypto-logo { font-size: 18px; font-weight: bold; min-width: 60px; text-align: center; }
         .format-table { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #0d1b2a; font-size: 12px; }
-        .format-table th, .format-table td { border: 1px solid #415a77; padding: 8px; text-align: center; white-space: nowrap; }
+        .format-table th, .format-table td { border: 1px solid #415a77; padding: 10px; text-align: center; white-space: nowrap; }
         .format-table th { background-color: #1b263b; color: #38b000; }
-        .btn-buy { background-color: #38b000; color: #fff; padding: 4px 8px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        .btn-buy { background-color: #38b000; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
         .logout-btn { background-color: #d90429; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; }
         .deposit-form { background-color: #0d1b2a; padding: 20px; border-radius: 8px; border: 1px solid #415a77; margin-top: 15px; }
-        .deposit-form input, .deposit-form select { width: 100%; padding: 10px; margin: 8px 0 15px 0; background: #1b263b; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        .deposit-form input, .deposit-form select { width: 100%; padding: 10px; margin: 8px 0 15px 0; background: #1b263b; border: 1px solid #415a77; color: #fff; border-radius: 4px; }
         .seller-badge { color: #ffb703; font-weight: bold; }
     </style>
 </head>
@@ -40,6 +41,7 @@
             <li><a onclick="switchPage('cc')" id="nav-cc">CC Market</a></li>
             <li><a onclick="switchPage('dumps')" id="nav-dumps">Dumps Market</a></li>
             <li><a onclick="switchPage('fullz')" id="nav-fullz">Fullz Market</a></li>
+            <li><a href="seller.html" style="color: #ffb703;">⚡ Seller Portal (Vendor)</a></li>
             <li><a onclick="switchPage('refund')" id="nav-refund">Refund / Privacy Notice</a></li>
         </ul>
     </div>
@@ -60,52 +62,34 @@
             <div id="alert-box"></div>
             <div id="activation-warning" class="warning-box" style="display:none;">
                 ⚠️ <b>WARNING: Account Activation Required!</b><br>
-                Your account needs an activation deposit. Once activated, your account remains <b>safe and active forever</b>. Unactivated accounts auto-delete after 5 days.
-                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin (zPub):</b><br><code id="cfg-btc"></code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b><br><code id="cfg-ltc"></code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#c2a633;">🐕 DOGE</div> <div><b>Dogecoin (DOGE):</b><br><code id="cfg-doge"></code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b><br><code id="cfg-eth"></code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b><br><code id="cfg-xmr"></code></div></div>
+                Your account needs an activation deposit to our official wallets below. Once activated, your account remains safe and active forever.
+                
+                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin (zPub):</b><br><code>zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b><br><code>LKjLzD6m4katWbMntfjJzkz5QSM5teicNx</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#c2a633;">🐕 DOGE</div> <div><b>Dogecoin (DOGE):</b><br><code>DGFmS6gLSWfn3hL9HzSGTXUMQjTpHCDQYN</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b><br><code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b><br><code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
             </div>
-
             <div id="page-content"></div>
         </div>
     </div>
 
-    <script src="config.js"></script>
     <script>
         let currentUser = null;
-        let sampleProducts = [
-            { id: 1, category: 'cc', seller: 'CryptoKing', rating: 4.9, bins: '453211', type: 'Visa', subtype: 'Credit', expiry: '12/28', name: 'John Doe', country: 'US', state: 'NY', address: '123 Main St', extra: 'Secure', zip: '10001', bank: 'Chase', price: 15.00 },
-            { id: 2, category: 'dumps', seller: 'AlphaDump', rating: 4.8, bins: '517890', type: 'Mastercard', subtype: 'Debit', expiry: '09/27', name: 'Jane Smith', country: 'UK', state: 'LDN', address: '45 Baker St', extra: 'Track 2', zip: 'NW16XE', bank: 'Barclays', price: 25.00 },
-            { id: 3, category: 'fullz', seller: 'TopFullz', rating: 5.0, bins: '378282', type: 'Amex', subtype: 'Credit', expiry: '11/29', name: 'Robert Fox', country: 'CA', state: 'ON', address: '789 Park Ave', extra: 'Full Info', zip: 'M5V2H1', bank: 'RBC', pin: '1234', emailpass: 'robert@gmail.com|pass123', price: 45.00 }
-        ];
 
         window.onload = function() {
             const username = localStorage.getItem('czc_current_user');
-            if (!username) {
-                window.location.href = 'index.html';
-                return;
-            }
+            if (!username) { window.location.href = 'index.html'; return; }
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
             currentUser = users.find(u => u.username === username);
-            if (!currentUser) {
-                window.location.href = 'index.html';
-                return;
-            }
+            if (!currentUser) { window.location.href = 'index.html'; return; }
 
             document.getElementById('username-display').innerText = currentUser.username;
             document.getElementById('user-balance').innerText = Number(currentUser.balance_usd).toFixed(2);
 
             if (currentUser.is_activated === 0) {
                 document.getElementById('activation-warning').style.display = 'block';
-                document.getElementById('cfg-btc').innerText = SITE_CONFIG.btc_zpub;
-                document.getElementById('cfg-ltc').innerText = SITE_CONFIG.ltc_address;
-                document.getElementById('cfg-doge').innerText = SITE_CONFIG.doge_address;
-                document.getElementById('cfg-eth').innerText = SITE_CONFIG.eth_address;
-                document.getElementById('cfg-xmr').innerText = SITE_CONFIG.xmr_address;
             }
-
             switchPage('account_management');
         };
 
@@ -116,55 +100,38 @@
 
             const content = document.getElementById('page-content');
             if (page === 'account_management') {
-                content.innerHTML = `
-                    <h2>Account Management</h2>
-                    <p>Manage your account settings and view your activation status.</p>
-                    <p><b>Status:</b> ${currentUser.is_activated === 1 ? '<span style="color:#38b000;">Activated (Permanent & Safe)</span>' : '<span style="color:#ffb703;">Unactivated (Pending Deposit)</span>'}</p>
-                    <p><b>Registered Email:</b> ${currentUser.email}</p>
-                `;
+                content.innerHTML = `<h2>Account Management</h2><p>Status: ${currentUser.is_activated === 1 ? '<span style="color:#38b000;">Activated</span>' : '<span style="color:#ffb703;">Unactivated</span>'}</p><p>Email: ${currentUser.email}</p>`;
             } else if (page === 'account_balance') {
-                content.innerHTML = `
-                    <h2>Account Balance & Top-Up Deposits</h2>
-                    <p>Your current wallet balance: <b>$${Number(currentUser.balance_usd).toFixed(2)} USD</b></p>
-                    <div style="margin-bottom: 20px;">
-                        <b>Official Deposit Addresses & Logos:</b>
-                        <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin (zPub):</b> <code>${SITE_CONFIG.btc_zpub}</code></div></div>
-                        <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>${SITE_CONFIG.ltc_address}</code></div></div>
-                        <div class="crypto-box"><div class="crypto-logo" style="color:#c2a633;">🐕 DOGE</div> <div><b>Dogecoin (DOGE):</b> <code>${SITE_CONFIG.doge_address}</code></div></div>
-                        <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b> <code>${SITE_CONFIG.eth_address}</code></div></div>
-                        <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>${SITE_CONFIG.xmr_address}</code></div></div>
-                    </div>
-                    <div class="deposit-form">
-                        <h3>Top-Up Deposit</h3>
-                        <label>Select Crypto:</label>
-                        <select id="dep-crypto">
-                            <option value="BTC">Bitcoin (BTC)</option>
-                            <option value="LTC">Litecoin (LTC)</option>
-                            <option value="DOGE">Dogecoin (DOGE)</option>
-                            <option value="ETH">Ethereum (ETH)</option>
-                            <option value="XMR">Monero (XMR)</option>
-                        </select>
-                        <label>Amount ($ USD):</label>
-                        <input type="number" id="dep-amount" placeholder="50.00">
-                        <label>TXID / Hash:</label>
-                        <input type="text" id="dep-tx" placeholder="Transaction Hash">
-                        <button onclick="submitDeposit()" class="btn-buy" style="padding:10px; width:100%;">Submit Top-Up (Pending 15-20 mins)</button>
-                    </div>
-                `;
+                content.innerHTML = `<h2>Account Balance & Deposit</h2><p>Balance: $${currentUser.balance_usd.toFixed(2)} USD</p>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin (zPub):</b> <code>zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>LKjLzD6m4katWbMntfjJzkz5QSM5teicNx</code></div></div>
+                <div class="deposit-form">
+                    <h3>Top-Up Deposit</h3>
+                    <input type="number" id="dep-amount" placeholder="Amount ($ USD)">
+                    <input type="text" id="dep-tx" placeholder="Transaction Hash (TXID)">
+                    <button onclick="submitDeposit()" class="btn-buy" style="padding:10px; width:100%;">Submit Top-Up</button>
+                </div>`;
             } else if (page === 'cc' || page === 'dumps' || page === 'fullz') {
-                let items = sampleProducts.filter(p => p.category === page);
+                let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+                let items = allProducts.filter(p => p.category === page);
+                
                 let html = `<h2>${page.toUpperCase()} Market</h2><table class="format-table"><tr>
-                    <th>Seller</th><th>Bins</th><th>Type</th><th>Expiry</th><th>Name</th><th>Country</th><th>State</th><th>Address</th><th>Price</th><th>Action</th>
+                    <th>Seller</th><th>Bins</th><th>Type</th><th>Expiry</th><th>Name</th><th>Country</th><th>Address</th><th>Price</th><th>Action</th>
                 </tr>`;
-                items.forEach(item => {
-                    html += `<tr>
-                        <td><span class="seller-badge">${item.seller}</span><br>⭐(${item.rating})</td>
-                        <td>${item.bins}</td><td>${item.type}</td><td>${item.expiry}</td>
-                        <td>****</td><td>${item.country}</td><td>****</td><td>****</td>
-                        <td>$${item.price.toFixed(2)}</td>
-                        <td><button class="btn-buy" onclick="buyItem(${item.id})">Buy</button></td>
-                    </tr>`;
-                });
+                
+                if(items.length === 0) {
+                    html += `<tr><td colspan="9" style="padding:20px; color:#adb5bd;">No products available. Sellers can add items from the Seller Portal.</td></tr>`;
+                } else {
+                    items.forEach(item => {
+                        html += `<tr>
+                            <td><span class="seller-badge">${item.seller}</span></td>
+                            <td>${item.bins}</td><td>${item.type}</td><td>${item.expiry}</td>
+                            <td>****</td><td>${item.country}</td><td>****</td>
+                            <td>$${Number(item.price).toFixed(2)}</td>
+                            <td><button class="btn-buy" onclick="buyItem(${item.id})">Buy</button></td>
+                        </tr>`;
+                    });
+                }
                 html += `</table>`;
                 content.innerHTML = html;
             } else if (page === 'refund') {
@@ -177,38 +144,29 @@
             if (!amt || amt <= 0) { alert('Enter valid amount'); return; }
             currentUser.balance_usd += amt;
             currentUser.is_activated = 1;
-            updateUserStorage();
-            alert('Deposit submitted successfully! Balance updated.');
+            updateStorage();
+            alert('Deposit submitted successfully!');
             location.reload();
         }
 
         function buyItem(id) {
-            let item = sampleProducts.find(p => p.id === id);
-            if (currentUser.balance_usd < item.price) {
-                alert('Insufficient Balance! Please top-up first.');
-                return;
-            }
+            let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+            let item = allProducts.find(p => p.id === id);
+            if (currentUser.balance_usd < item.price) { alert('Insufficient Balance!'); return; }
             currentUser.balance_usd -= item.price;
             currentUser.is_activated = 1;
-            updateUserStorage();
-
-            document.getElementById('alert-box').innerHTML = `
-                <div style='background-color:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px; margin-bottom:15px;'>
-                    <b>Purchase Successful! Deducted: \$${item.price} USD.</b><br>
-                    <b>Unlocked Data:</b> Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.state}, ${item.country} - ${item.zip} | Bank: ${item.bank} 
-                    ${item.pin ? '| Pin: ' + item.pin + ' | Email/Pass: ' + item.emailpass : ''}
-                </div>
-            `;
-            document.getElementById('user-balance').innerText = Number(currentUser.balance_usd).toFixed(2);
+            updateStorage();
+            document.getElementById('alert-box').innerHTML = `<div style='background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px; margin-bottom:15px;'>
+                <b>Success! Unlocked Details:</b> Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}
+            </div>`;
+            document.getElementById('user-balance').innerText = currentUser.balance_usd.toFixed(2);
+            switchPage(item.category);
         }
 
-        function updateUserStorage() {
+        function updateStorage() {
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
             let index = users.findIndex(u => u.username === currentUser.username);
-            if (index !== -1) {
-                users[index] = currentUser;
-                localStorage.setItem('czc_users', JSON.stringify(users));
-            }
+            if (index !== -1) { users[index] = currentUser; localStorage.setItem('czc_users', JSON.stringify(users)); }
         }
     </script>
 </body>
