@@ -18,7 +18,7 @@
 </head>
 <body>
     <div class="box">
-        <h2>Seller / Vendor Portal</h2>
+        <h2>Seller Portal</h2>
         <form onsubmit="addProduct(event)">
             <div class="form-group">
                 <label>Seller Nickname:</label>
@@ -26,24 +26,53 @@
             </div>
             <div class="form-group">
                 <label>Category Market:</label>
-                <select id="prod-cat">
+                <select id="prod-cat" onchange="toggleCategoryFields()">
                     <option value="cc">CC Market</option>
                     <option value="dumps">Dumps Market</option>
                     <option value="fullz">Fullz Market</option>
+                    <option value="identity">SSN / Driving License / National ID</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Bins (First 6 digits):</label>
-                <input type="text" id="prod-bins" placeholder="453211" required>
+
+            <!-- कार्ड फील्ड्स -->
+            <div id="card-fields">
+                <div class="form-group">
+                    <label>Bins (First 6 digits):</label>
+                    <input type="text" id="prod-bins" placeholder="453211">
+                </div>
+                <div class="form-group">
+                    <label>Card Type:</label>
+                    <input type="text" id="prod-type" placeholder="Visa / Mastercard">
+                </div>
+                <div class="form-group">
+                    <label>CVV Status (VVB / Non-VVB):</label>
+                    <select id="prod-cvv">
+                        <option value="with-cvv">With CVV (VVB)</option>
+                        <option value="non-cvv">Non-CVV</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Expiry (MM/YY):</label>
+                    <input type="text" id="prod-expiry" placeholder="12/28">
+                </div>
             </div>
-            <div class="form-group">
-                <label>Card Type:</label>
-                <input type="text" id="prod-type" placeholder="Visa / Mastercard" required>
+
+            <!-- आइडेंटिटी / SSN / DL फील्ड्स -->
+            <div id="identity-fields" style="display:none;">
+                <div class="form-group">
+                    <label>Document Type:</label>
+                    <select id="doc-type">
+                        <option value="SSN">SSN (Social Security Number)</option>
+                        <option value="Driving License">Driving License</option>
+                        <option value="National ID">National ID Card</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Document Number / ID:</label>
+                    <input type="text" id="doc-number" placeholder="Enter SSN / DL / ID Number">
+                </div>
             </div>
-            <div class="form-group">
-                <label>Expiry (MM/YY):</label>
-                <input type="text" id="prod-expiry" placeholder="12/28" required>
-            </div>
+
             <div class="form-group">
                 <label>Holder Name:</label>
                 <input type="text" id="prod-holder" placeholder="John Doe" required>
@@ -57,8 +86,8 @@
                 <input type="text" id="prod-address" placeholder="123 Main St, Zip: 10001" required>
             </div>
             <div class="form-group">
-                <label>Bank Name:</label>
-                <input type="text" id="prod-bank" placeholder="Chase Bank" required>
+                <label>Bank / Issuer Name:</label>
+                <input type="text" id="prod-bank" placeholder="Chase Bank / Government Issuer" required>
             </div>
             <div class="form-group">
                 <label>Price ($ USD):</label>
@@ -70,21 +99,38 @@
     </div>
 
     <script>
+        function toggleCategoryFields() {
+            let cat = document.getElementById('prod-cat').value;
+            if (cat === 'identity') {
+                document.getElementById('card-fields').style.display = 'none';
+                document.getElementById('identity-fields').style.display = 'block';
+            } else {
+                document.getElementById('card-fields').style.display = 'block';
+                document.getElementById('identity-fields').style.display = 'none';
+            }
+        }
+
         function addProduct(e) {
             e.preventDefault();
+            let cat = document.getElementById('prod-cat').value;
+            let isIdentity = (cat === 'identity');
+
             let newProduct = {
                 id: Date.now(),
                 seller: document.getElementById('seller-name').value.trim(),
-                category: document.getElementById('prod-cat').value,
-                bins: document.getElementById('prod-bins').value.trim(),
-                type: document.getElementById('prod-type').value.trim(),
-                expiry: document.getElementById('prod-expiry').value.trim(),
+                category: cat,
+                bins: isIdentity ? 'ID-DOC' : document.getElementById('prod-bins').value.trim(),
+                type: isIdentity ? document.getElementById('doc-type').value : document.getElementById('prod-type').value.trim(),
+                cvvStatus: isIdentity ? 'N/A' : document.getElementById('prod-cvv').value,
+                docNumber: isIdentity ? document.getElementById('doc-number').value.trim() : '****',
+                expiry: isIdentity ? 'N/A' : document.getElementById('prod-expiry').value.trim(),
                 name: document.getElementById('prod-holder').value.trim(),
                 country: document.getElementById('prod-country').value.trim(),
                 address: document.getElementById('prod-address').value.trim(),
                 bank: document.getElementById('prod-bank').value.trim(),
                 price: parseFloat(document.getElementById('prod-price').value),
-                rating: 5.0
+                totalRatingScore: 5.0,
+                ratingCount: 1
             };
 
             let products = JSON.parse(localStorage.getItem('czc_products') || '[]');
@@ -93,6 +139,7 @@
 
             alert('Product successfully listed on the live market!');
             e.target.reset();
+            toggleCategoryFields();
         }
     </script>
 </body>
