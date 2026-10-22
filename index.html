@@ -3,39 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Card Zone Club</title>
+    <title>CARD ZONE CLUB LOGIN</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #050b14; color: #ffffff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .login-box { background: rgba(18, 24, 38, 0.95); border: 1px solid #1e3a5f; border-radius: 12px; padding: 25px; width: 100%; max-width: 380px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7); box-sizing: border-box; text-align: center; }
-        .login-box h2 { color: #00ff66; font-size: 18px; margin-top: 0; margin-bottom: 20px; }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            background: #050b14 url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff; font-family: Arial, sans-serif;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .login-box {
+            background: rgba(13, 22, 36, 0.92);
+            border: 1px solid #1e3a5f; border-radius: 12px; padding: 25px;
+            width: 100%; max-width: 380px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8); text-align: center;
+        }
+        .login-box h2 {
+            color: #00ff66; font-size: 15px; margin-top: 0; margin-bottom: 20px;
+            font-family: monospace; text-shadow: 0 0 10px rgba(0,255,102,0.5);
+        }
         .form-group { margin-bottom: 12px; text-align: left; }
-        .form-group label { display: block; font-size: 13px; color: #a0aec0; margin-bottom: 4px; }
-        .form-control { width: 100%; padding: 10px; background-color: #0b132b; border: 1px solid #1c2541; color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
-        .captcha-display { background-color: #050b14; border: 1px dashed #22b573; color: #00ff66; padding: 10px; font-size: 20px; font-weight: bold; letter-spacing: 4px; border-radius: 6px; margin: 8px 0; font-family: monospace; }
-        .key-display { background-color: #050b14; border: 1px solid #ffb703; color: #ffb703; padding: 12px; font-size: 11px; font-weight: bold; border-radius: 6px; margin: 15px 0; word-break: break-all; font-family: monospace; }
-        .btn { background-color: #1a73e8; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; font-size: 14px; margin-top: 10px; }
+        .form-group label { display: block; font-size: 12px; color: #a0aec0; margin-bottom: 4px; }
+        .form-control {
+            width: 100%; padding: 10px; background-color: #0b132b;
+            border: 1px solid #1c2541; color: #fff; border-radius: 6px; font-size: 13px;
+        }
+        .captcha-display {
+            background-color: #050b14; border: 1px dashed #22b573;
+            color: #00ff66; padding: 10px; font-size: 20px; font-weight: bold;
+            letter-spacing: 6px; border-radius: 6px; margin: 8px 0; text-align: center; font-family: monospace;
+        }
+        .key-display {
+            background-color: #050b14; border: 1px solid #ffb703;
+            color: #ffb703; padding: 12px; font-size: 11px; font-weight: bold;
+            border-radius: 6px; margin: 15px 0; word-break: break-all; font-family: monospace;
+        }
+        .btn {
+            background-color: #1a73e8; color: white; border: none;
+            padding: 12px; border-radius: 6px; cursor: pointer; width: 100%;
+            font-weight: bold; font-size: 14px; margin-top: 10px;
+        }
         .btn:hover { background-color: #1557b0; }
-        .error { background-color: rgba(217, 4, 41, 0.2); border: 1px solid #d90429; color: #ffb703; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px; }
+        .error {
+            background-color: rgba(217, 4, 41, 0.2); border: 1px solid #d90429;
+            color: #ffb703; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;
+        }
+        .seller-link { margin-top: 15px; display: block; font-size: 13px; color: #38b000; text-decoration: none; }
+        .seller-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <h2>Welcome to Card Zone Club</h2>
+        <h2>CARD ZONE CLUB LOGIN.php</h2>
         <div id="error-msg" class="error" style="display:none;"></div>
 
         <div id="step1-container">
-            <form id="register-form" onsubmit="handleStep1(event)">
+            <form onsubmit="handleStep1(event)">
                 <div class="form-group">
                     <label>Name:</label>
-                    <input type="text" id="name" class="form-control" required>
+                    <input type="text" id="name" class="form-control" placeholder="Alex" required>
                 </div>
                 <div class="form-group">
                     <label>Username:</label>
-                    <input type="text" id="username" class="form-control" required>
+                    <input type="text" id="username" class="form-control" placeholder="NightOwlCoder" required>
                 </div>
                 <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" id="email" class="form-control" required>
+                    <label>Gmail:</label>
+                    <input type="email" id="email" class="form-control" placeholder="nightowl.code@gmail.com" required>
                 </div>
                 <div class="form-group">
                     <label>Captcha Code:</label>
@@ -44,11 +78,12 @@
                 </div>
                 <button type="submit" class="btn">Verify & Continue</button>
             </form>
+            <a href="seller.html" class="seller-link">Want to sell? Register as Seller →</a>
         </div>
 
         <div id="step2-container" style="display:none;">
-            <p style="font-size: 13px; color: #adb5bd;" id="step2-text"></p>
-            <form id="login-form" onsubmit="handleStep2(event)">
+            <p style="font-size: 13px; color: #adb5bd;">Account found! Enter your <b>36-character Private Key</b> to login:</p>
+            <form onsubmit="handleStep2(event)">
                 <div class="form-group">
                     <input type="text" id="entered-key" class="form-control" placeholder="Enter 36-char Private Key" required>
                 </div>
@@ -58,23 +93,21 @@
 
         <div id="step3-container" style="display:none;">
             <p style="font-size: 13px; color: #38b000;"><b>Account Registered Successfully!</b></p>
-            <p style="font-size: 12px; color: #adb5bd;">Save this 36-character Private Key securely. You must use this key for future logins:</p>
+            <p style="font-size: 12px; color: #adb5bd;">Save this 36-character Private Key securely:</p>
             <div id="new-key-display" class="key-display"></div>
-            <button onclick="goToStore()" class="btn">Proceed to Store</button>
+            <button onclick="window.location.href='store.html'" class="btn">Proceed to Store</button>
         </div>
     </div>
 
     <script>
         let currentCaptcha = '';
-
         function generateCaptcha() {
             const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz';
             let res = '';
-            for (let i = 0; i < 6; i++) res += chars[Math.floor(Math.random() * chars.length)];
+            for (let i = 0; i < 4; i++) res += chars[Math.floor(Math.random() * chars.length)];
             currentCaptcha = res;
             document.getElementById('captcha-code').innerText = res;
         }
-
         function generatePrivateKey() {
             const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -82,10 +115,7 @@
             for (let i = 0; i < 35; i++) key += chars[Math.floor(Math.random() * chars.length)];
             return key;
         }
-
-        window.onload = function() {
-            generateCaptcha();
-        };
+        window.onload = generateCaptcha;
 
         function handleStep1(e) {
             e.preventDefault();
@@ -109,15 +139,9 @@
                 localStorage.setItem('czc_pending_user', existingUser.username);
                 document.getElementById('step1-container').style.display = 'none';
                 document.getElementById('step2-container').style.display = 'block';
-                document.getElementById('step2-text').innerHTML = `Account found! Enter your <b>36-character Private Key</b> to login:`;
             } else {
                 const privateKey = generatePrivateKey();
-                const newUser = {
-                    name, username, email, privateKey,
-                    is_activated: 0,
-                    balance_usd: 0.00,
-                    created_at: new Date().toISOString()
-                };
+                const newUser = { name, username, email, privateKey, is_activated: 0, balance_usd: 0.00 };
                 users.push(newUser);
                 localStorage.setItem('czc_users', JSON.stringify(users));
                 localStorage.setItem('czc_current_user', username);
@@ -141,12 +165,8 @@
             } else {
                 const errorDiv = document.getElementById('error-msg');
                 errorDiv.style.display = 'block';
-                errorDiv.innerText = "Invalid 36-character Private Key! Access Denied.";
+                errorDiv.innerText = "Invalid Private Key! Access Denied.";
             }
-        }
-
-        function goToStore() {
-            window.location.href = 'store.html';
         }
     </script>
 </body>
