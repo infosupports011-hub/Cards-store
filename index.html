@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WELCOME TO CARDS ZONES CLUB</title>
+    <title>🏴‍☠️WELCOME TO CARDS ZONES CLUB🏴‍☠️</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -166,7 +166,7 @@
             }
 
             const privateKey = generatePrivateKey();
-            const newUser = { name, username, email, privateKey, is_activated: 0, balance_usd: 0.00 };
+            const newUser = { name, username, email, privateKey, is_activated: 0, balance_usd: 0.00, tfaEnabled: false };
             users.push(newUser);
             localStorage.setItem('czc_users', JSON.stringify(users));
             localStorage.setItem('czc_current_user', username);
