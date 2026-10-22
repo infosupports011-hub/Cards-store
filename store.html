@@ -7,33 +7,57 @@
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background-color: #1b263b; height: 100vh; position: fixed; top: 0; left: 0; border-right: 1px solid #415a77; overflow-y: auto; z-index: 100; }
+        
+        /* Sidebar Styling */
+        .sidebar { width: 260px; background-color: #1b263b; height: 100vh; position: fixed; top: 0; left: 0; border-right: 1px solid #415a77; overflow-y: auto; z-index: 1000; transition: transform 0.3s ease; }
         .sidebar h2 { text-align: center; color: #38b000; padding: 20px 0; border-bottom: 1px solid #415a77; margin: 0; font-size: 22px; }
         .sidebar ul { list-style: none; padding: 0; margin: 0; }
         .sidebar ul li a { display: block; padding: 14px 20px; color: #adb5bd; text-decoration: none; border-bottom: 1px solid #132238; font-size: 14px; cursor: pointer; }
         .sidebar ul li a:hover, .sidebar ul li a.active { background-color: #0077b6; color: #fff; }
-        .main-content { margin-left: 260px; padding: 30px; width: calc(100% - 260px); box-sizing: border-box; min-height: 100vh; }
+
+        /* Main Content Styling */
+        .main-content { margin-left: 260px; padding: 30px; width: calc(100% - 260px); box-sizing: border-box; min-height: 100vh; transition: margin 0.3s ease, width 0.3s ease; }
+        
         .top-header { font-size: 22px; font-weight: bold; color: #38b000; margin-bottom: 20px; border-bottom: 2px solid #415a77; padding-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        
+        /* Hamburger Menu Button (तीन लकीर) */
+        .menu-toggle { background: none; border: 1px solid #415a77; color: #38b000; font-size: 20px; padding: 5px 10px; border-radius: 4px; cursor: pointer; display: none; }
+
         .top-right-panel { display: flex; align-items: center; gap: 15px; font-size: 14px; flex-wrap: wrap; }
         .balance-badge { background-color: #1b263b; border: 1px solid #38b000; color: #38b000; padding: 6px 12px; border-radius: 20px; font-weight: bold; }
         .user-info { font-size: 13px; color: #adb5bd; }
+        
         .content-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; overflow-x: auto; }
         .warning-box { background-color: rgba(255, 183, 3, 0.15); border: 1px solid #ffb703; color: #ffb703; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
         .crypto-box { background-color: #0d1b2a; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #415a77; word-break: break-all; font-size: 12px; display: flex; align-items: center; gap: 10px; }
         .crypto-logo { font-size: 18px; font-weight: bold; min-width: 60px; text-align: center; }
+        
         .format-table { width: 100%; border-collapse: collapse; margin-top: 15px; background-color: #0d1b2a; font-size: 12px; }
         .format-table th, .format-table td { border: 1px solid #415a77; padding: 10px; text-align: center; white-space: nowrap; }
         .format-table th { background-color: #1b263b; color: #38b000; }
+        
         .btn-buy { background-color: #38b000; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
         .logout-btn { background-color: #d90429; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; }
+        
         .deposit-form { background-color: #0d1b2a; padding: 20px; border-radius: 8px; border: 1px solid #415a77; margin-top: 15px; }
-        .deposit-form input, .deposit-form select { width: 100%; padding: 10px; margin: 8px 0 15px 0; background: #1b263b; border: 1px solid #415a77; color: #fff; border-radius: 4px; }
+        .deposit-form input, .deposit-form textarea { width: 100%; padding: 10px; margin: 8px 0 15px 0; background: #1b263b; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        
         .seller-badge { color: #ffb703; font-weight: bold; }
+        .rating-badge { color: #00ff66; font-weight: bold; }
+
+        /* Responsive Sidebar */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; width: 100%; padding: 15px; }
+            .menu-toggle { display: block; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <h2>Cards</h2>
         <ul>
             <li><a onclick="switchPage('account_management')" id="nav-account_management">Account Management</a></li>
@@ -41,14 +65,18 @@
             <li><a onclick="switchPage('cc')" id="nav-cc">CC Market</a></li>
             <li><a onclick="switchPage('dumps')" id="nav-dumps">Dumps Market</a></li>
             <li><a onclick="switchPage('fullz')" id="nav-fullz">Fullz Market</a></li>
-            <li><a href="seller.html" style="color: #ffb703;">⚡ Seller Portal (Vendor)</a></li>
+            <li><a onclick="switchPage('club_partners')" id="nav-club_partners" style="color: #ffb703;">⭐ Club Partners (Apply)</a></li>
+            <li><a href="seller.html" style="color: #38b000;">⚡ Seller Portal (Vendor)</a></li>
             <li><a onclick="switchPage('refund')" id="nav-refund">Refund / Privacy Notice</a></li>
         </ul>
     </div>
 
-    <div class="main-content">
+    <div class="main-content" id="main-content">
         <div class="top-header">
-            <span>Cards Dashboard</span>
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <span>Cards Dashboard</span>
+            </div>
             <div class="top-right-panel">
                 <div class="balance-badge">Balance: $<span id="user-balance">0.00</span> USD</div>
                 <div class="user-info">
@@ -75,7 +103,13 @@
     </div>
 
     <script>
+        // ADMIN CONTROL: इसे true करने पर एप्लीकेशन फॉर्म खुलेगा, false करने पर बंद हो जाएगा
+        let isSellerApplicationOpen = true; 
         let currentUser = null;
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
 
         window.onload = function() {
             const username = localStorage.getItem('czc_current_user');
@@ -111,24 +145,52 @@
                     <input type="text" id="dep-tx" placeholder="Transaction Hash (TXID)">
                     <button onclick="submitDeposit()" class="btn-buy" style="padding:10px; width:100%;">Submit Top-Up</button>
                 </div>`;
+            } else if (page === 'club_partners') {
+                if (!isSellerApplicationOpen) {
+                    content.innerHTML = `<h2>Club Partners - Seller Application</h2><div style="background:rgba(217,4,41,0.2); border:1px solid #d90429; color:#ffb703; padding:15px; border-radius:6px;"><b>Notice:</b> Seller applications are currently closed by admin. Please check back later.</div>`;
+                } else {
+                    content.innerHTML = `<h2>Club Partners - Seller Application Portal</h2>
+                    <p style="color:#adb5bd; font-size:13px;">Apply to become an official vendor/seller on Card Zone Club.</p>
+                    <div class="deposit-form">
+                        <label>Full Name:</label>
+                        <input type="text" id="partner-name" placeholder="Enter your name" required>
+                        <label>Email Address:</label>
+                        <input type="email" id="partner-email" placeholder="Enter your email" required>
+                        <label>Username:</label>
+                        <input type="text" id="partner-username" placeholder="Enter your username" required>
+                        <label>Details / Experience:</label>
+                        <textarea id="partner-details" rows="4" placeholder="Enter your background or details..." required></textarea>
+                        <button onclick="submitPartnerApplication()" class="btn-buy" style="padding:12px; width:100%; margin-top:10px;">Submit Seller Application</button>
+                    </div>`;
+                }
             } else if (page === 'cc' || page === 'dumps' || page === 'fullz') {
                 let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
                 let items = allProducts.filter(p => p.category === page);
                 
+                items.sort((a, b) => {
+                    let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
+                    let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
+                    return ratingB - ratingA;
+                });
+
                 let html = `<h2>${page.toUpperCase()} Market</h2><table class="format-table"><tr>
-                    <th>Seller</th><th>Bins</th><th>Type</th><th>Expiry</th><th>Name</th><th>Country</th><th>Address</th><th>Price</th><th>Action</th>
+                    <th>Seller</th><th>Rating</th><th>Bins</th><th>Type</th><th>Expiry</th><th>Name</th><th>Country</th><th>Address</th><th>Price</th><th>Action</th>
                 </tr>`;
                 
                 if(items.length === 0) {
-                    html += `<tr><td colspan="9" style="padding:20px; color:#adb5bd;">No products available. Sellers can add items from the Seller Portal.</td></tr>`;
+                    html += `<tr><td colspan="10" style="padding:20px; color:#adb5bd;">No products available. Sellers can add items from the Seller Portal.</td></tr>`;
                 } else {
                     items.forEach(item => {
-                        html += `<tr>
-                            <td><span class="seller-badge">${item.seller}</span></td>
+                        let avgRating = item.ratingCount > 0 ? (item.totalRatingScore / item.ratingCount).toFixed(1) : '5.0';
+                        let isBlacklisted = Number(avgRating) < 2.0;
+                        
+                        html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
+                            <td><span class="seller-badge">${item.seller}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
+                            <td><span class="rating-badge">⭐ ${avgRating} (${item.ratingCount || 0})</span></td>
                             <td>${item.bins}</td><td>${item.type}</td><td>${item.expiry}</td>
                             <td>****</td><td>${item.country}</td><td>****</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
-                            <td><button class="btn-buy" onclick="buyItem(${item.id})">Buy</button></td>
+                            <td>${isBlacklisted ? '<span style="color:#ff4d4d; font-size:11px;">Banned</span>' : `<button class="btn-buy" onclick="buyItem(${item.id})">Buy</button>`}</td>
                         </tr>`;
                     });
                 }
@@ -137,6 +199,25 @@
             } else if (page === 'refund') {
                 content.innerHTML = `<h2>Privacy Notice & Refund Policy</h2><p>All sales are final due to digital nature.</p>`;
             }
+        }
+
+        function submitPartnerApplication() {
+            const name = document.getElementById('partner-name').value.trim();
+            const email = document.getElementById('partner-email').value.trim();
+            const username = document.getElementById('partner-username').value.trim();
+            const details = document.getElementById('partner-details').value.trim();
+
+            if (!name || !email || !username || !details) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            let applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]');
+            applications.push({ name, email, username, details, date: new Date().toISOString() });
+            localStorage.setItem('czc_seller_applications', JSON.stringify(applications));
+
+            alert('Seller application submitted successfully!');
+            switchPage('account_management');
         }
 
         function submitDeposit() {
@@ -151,11 +232,26 @@
 
         function buyItem(id) {
             let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
-            let item = allProducts.find(p => p.id === id);
+            let itemIndex = allProducts.findIndex(p => p.id === id);
+            if (itemIndex === -1) return;
+            let item = allProducts[itemIndex];
+
             if (currentUser.balance_usd < item.price) { alert('Insufficient Balance!'); return; }
             currentUser.balance_usd -= item.price;
             currentUser.is_activated = 1;
             updateStorage();
+
+            let userRating = prompt("Purchase Successful! Please rate this seller from 1 to 5 stars:", "5");
+            let ratingVal = parseInt(userRating);
+            if (ratingVal >= 1 && ratingVal <= 5) {
+                if (!item.totalRatingScore) item.totalRatingScore = 5.0;
+                if (!item.ratingCount) item.ratingCount = 1;
+                item.totalRatingScore += ratingVal;
+                item.ratingCount += 1;
+                allProducts[itemIndex] = item;
+                localStorage.setItem('czc_products', JSON.stringify(allProducts));
+            }
+
             document.getElementById('alert-box').innerHTML = `<div style='background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px; margin-bottom:15px;'>
                 <b>Success! Unlocked Details:</b> Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}
             </div>`;
