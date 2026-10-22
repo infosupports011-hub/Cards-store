@@ -1,93 +1,3 @@
-<?php
-session_start();
-require_once 'db.php';
-
-$error = '';
-
-function generateCaptchaString($length = 6) {
-    $characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz';
-    $captcha = '';
-    for ($i = 0; $i < $length; $i++) {
-        $captcha .= $characters[rand(0, strlen($characters) - 1)];
-    }
-    return $captcha;
-}
-
-function generateRandomPrivateKey() {
-    $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    $randomKey = $uppercase[rand(0, strlen($uppercase) - 1)];
-    for ($i = 0; $i < 35; $i++) {
-        $randomKey .= $chars[rand(0, strlen($chars) - 1)];
-    }
-    return $randomKey;
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $action_type = $_POST['action_type'] ?? '';
-
-    if ($action_type == 'step1_details') {
-        $name = trim($_POST['name'] ?? '');
-        $username = trim($_POST['username'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $captcha = trim($_POST['captcha'] ?? '');
-        $captcha_session = $_SESSION['captcha'] ?? '';
-
-        if (empty($name) || empty($username) || empty($email) || empty($captcha)) {
-            $error = "All fields are required.";
-        } elseif ($captcha !== $captcha_session) {
-            $error = "Invalid Captcha code. Please try again.";
-            $_SESSION['captcha'] = generateCaptchaString();
-        } else {
-            $stmt = $pdo->prepare("SELECT * FROM buyers WHERE email = ? OR username = ?");
-            $stmt->execute([$email, $username]);
-            $buyer = $stmt->fetch();
-
-            if ($buyer) {
-                $_SESSION['pending_buyer_id'] = $buyer['id'];
-                header("Location: index.php?step=ask_private_key");
-                exit();
-            } else {
-                $private_key = generateRandomPrivateKey();
-                $stmt = $pdo->prepare("INSERT INTO buyers (name, username, email, private_key, is_activated, created_at) VALUES (?, ?, ?, ?, 0, NOW())");
-                $stmt->execute([$name, $username, $email, $private_key]);
-                
-                $_SESSION['buyer_id'] = $pdo->lastInsertId();
-                $_SESSION['username'] = $username;
-                $_SESSION['new_private_key'] = $private_key;
-                
-                header("Location: index.php?step=show_new_key");
-                exit();
-            }
-        }
-    } 
-    elseif ($action_type == 'step2_verify_key') {
-        $entered_key = trim($_POST['private_key'] ?? '');
-        $buyer_id = $_SESSION['pending_buyer_id'] ?? 0;
-
-        $stmt = $pdo->prepare("SELECT * FROM buyers WHERE id = ? AND private_key = ?");
-        $stmt->execute([$buyer_id, $entered_key]);
-        $buyer = $stmt->fetch();
-
-        if ($buyer) {
-            $_SESSION['buyer_id'] = $buyer['id'];
-            $_SESSION['username'] = $buyer['username'];
-            unset($_SESSION['pending_buyer_id']);
-            header("Location: store.php");
-            exit();
-        } else {
-            $error = "Invalid 36-character Private Key! Access Denied.";
-        }
-    }
-} else {
-    if (!isset($_GET['step'])) {
-        $_SESSION['captcha'] = generateCaptchaString();
-    }
-}
-
-$current_captcha = $_SESSION['captcha'] ?? '';
-$step = $_GET['step'] ?? 'form';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,45 +21,133 @@ $step = $_GET['step'] ?? 'form';
 <body>
     <div class="login-box">
         <h2>Welcome to Card Zone Club</h2>
-        <?php if (!empty($error)) echo "<div class='error'>$error</div>"; ?>
+        <div id="error-msg" class="error" style="display:none;"></div>
 
-        <?php if ($step == 'form'): ?>
-            <form method="POST">
-                <input type="hidden" name="action_type" value="step1_details">
+        <div id="step1-container">
+            <form id="register-form" onsubmit="handleStep1(event)">
                 <div class="form-group">
                     <label>Name:</label>
-                    <input type="text" name="name" class="form-control" required>
+                    <input type="text" id="name" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Username:</label>
-                    <input type="text" name="username" class="form-control" required>
+                    <input type="text" id="username" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Email:</label>
-                    <input type="email" name="email" class="form-control" required>
+                    <input type="email" id="email" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Captcha Code:</label>
-                    <div class="captcha-display"><?php echo $current_captcha; ?></div>
-                    <input type="text" name="captcha" class="form-control" placeholder="Enter code shown above" required>
+                    <div id="captcha-code" class="captcha-display"></div>
+                    <input type="text" id="captcha-input" class="form-control" placeholder="Enter code shown above" required>
                 </div>
                 <button type="submit" class="btn">Verify & Continue</button>
             </form>
-        <?php elseif ($step == 'ask_private_key'): ?>
-            <p style="font-size: 13px; color: #adb5bd;">Account found! Enter your <b>36-character Private Key</b> to login:</p>
-            <form method="POST">
-                <input type="hidden" name="action_type" value="step2_verify_key">
+        </div>
+
+        <div id="step2-container" style="display:none;">
+            <p style="font-size: 13px; color: #adb5bd;" id="step2-text"></p>
+            <form id="login-form" onsubmit="handleStep2(event)">
                 <div class="form-group">
-                    <input type="text" name="private_key" class="form-control" placeholder="Enter 36-char Private Key" required>
+                    <input type="text" id="entered-key" class="form-control" placeholder="Enter 36-char Private Key" required>
                 </div>
                 <button type="submit" class="btn">Login to Dashboard</button>
             </form>
-        <?php elseif ($step == 'show_new_key'): ?>
+        </div>
+
+        <div id="step3-container" style="display:none;">
             <p style="font-size: 13px; color: #38b000;"><b>Account Registered Successfully!</b></p>
             <p style="font-size: 12px; color: #adb5bd;">Save this 36-character Private Key securely. You must use this key for future logins:</p>
-            <div class="key-display"><?php echo $_SESSION['new_private_key'] ?? 'N/A'; ?></div>
-            <a href="store.php" class="btn" style="display:block; text-decoration:none; box-sizing:border-box; line-height:normal;">Proceed to Store</a>
-        <?php endif; ?>
+            <div id="new-key-display" class="key-display"></div>
+            <button onclick="goToStore()" class="btn">Proceed to Store</button>
+        </div>
     </div>
+
+    <script>
+        let currentCaptcha = '';
+
+        function generateCaptcha() {
+            const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz';
+            let res = '';
+            for (let i = 0; i < 6; i++) res += chars[Math.floor(Math.random() * chars.length)];
+            currentCaptcha = res;
+            document.getElementById('captcha-code').innerText = res;
+        }
+
+        function generatePrivateKey() {
+            const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let key = upper[Math.floor(Math.random() * upper.length)];
+            for (let i = 0; i < 35; i++) key += chars[Math.floor(Math.random() * chars.length)];
+            return key;
+        }
+
+        window.onload = function() {
+            generateCaptcha();
+        };
+
+        function handleStep1(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const captchaInput = document.getElementById('captcha-input').value.trim();
+            const errorDiv = document.getElementById('error-msg');
+
+            if (captchaInput !== currentCaptcha) {
+                errorDiv.style.display = 'block';
+                errorDiv.innerText = "Invalid Captcha code. Please try again.";
+                generateCaptcha();
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
+            let existingUser = users.find(u => u.email === email || u.username === username);
+
+            if (existingUser) {
+                localStorage.setItem('czc_pending_user', existingUser.username);
+                document.getElementById('step1-container').style.display = 'none';
+                document.getElementById('step2-container').style.display = 'block';
+                document.getElementById('step2-text').innerHTML = `Account found! Enter your <b>36-character Private Key</b> to login:`;
+            } else {
+                const privateKey = generatePrivateKey();
+                const newUser = {
+                    name, username, email, privateKey,
+                    is_activated: 0,
+                    balance_usd: 0.00,
+                    created_at: new Date().toISOString()
+                };
+                users.push(newUser);
+                localStorage.setItem('czc_users', JSON.stringify(users));
+                localStorage.setItem('czc_current_user', username);
+
+                document.getElementById('step1-container').style.display = 'none';
+                document.getElementById('step3-container').style.display = 'block';
+                document.getElementById('new-key-display').innerText = privateKey;
+            }
+        }
+
+        function handleStep2(e) {
+            e.preventDefault();
+            const enteredKey = document.getElementById('entered-key').value.trim();
+            const pendingUsername = localStorage.getItem('czc_pending_user');
+            let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
+            let user = users.find(u => u.username === pendingUsername && u.privateKey === enteredKey);
+
+            if (user) {
+                localStorage.setItem('czc_current_user', user.username);
+                window.location.href = 'store.html';
+            } else {
+                const errorDiv = document.getElementById('error-msg');
+                errorDiv.style.display = 'block';
+                errorDiv.innerText = "Invalid 36-character Private Key! Access Denied.";
+            }
+        }
+
+        function goToStore() {
+            window.location.href = 'store.html';
+        }
+    </script>
 </body>
 </html>
