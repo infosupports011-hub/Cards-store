@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CARD ZONE CLUB LOGIN</title>
+    <title>WELCOME TO CARD ZONE CLUB</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -14,13 +14,13 @@
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
         .login-box {
-            background: rgba(13, 22, 36, 0.92);
+            background: rgba(13, 22, 36, 0.95);
             border: 1px solid #1e3a5f; border-radius: 12px; padding: 25px;
             width: 100%; max-width: 380px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8); text-align: center;
         }
         .login-box h2 {
             color: #00ff66; font-size: 15px; margin-top: 0; margin-bottom: 20px;
-            font-family: monospace; text-shadow: 0 0 10px rgba(0,255,102,0.5);
+            font-family: monospace; text-shadow: 0 0 10px rgba(0,255,102,0.5); text-transform: uppercase;
         }
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 12px; color: #a0aec0; margin-bottom: 4px; }
@@ -48,28 +48,29 @@
             background-color: rgba(217, 4, 41, 0.2); border: 1px solid #d90429;
             color: #ffb703; padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;
         }
-        .seller-link { margin-top: 15px; display: block; font-size: 13px; color: #38b000; text-decoration: none; }
-        .seller-link:hover { text-decoration: underline; }
+        .nav-links { display: flex; justify-content: space-between; margin-top: 15px; font-size: 13px; }
+        .nav-links a { color: #38b000; text-decoration: none; }
+        .nav-links a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <h2>CARD ZONE CLUB LOGIN.php</h2>
+        <h2>WELCOME TO CARD ZONE CLUB</h2>
         <div id="error-msg" class="error" style="display:none;"></div>
 
         <div id="step1-container">
             <form onsubmit="handleStep1(event)">
                 <div class="form-group">
                     <label>Name:</label>
-                    <input type="text" id="name" class="form-control" placeholder="Alex" required>
+                    <input type="text" id="name" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Username:</label>
-                    <input type="text" id="username" class="form-control" placeholder="NightOwlCoder" required>
+                    <input type="text" id="username" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Gmail:</label>
-                    <input type="email" id="email" class="form-control" placeholder="nightowl.code@gmail.com" required>
+                    <input type="email" id="email" class="form-control" required>
                 </div>
                 <div class="form-group">
                     <label>Captcha Code:</label>
@@ -78,7 +79,10 @@
                 </div>
                 <button type="submit" class="btn">Verify & Continue</button>
             </form>
-            <a href="seller.html" class="seller-link">Want to sell? Register as Seller →</a>
+            <div class="nav-links">
+                <a href="store.html">Buyer Store</a>
+                <a href="seller.html">Seller Portal →</a>
+            </div>
         </div>
 
         <div id="step2-container" style="display:none;">
