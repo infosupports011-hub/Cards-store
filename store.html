@@ -247,7 +247,7 @@
                     <div class="deposit-form">
                         <label>Enter Full Card Number / BIN:</label>
                         <textarea id="check-card-input" rows="3" placeholder="453229xxxxxxxxxx|MM|YY|CVV"></textarea>
-                        <button onclick="performCardCheck()" class="btn-buy" style="padding:10px; width:100%;">Check Card via API</button>
+                        <button onclick="performCardCheck()" class="btn-buy" style="padding:10px; width:100%;">Check Bins & Cards via Live</button>
                     </div>
                     <div id="card-result-box" style="margin-top:20px;"></div>
                 `;
@@ -433,11 +433,11 @@
             } catch (err) {
                 displayCardResult(bin, {
                     bank: "GLOBAL ISSUING BANK",
-                    country: "UNITED STATES",
-                    code: "US",
-                    type: "CREDIT",
-                    brand: "VISA / MASTERCARD",
-                    level: "GOLD / PLATINUM"
+                    country: "UNITED STATES / UNITED KINGDOM / GERMANY / SWITZERLAND / BRAZIL",
+                    code: "US / UK / DE / CH / BR",
+                    type: "CREDIT / DEBIT",
+                    brand: "VISA / MASTERCARD / JCB / UNION PAY / MASTERO / AMERICAN EXPRESS",
+                    level: "GOLD / PLATINUM / SILVER / SIGNATURE / WORLD / WORLD ELITES / BLACK BEAUTY"
                 });
             }
         }
