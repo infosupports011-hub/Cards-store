@@ -401,7 +401,7 @@
             resultBox.innerHTML = `<p style="color:#adb5bd;">Fetching data from API...</p>`;
 
             try {
-                let response = await fetch(`https://data.handyapi.com/bin/${bin}`);
+                let response = await fetch(`https://binlist.io/lookup/${bin}/`);
 
                 if (!response.ok) {
                     throw new Error('API response failed');
@@ -409,25 +409,21 @@
 
                 let data = await response.json();
 
-                if (data.Status === "SUCCESS") {
-                    let countryName = (typeof data.CountryName === 'object') ? (data.CountryName.Name || 'N/A') : (data.CountryName || 'N/A');
-                    let countryCode = (typeof data.Country === 'object') ? (data.Country.Code || '') : (data.Country || '');
-                    let bankName = (typeof data.Bank === 'object') ? (data.Bank.Name || 'N/A') : (data.Bank || 'N/A');
-                    
-                    let cardLevel = 'N/A';
-                    if (data.CardLevel) {
-                        cardLevel = (typeof data.CardLevel === 'object') ? (data.CardLevel.Name || data.CardLevel.Level || 'N/A') : data.CardLevel;
-                    } else if (data.Level) {
-                        cardLevel = (typeof data.Level === 'object') ? (data.Level.Name || 'N/A') : data.Level;
-                    }
+                if (data.success) {
+                    let bankName = (data.bank && data.bank.name) ? data.bank.name : 'N/A';
+                    let countryName = (data.country && data.country.name) ? data.country.name : 'N/A';
+                    let countryCode = (data.country && data.country.alpha2) ? data.country.alpha2 : '';
+                    let cardType = data.type ? data.type.toUpperCase() : 'N/A';
+                    let cardBrand = data.scheme ? data.scheme.toUpperCase() : 'N/A';
+                    let cardLevel = data.brand ? data.brand.toUpperCase() : 'N/A';
 
                     resultBox.innerHTML = `
                         <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
                             <h3 style="color:#38b000; margin-top:0;">💳 Live API Verified Details: ${bin}</h3>
                             <p><b>Bank Name:</b> ${bankName}</p>
                             <p><b>Country:</b> ${countryName} (${countryCode})</p>
-                            <p><b>Card Type:</b> ${data.Type || 'N/A'}</p>
-                            <p><b>Card Brand:</b> ${data.Scheme || 'N/A'}</p>
+                            <p><b>Card Type:</b> ${cardType}</p>
+                            <p><b>Card Brand:</b> ${cardBrand}</p>
                             <p><b>Card Level:</b> ${cardLevel}</p>
                             <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% SUCCESSFUL (Live API Connected)</p>
                         </div>
