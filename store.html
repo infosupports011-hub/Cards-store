@@ -168,15 +168,15 @@
         let pendingRatingItem = null;
         let verificationInterval = null;
 
-        function initializeSystemAdmin() {
+        function initializeSystemAccounts() {
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
-            let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
             
+            // Seed Owner
+            let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
             let adminData = {
                 name: 'admin',
                 username: 'admin',
                 email: 'treasurerman89@gmail.com',
-                password: 'adminpassword',
                 privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
                 balance_usd: 5000.00,
                 is_activated: 1,
@@ -185,17 +185,43 @@
                 emailVerified: true,
                 activationDate: new Date().toISOString()
             };
-
-            if (adminIndex === -1) {
-                users.push(adminData);
-            } else {
+            if (adminIndex === -1) { users.push(adminData); } else {
                 users[adminIndex].name = 'admin';
                 users[adminIndex].email = 'treasurerman89@gmail.com';
                 users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
-                users[adminIndex].is_activated = 1;
                 users[adminIndex].role = 'Owner';
+                users[adminIndex].is_activated = 1;
             }
+
+            // Seed Personal Assistant (Williams)
+            let assistantIndex = users.findIndex(u => u.username.toLowerCase() === 'williams');
+            let assistantData = {
+                name: 'williams',
+                username: 'williams',
+                email: 'williams39@gmail.com',
+                privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
+                balance_usd: 1500.00,
+                is_activated: 1,
+                role: 'Personal Assistant',
+                tfaEnabled: false,
+                emailVerified: true,
+                activationDate: new Date().toISOString()
+            };
+            if (assistantIndex === -1) { users.push(assistantData); } else {
+                users[assistantIndex].name = 'williams';
+                users[assistantIndex].email = 'williams39@gmail.com';
+                users[assistantIndex].privateKey = 'CZCWILLIAMS9876543210abcdefABCDEF123';
+                users[assistantIndex].role = 'Personal Assistant';
+                users[assistantIndex].is_activated = 1;
+            }
+
             localStorage.setItem('czc_users', JSON.stringify(users));
+
+            let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
+            if (!approvedSellers.includes('williams')) {
+                approvedSellers.push('williams');
+                localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
+            }
         }
 
         function getUserBitcoinAddress(username) {
@@ -226,7 +252,7 @@
         }
 
         window.onload = function() {
-            initializeSystemAdmin();
+            initializeSystemAccounts();
 
             const username = localStorage.getItem('czc_current_user');
             if (!username) { window.location.href = 'index.html'; return; }
@@ -237,11 +263,16 @@
             let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
             let isSeller = approvedSellers.includes(currentUser.username);
             let isOwner = currentUser.username.toLowerCase() === 'admin' || currentUser.role === 'Owner';
+            let isAssistant = currentUser.username.toLowerCase() === 'williams' || currentUser.role === 'Personal Assistant';
 
             if (isOwner) {
                 currentUser.role = 'Owner';
                 currentUser.is_activated = 1;
                 document.getElementById('admin-panel-nav').style.display = 'block';
+                document.getElementById('seller-hub-nav').style.display = 'block';
+            } else if (isAssistant) {
+                currentUser.role = 'Personal Assistant';
+                currentUser.is_activated = 1;
                 document.getElementById('seller-hub-nav').style.display = 'block';
             } else if (isSeller) {
                 currentUser.role = 'Official Seller';
@@ -281,9 +312,9 @@
                 
                 let activationDetails = '';
                 let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
-                let isSellerOrOwner = approvedSellers.includes(currentUser.username) || currentUser.username.toLowerCase() === 'admin' || currentUser.role === 'Owner';
+                let isPermanent = approvedSellers.includes(currentUser.username) || currentUser.username.toLowerCase() === 'admin' || currentUser.username.toLowerCase() === 'williams' || currentUser.role === 'Owner' || currentUser.role === 'Personal Assistant';
 
-                if (isSellerOrOwner) {
+                if (isPermanent) {
                     activationDetails = `<p><b>Account Status:</b> <span style="color:#38b000;">${currentUser.role} (Permanently Active)</span></p>`;
                 } else if (currentUser.is_activated === 1 && currentUser.activationDate) {
                     let actDate = new Date(currentUser.activationDate);
@@ -674,12 +705,11 @@
                 unlockedSummary += `[${item.type}]: ${details}\n`;
             });
 
-            currentUser.cart = []; // clear cart
+            currentUser.cart = [];
             updateStorage();
             updateCartCount();
             closeCartModal();
 
-            // Trigger Hacker Verification Overlay
             let timeLeft = 10;
             document.getElementById('verification-timer-text').innerText = `Secure Tunnel Verification: ${timeLeft}s remaining...`;
             document.getElementById('spinner-circle').style.display = 'block';
