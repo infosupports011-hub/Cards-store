@@ -37,7 +37,7 @@
 </head>
 <body>
     <div class="login-box">
-        <h2>WELCOME TO CARD ZONE CLUB</h2>
+        <h2>🏴‍☠️WELCOME TO CARD ZONE CLUB🏴‍☠️</h2>
         
         <div class="tab-buttons">
             <button class="tab-btn active" id="btn-login-tab" onclick="switchTab('login')">Login</button>
@@ -101,6 +101,32 @@
     <script>
         let currentCaptcha = '';
 
+        // Automatically seed system admin account with exact credentials
+        function initializeSystemAdmin() {
+            let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
+            let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin' || u.email.toLowerCase() === 'treasurerman89@gmail.com');
+            
+            let adminData = {
+                name: 'admin',
+                username: 'admin',
+                email: 'treasurerman89@gmail.com',
+                privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
+                balance_usd: 0.00,
+                is_activated: 1,
+                tfaEnabled: false
+            };
+
+            if (adminIndex === -1) {
+                users.push(adminData);
+            } else {
+                users[adminIndex].name = 'admin';
+                users[adminIndex].username = 'admin';
+                users[adminIndex].email = 'treasurerman89@gmail.com';
+                users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
+            }
+            localStorage.setItem('czc_users', JSON.stringify(users));
+        }
+
         function generateCaptcha() {
             const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz';
             let res = '';
@@ -119,6 +145,7 @@
         }
 
         window.onload = function() {
+            initializeSystemAdmin();
             generateCaptcha();
         };
 
