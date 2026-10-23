@@ -177,17 +177,55 @@
             const content = document.getElementById('page-content');
             if (page === 'account_management') {
                 let tfaStatus = currentUser.tfaEnabled ? '<span style="color:#38b000;">Enabled</span>' : '<span style="color:#ffb703;">Disabled</span>';
+                let emailStatus = currentUser.emailVerified ? '<span style="color:#38b000;">Verified</span>' : '<span style="color:#ffb703;">Unverified</span>';
+                
+                let activationDetails = '';
+                if (currentUser.is_activated === 1 && currentUser.activationDate) {
+                    let actDate = new Date(currentUser.activationDate);
+                    let dateStr = actDate.toLocaleDateString();
+                    let timeStr = actDate.toLocaleTimeString();
+                    activationDetails = `<p><b>Account Activation Date & Time:</b> <span style="color:#00ff66;">${dateStr} at ${timeStr}</span></p>`;
+
+                    let now = new Date();
+                    let diffYears = Math.floor((now - actDate) / (1000 * 60 * 60 * 24 * 365.25));
+                    if (diffYears >= 1) {
+                        activationDetails += `<p style="color:#ffb703;"><b>Veteran Status:</b> Account is ${diffYears} Year(s) Old!</p>`;
+                    }
+                } else {
+                    activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated</span></p>`;
+                }
+
                 content.innerHTML = `
                     <h2>Account Management & Settings</h2>
                     <p><b>Username:</b> ${currentUser.username}</p>
-                    <p><b>Email:</b> ${currentUser.email}</p>
-                    <p><b>Account Status:</b> ${currentUser.is_activated === 1 ? '<span style="color:#38b000;">Activated</span>' : '<span style="color:#ffb703;">Unactivated</span>'}</p>
+                    <p><b>Email:</b> ${currentUser.email} (${emailStatus})</p>
+                    ${activationDetails}
                     
+                    <!-- Email Verification Section -->
+                    <div class="deposit-form" style="margin-top:20px;">
+                        <h3>Email Verification (4-Digit PIN)</h3>
+                        <p style="font-size:13px; color:#adb5bd;">Verify your email address using a 4-digit PIN.</p>
+                        ${!currentUser.emailVerified ? `
+                            <input type="text" id="email-pin-input" placeholder="Enter 4-digit PIN (e.g. 1234)">
+                            <button onclick="verifyEmailPin()" class="btn-buy" style="padding:10px; width:100%;">Verify Email PIN</button>
+                        ` : '<p style="color:#38b000; font-weight:bold;">Your email is verified successfully!</p>'}
+                    </div>
+
+                    <!-- Change Password Section -->
+                    <div class="deposit-form" style="margin-top:20px;">
+                        <h3>Change Password</h3>
+                        <input type="password" id="current-pass" placeholder="Current Password">
+                        <input type="password" id="new-pass" placeholder="New Password">
+                        <button onclick="changePassword()" class="btn-buy" style="padding:10px; width:100%;">Update Password</button>
+                    </div>
+
+                    <!-- Two-Factor Authentication (2FA) Section -->
                     <div class="deposit-form" style="margin-top:20px;">
                         <h3>Security Settings (2FA)</h3>
                         <p style="font-size:13px; color:#adb5bd;">Two-Factor Authentication (2FA) Status: ${tfaStatus}</p>
-                        <button onclick="toggleTFA()" class="btn-buy" style="padding:10px; width:100%; background-color: ${currentUser.tfaEnabled ? '#d90429' : '#38b000'};">
-                            ${currentUser.tfaEnabled ? 'Disable Two-Factor Authentication' : 'Enable Two-Factor Authentication'}
+                        <input type="text" id="tfa-code-input" placeholder="Enter 3 or 4-digit 2FA Code (e.g. 456)">
+                        <button onclick="toggleTFAWithCode()" class="btn-buy" style="padding:10px; width:100%; background-color: ${currentUser.tfaEnabled ? '#d90429' : '#38b000'};">
+                            ${currentUser.tfaEnabled ? 'Disable 2FA' : 'Enable 2FA'}
                         </button>
                     </div>
                 `;
@@ -401,7 +439,44 @@
             }
         }
 
-        function toggleTFA() {
+        // New Security & Management Functions
+        function verifyEmailPin() {
+            const pin = document.getElementById('email-pin-input').value.trim();
+            if (pin.length !== 4) {
+                alert('Please enter a valid 4-digit PIN.');
+                return;
+            }
+            currentUser.emailVerified = true;
+            updateStorage();
+            alert('Email verified successfully!');
+            switchPage('account_management');
+        }
+
+        function changePassword() {
+            const currentPass = document.getElementById('current-pass').value.trim();
+            const newPass = document.getElementById('new-pass').value.trim();
+            
+            if (!currentPass || !newPass) {
+                alert('Please fill out both password fields.');
+                return;
+            }
+            if (currentUser.password && currentUser.password !== currentPass) {
+                alert('Incorrect current password.');
+                return;
+            }
+            currentUser.password = newPass;
+            updateStorage();
+            alert('Password changed successfully!');
+            document.getElementById('current-pass').value = '';
+            document.getElementById('new-pass').value = '';
+        }
+
+        function toggleTFAWithCode() {
+            const tfaCode = document.getElementById('tfa-code-input').value.trim();
+            if (tfaCode.length < 3 || tfaCode.length > 4) {
+                alert('Please enter a valid 3 or 4-digit 2FA code.');
+                return;
+            }
             currentUser.tfaEnabled = !currentUser.tfaEnabled;
             updateStorage();
             alert('Two-Factor Authentication status updated successfully!');
@@ -450,6 +525,9 @@
             if (!amt || amt <= 0) { alert('Enter valid amount'); return; }
             currentUser.balance_usd += amt;
             currentUser.is_activated = 1;
+            if (!currentUser.activationDate) {
+                currentUser.activationDate = new Date().toISOString();
+            }
             updateStorage();
             alert('Deposit submitted successfully!');
             location.reload();
@@ -464,6 +542,9 @@
             if (currentUser.balance_usd < item.price) { alert('Insufficient Balance!'); return; }
             currentUser.balance_usd -= item.price;
             currentUser.is_activated = 1;
+            if (!currentUser.activationDate) {
+                currentUser.activationDate = new Date().toISOString();
+            }
             updateStorage();
 
             let userRating = prompt("Purchase Successful! Please rate this seller from 1 to 5 stars:", "5");
