@@ -33,6 +33,7 @@
         .format-table th, .format-table td { border: 1px solid #415a77; padding: 8px; text-align: center; white-space: nowrap; }
         .format-table th { background-color: #132238; color: #38b000; }
         .btn-buy { background-color: #38b000; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .btn-cart { background-color: #ffb703; color: #000; padding: 6px 10px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; margin-left: 4px; }
         .btn-edit { background-color: #ffb703; color: #000; padding: 4px 8px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; margin-right: 4px; }
         .btn-delete { background-color: #d90429; color: #fff; padding: 4px 8px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; }
         .logout-btn { background-color: #d90429; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; }
@@ -41,6 +42,10 @@
         .seller-badge { color: #ffb703; font-weight: bold; cursor: pointer; text-decoration: underline; }
         .rating-badge { color: #00ff66; font-weight: bold; }
         .search-bar { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
+
+        /* Cart Modal */
+        .cart-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 5, 10, 0.9); z-index: 9980; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .cart-content { background: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; font-family: monospace; }
 
         /* Hacker Verification Modal Overlay */
         #hacker-vault-overlay {
@@ -71,6 +76,21 @@
     </style>
 </head>
 <body>
+
+    <!-- Shopping Cart Modal -->
+    <div id="cart-modal" class="cart-modal">
+        <div class="cart-content">
+            <h3 style="color:#ffb703; margin-top:0;">🛒 Shopping Trolley & Cart</h3>
+            <div id="cart-items-container"></div>
+            <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <b style="font-size:14px;">Total: $<span id="cart-total">0.00</span> USD</b>
+                <div>
+                    <button onclick="checkoutCart()" class="btn-buy" style="padding:8px 15px;">Checkout / Buy All</button>
+                    <button onclick="closeCartModal()" class="logout-btn" style="padding:8px 15px; border:none; cursor:pointer;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Hacker Verification & 3 Cards Running Overlay -->
     <div id="hacker-vault-overlay">
@@ -114,6 +134,7 @@
                 <span>🏴‍☠️Cards Zones Club🏴‍☠️ - Dashboard</span>
             </div>
             <div class="top-right-panel">
+                <button onclick="openCartModal()" style="background:#1b263b; border:1px solid #ffb703; color:#ffb703; padding:6px 12px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:12px;">🛒 Cart (<span id="cart-count">0</span>)</button>
                 <div class="balance-badge">Balance: $<span id="user-balance">0.00</span> USD</div>
                 <div class="user-info">
                     User: <b id="username-display"></b> | Role: <b id="user-role-display" style="color:#00ff66;"></b> | 
@@ -233,6 +254,7 @@
             document.getElementById('username-display').innerText = currentUser.username;
             document.getElementById('user-role-display').innerText = currentUser.role;
             document.getElementById('user-balance').innerText = Number(currentUser.balance_usd).toFixed(2);
+            updateCartCount();
 
             const btcAddr = getUserBitcoinAddress(currentUser.username);
             const btcEl = document.getElementById('generated-btc-address');
@@ -435,7 +457,10 @@
                                 ${item.category === 'identity' ? `<td>${item.name}</td>` : `<td>${item.bins}</td>`}
                                 <td>${item.country}</td>
                                 <td>$${Number(item.price).toFixed(2)}</td>
-                                <td><button class="btn-buy" onclick="buyItem(${item.id})">Buy</button></td>
+                                <td>
+                                    <button class="btn-buy" onclick="buyItem(${item.id})">Buy</button>
+                                    <button class="btn-cart" onclick="addToCart(${item.id})">Add to Cart</button>
+                                </td>
                             </tr>
                           `).join('')}
                     </table>
@@ -545,12 +570,137 @@
                         ${isIdPage ? '' : `<td>${cvvText}</td><td>${item.expiry}</td>`}
                         <td>${item.country}</td>
                         <td>$${Number(item.price).toFixed(2)}</td>
-                        <td>${isBlacklisted ? '<span style="color:#ff4d4d; font-size:11px;">Banned</span>' : `<button class="btn-buy" onclick="buyItem(${item.id})">Buy</button>`}</td>
+                        <td>
+                            ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:11px;">Banned</span>' : `
+                                <button class="btn-buy" onclick="buyItem(${item.id})">Buy</button>
+                                <button class="btn-cart" onclick="addToCart(${item.id})">Add to Cart</button>
+                            `}
+                        </td>
                     </tr>`;
                 });
             }
             html += `</table>`;
             return html;
+        }
+
+        function addToCart(id) {
+            let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+            let item = allProducts.find(p => p.id === id);
+            if (!item) return;
+
+            currentUser.cart = currentUser.cart || [];
+            currentUser.cart.push(item);
+            updateStorage();
+            updateCartCount();
+            alert(`Added "${item.type}" to your shopping cart.`);
+        }
+
+        function updateCartCount() {
+            let cart = currentUser.cart || [];
+            const countEl = document.getElementById('cart-count');
+            if (countEl) countEl.innerText = cart.length;
+        }
+
+        function openCartModal() {
+            let cart = currentUser.cart || [];
+            let container = document.getElementById('cart-items-container');
+            let total = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="color:#adb5bd; font-size:13px;">Your shopping cart is empty.</p>`;
+                document.getElementById('cart-total').innerText = '0.00';
+            } else {
+                let html = `<table class="format-table" style="font-size:12px;"><tr><th>Type</th><th>Identifier</th><th>Price</th><th>Action</th></tr>`;
+                cart.forEach((item, index) => {
+                    total += Number(item.price);
+                    html += `<tr>
+                        <td>${item.type}</td>
+                        <td>${item.bins || item.name}</td>
+                        <td>$${Number(item.price).toFixed(2)}</td>
+                        <td><button class="btn-delete" onclick="removeFromCart(${index})">Remove</button></td>
+                    </tr>`;
+                });
+                html += `</table>`;
+                container.innerHTML = html;
+                document.getElementById('cart-total').innerText = total.toFixed(2);
+            }
+            document.getElementById('cart-modal').style.display = 'flex';
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function removeFromCart(index) {
+            currentUser.cart.splice(index, 1);
+            updateStorage();
+            updateCartCount();
+            openCartModal();
+        }
+
+        function checkoutCart() {
+            let cart = currentUser.cart || [];
+            if (cart.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+
+            let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+            if (currentUser.balance_usd < total) {
+                alert('Insufficient Balance for all items in cart!');
+                return;
+            }
+
+            currentUser.balance_usd -= total;
+            currentUser.is_activated = 1;
+            if (!currentUser.activationDate) {
+                currentUser.activationDate = new Date().toISOString();
+            }
+
+            let unlockedSummary = '';
+            currentUser.myOrders = currentUser.myOrders || [];
+
+            cart.forEach(item => {
+                let details = item.category === 'identity' 
+                    ? `Doc Type: ${item.type} | Doc Number: ${item.docNumber} | Name: ${item.name} | Address: ${item.address}, ${item.country}`
+                    : `Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}`;
+                
+                currentUser.myOrders.push({
+                    category: item.category,
+                    details: details,
+                    price: item.price,
+                    date: new Date().toISOString()
+                });
+                unlockedSummary += `[${item.type}]: ${details}\n`;
+            });
+
+            currentUser.cart = []; // clear cart
+            updateStorage();
+            updateCartCount();
+            closeCartModal();
+
+            // Trigger Hacker Verification Overlay
+            let timeLeft = 10;
+            document.getElementById('verification-timer-text').innerText = `Secure Tunnel Verification: ${timeLeft}s remaining...`;
+            document.getElementById('spinner-circle').style.display = 'block';
+            document.getElementById('hacker-unlocked-data').style.display = 'none';
+            document.getElementById('vault-confirm-btn').style.display = 'none';
+            document.getElementById('hacker-vault-overlay').style.display = 'flex';
+
+            if (verificationInterval) clearInterval(verificationInterval);
+            verificationInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    document.getElementById('verification-timer-text').innerText = `Secure Tunnel Verification: ${timeLeft}s remaining...`;
+                } else {
+                    clearInterval(verificationInterval);
+                    document.getElementById('spinner-circle').style.display = 'none';
+                    document.getElementById('verification-timer-text').innerText = `✅ All Cart Items Successfully Decrypted!`;
+                    document.getElementById('hacker-unlocked-data').innerText = unlockedSummary;
+                    document.getElementById('hacker-unlocked-data').style.display = 'block';
+                    document.getElementById('vault-confirm-btn').style.display = 'inline-block';
+                }
+            }, 1000);
         }
 
         function saveSellerProduct() {
@@ -572,7 +722,6 @@
             let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
 
             if (id) {
-                // Editing existing product
                 let index = allProducts.findIndex(p => p.id == id);
                 if (index !== -1 && allProducts[index].seller.toLowerCase() === currentUser.username.toLowerCase()) {
                     allProducts[index].category = category;
@@ -591,7 +740,6 @@
                 }
                 alert('Product updated successfully!');
             } else {
-                // Adding new product
                 let newProd = {
                     id: Date.now(),
                     seller: currentUser.username,
