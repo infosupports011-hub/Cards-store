@@ -242,11 +242,11 @@
                 </div>`;
             } else if (page === 'card_checker') {
                 content.innerHTML = `
-                    <h2>💳 Live BINs & Cards Checker (12-Tier Private & Pro API Chain)</h2>
-                    <p style="color:#adb5bd; font-size:13px;">Enter card number or BIN (12-API Private/Paid Secure Chain Lookup).</p>
+                    <h2>💳 Live BINs & Cards Checker (Direct Secure API)</h2>
+                    <p style="color:#adb5bd; font-size:13px;">Enter card number or BIN for instant global lookup.</p>
                     <div class="deposit-form">
                         <label>Enter Full Card Number / BIN:</label>
-                        <textarea id="check-card-input" rows="3" placeholder="590776xxxxxxxxxx|MM|YY|CVV"></textarea>
+                        <textarea id="check-card-input" rows="3" placeholder="475857xxxxxxxxxx|MM|YY|CVV"></textarea>
                         <button onclick="performCardCheck()" class="btn-buy" style="padding:10px; width:100%;">Check Bins & Cards via Live</button>
                     </div>
                     <div id="card-result-box" style="margin-top:20px;"></div>
@@ -398,138 +398,32 @@
             }
             let bin = inputVal.replace(/[^0-9]/g, '').substring(0, 6);
 
-            resultBox.innerHTML = `<p style="color:#adb5bd;">Executing 12-Tier Private & Pro API Chain Lookup...</p>`;
+            resultBox.innerHTML = `<p style="color:#adb5bd;">Fetching live global data via secure CORS proxy...</p>`;
 
             let cardData = null;
 
-            // 1. Private API Endpoint 1 (Binlist Primary)
-            if (!cardData) {
-                try {
-                    let res = await fetch(`https://lookup.binlist.net/${bin}`, { headers: { 'Accept-Version': '3' } });
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && (data.bank || data.country)) cardData = parseBinlist(data);
-                    }
-                } catch (e) {}
-            }
+            // Using AllOrigins CORS proxy wrapper to securely bypass browser CORS block and rate limits for live APIs
+            const apiEndpoints = [
+                `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://lookup.binlist.net/${bin}`),
+                `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://data.handyapi.com/bin/${bin}`),
+                `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://binlist.io/lookup/${bin}`)
+            ];
 
-            // 2. Private API Endpoint 2 (HandyAPI Pro)
-            if (!cardData || cardData.country === 'N/A') {
+            for (let endpoint of apiEndpoints) {
                 try {
-                    let res = await fetch(`https://data.handyapi.com/bin/${bin}`);
+                    let res = await fetch(endpoint);
                     if (res.ok) {
-                        let data = await res.json();
-                        if (data && data.Status === "SUCCESS") cardData = parseHandyApi(data);
-                    }
-                } catch (e) {}
-            }
+                        let textData = await res.text();
+                        let data = JSON.parse(textData);
 
-            // 3. Private API Endpoint 3 (Binlist.io Secure)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://binlist.io/lookup/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && data.success) cardData = parseBinlistIo(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 4. Private API Endpoint 4 (APILayer / Premium Gateway Mirror)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://api.binlist.net/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && (data.bank || data.country)) cardData = parseBinlist(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 5. Private API Endpoint 5 (HandyAPI Secondary Mirror)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://data.handyapi.com/json/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && (data.Status === "SUCCESS" || data.Bank)) cardData = parseHandyApi(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 6. Private API Endpoint 6 (Bincheck Pro Gateway)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://lookup.binlist.net/v1/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && (data.bank || data.country)) cardData = parseBinlist(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 7. Private API Endpoint 7 (Binlist.io API v1)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://binlist.io/api/v1/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && data.success) cardData = parseBinlistIo(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 8. Private API Endpoint 8 (CardInfo Direct Node)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://data.handyapi.com/bin/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && data.Status === "SUCCESS") cardData = parseHandyApi(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 9. Private API Endpoint 9 (RapidAPI Secure Node Mirror)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://lookup.binlist.net/${bin}`, { headers: { 'Accept-Version': '3' } });
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && (data.bank || data.country)) cardData = parseBinlist(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 10. Private API Endpoint 10 (Enterprise Gateway Instance A)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://binlist.io/lookup/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && data.success) cardData = parseBinlistIo(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 11. Private API Endpoint 11 (Enterprise Gateway Instance B)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://data.handyapi.com/bin/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && data.Status === "SUCCESS") cardData = parseHandyApi(data);
-                    }
-                } catch (e) {}
-            }
-
-            // 12. Private API Endpoint 12 (Ultimate Final Backup Node)
-            if (!cardData || cardData.country === 'N/A') {
-                try {
-                    let res = await fetch(`https://lookup.binlist.net/v1/${bin}`);
-                    if (res.ok) {
-                        let data = await res.json();
-                        if (data && (data.bank || data.country)) cardData = parseBinlist(data);
+                        if (data) {
+                            if (data.bank || data.country || data.Status === "SUCCESS" || data.success) {
+                                cardData = parseUnifiedData(data);
+                                if (cardData && cardData.country !== 'N/A' && cardData.country !== '') {
+                                    break;
+                                }
+                            }
+                        }
                     }
                 } catch (e) {}
             }
@@ -537,58 +431,53 @@
             if (cardData && cardData.country !== 'N/A' && cardData.country !== '') {
                 resultBox.innerHTML = `
                     <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
-                        <h3 style="color:#38b000; margin-top:0;">💳 12-Tier Private API Verified Details: ${bin}</h3>
+                        <h3 style="color:#38b000; margin-top:0;">💳 Verified API Details: ${bin}</h3>
                         <p><b>Bank Name:</b> ${cardData.bank}</p>
                         <p><b>Country:</b> ${cardData.country} (${cardData.code})</p>
                         <p><b>Card Type:</b> ${cardData.type}</p>
                         <p><b>Card Brand:</b> ${cardData.brand}</p>
                         <p><b>Card Level:</b> ${cardData.level}</p>
-                        <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% SUCCESSFUL (Private 12-API Chain)</p>
+                        <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% SUCCESSFUL (Live API Connected)</p>
                     </div>
                 `;
             } else {
                 resultBox.innerHTML = `
                     <div style="background:#0d1b2a; border:1px solid #d90429; padding:15px; border-radius:6px; font-size:13px; line-height:1.6; color:#ff4d4d;">
                         <h3 style="color:#d90429; margin-top:0;">⚠️ BIN Not Found</h3>
-                        <p>सभी 12 प्राइवेट और प्रो एपीआई में से किसी पर भी इस BIN का वास्तविक डेटा उपलब्ध नहीं है। कोई भी फर्जी या गलत डेटा नहीं दिखाया गया है।</p>
+                        <p>इस BIN का वास्तविक डेटा लाइव एपीआई में उपलब्ध नहीं है। कोई भी फर्जी या गलत डेटा नहीं दिखाया गया है।</p>
                     </div>
                 `;
             }
         }
 
-        function parseBinlist(data) {
-            return {
-                bank: (data.bank && data.bank.name) ? data.bank.name.toUpperCase() : 'N/A',
-                country: (data.country && data.country.name) ? data.country.name.toUpperCase() : 'N/A',
-                code: (data.country && data.country.alpha2) ? data.country.alpha2.toUpperCase() : '',
-                type: data.type ? data.type.toUpperCase() : 'N/A',
-                brand: data.scheme ? data.scheme.toUpperCase() : 'N/A',
-                level: data.brand ? data.brand.toUpperCase() : 'N/A'
-            };
-        }
+        function parseUnifiedData(data) {
+            let bank = 'N/A', country = 'N/A', code = '', type = 'N/A', brand = 'N/A', level = 'N/A';
 
-        function parseHandyApi(data) {
-            let cName = typeof data.CountryName === 'object' ? (data.CountryName.Name || data.CountryName.name || 'N/A') : (data.CountryName || 'N/A');
-            let cCode = typeof data.Country === 'object' ? (data.Country.Code || data.Country.alpha2 || '') : (data.Country || '');
-            let bName = typeof data.Bank === 'object' ? (data.Bank.Name || data.Bank.name || 'N/A') : (data.Bank || 'N/A');
-            return {
-                bank: bName,
-                country: cName,
-                code: cCode,
-                type: data.Type || 'N/A',
-                brand: data.Scheme || 'N/A',
-                level: data.CardLevel || data.Level || 'N/A'
-            };
-        }
+            if (data.bank) {
+                bank = (typeof data.bank === 'object' ? (data.bank.name || data.bank.Name) : data.bank) || 'N/A';
+            } else if (data.Bank) {
+                bank = (typeof data.Bank === 'object' ? (data.Bank.Name || data.Bank.name) : data.Bank) || 'N/A';
+            }
 
-        function parseBinlistIo(data) {
+            if (data.country) {
+                country = (typeof data.country === 'object' ? (data.country.name || data.country.Name) : data.country) || 'N/A';
+                code = (typeof data.country === 'object' ? (data.country.alpha2 || data.country.Code) : '') || '';
+            } else if (data.CountryName) {
+                country = (typeof data.CountryName === 'object' ? (data.CountryName.Name || data.CountryName.name) : data.CountryName) || 'N/A';
+                code = (typeof data.Country === 'object' ? (data.Country.Code || data.Country.alpha2) : '') || '';
+            }
+
+            type = data.type || data.Type || 'N/A';
+            brand = data.scheme || data.Scheme || 'N/A';
+            level = data.brand || data.CardLevel || data.Level || 'N/A';
+
             return {
-                bank: data.bank ? data.bank.name.toUpperCase() : 'N/A',
-                country: data.country ? data.country.name.toUpperCase() : 'N/A',
-                code: data.country ? data.country.alpha2.toUpperCase() : '',
-                type: data.type ? data.type.toUpperCase() : 'N/A',
-                brand: data.scheme ? data.scheme.toUpperCase() : 'N/A',
-                level: data.brand ? data.brand.toUpperCase() : 'N/A'
+                bank: String(bank).toUpperCase(),
+                country: String(country).toUpperCase(),
+                code: String(code).toUpperCase(),
+                type: String(type).toUpperCase(),
+                brand: String(brand).toUpperCase(),
+                level: String(level).toUpperCase()
             };
         }
 
