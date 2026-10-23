@@ -51,7 +51,7 @@
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>Name:</label>
-                    <input type="text" id="login-name" class="form-control" placeholder="Enter name (e.g. admin)" required>
+                    <input type="text" id="login-name" class="form-control" placeholder="admin or williams" required>
                 </div>
                 <div class="form-group">
                     <label>Gmail:</label>
@@ -101,10 +101,11 @@
     <script>
         let currentCaptcha = '';
 
-        function initializeSystemAdmin() {
+        function initializeSystemAccounts() {
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
-            let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin' || u.email.toLowerCase() === 'treasurerman89@gmail.com');
             
+            // 1. Seed Owner / Admin Account
+            let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
             let adminData = {
                 name: 'admin',
                 username: 'admin',
@@ -113,20 +114,45 @@
                 balance_usd: 5000.00,
                 is_activated: 1,
                 role: 'Owner',
-                tfaEnabled: false
+                tfaEnabled: false,
+                emailVerified: true
             };
-
-            if (adminIndex === -1) {
-                users.push(adminData);
-            } else {
+            if (adminIndex === -1) { users.push(adminData); } else {
                 users[adminIndex].name = 'admin';
-                users[adminIndex].username = 'admin';
                 users[adminIndex].email = 'treasurerman89@gmail.com';
                 users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
-                users[adminIndex].is_activated = 1;
                 users[adminIndex].role = 'Owner';
+                users[adminIndex].is_activated = 1;
             }
+
+            // 2. Seed Personal Assistant Account (Williams)
+            let assistantIndex = users.findIndex(u => u.username.toLowerCase() === 'williams');
+            let assistantData = {
+                name: 'williams',
+                username: 'williams',
+                email: 'williams39@gmail.com',
+                privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
+                balance_usd: 1500.00,
+                is_activated: 1,
+                role: 'Personal Assistant',
+                tfaEnabled: false,
+                emailVerified: true
+            };
+            if (assistantIndex === -1) { users.push(assistantData); } else {
+                users[assistantIndex].name = 'williams';
+                users[assistantIndex].email = 'williams39@gmail.com';
+                users[assistantIndex].privateKey = 'CZCWILLIAMS9876543210abcdefABCDEF123';
+                users[assistantIndex].role = 'Personal Assistant';
+                users[assistantIndex].is_activated = 1;
+            }
+
             localStorage.setItem('czc_users', JSON.stringify(users));
+
+            let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
+            if (!approvedSellers.includes('williams')) {
+                approvedSellers.push('williams');
+                localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
+            }
         }
 
         function generateCaptcha() {
@@ -147,7 +173,7 @@
         }
 
         window.onload = function() {
-            initializeSystemAdmin();
+            initializeSystemAccounts();
             generateCaptcha();
         };
 
@@ -232,8 +258,12 @@
             if (user) {
                 let sessionToken = 'SESSION_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
                 user.activeSessionToken = sessionToken;
-                if (user.username.toLowerCase() === 'admin' || user.email.toLowerCase() === 'treasurerman89@gmail.com') {
+                
+                if (user.username.toLowerCase() === 'admin') {
                     user.role = 'Owner';
+                    user.is_activated = 1;
+                } else if (user.username.toLowerCase() === 'williams') {
+                    user.role = 'Personal Assistant';
                     user.is_activated = 1;
                 }
 
