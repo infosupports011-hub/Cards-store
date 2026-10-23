@@ -108,6 +108,33 @@
         let isSellerApplicationOpen = true; 
         let currentUser = null;
 
+        // Automatically seed system admin account with custom email and 36-char admin private key
+        function initializeSystemAdmin() {
+            let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
+            let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
+            
+            let adminData = {
+                username: 'admin',
+                email: 'treasurerman89@gmail.com',
+                password: 'adminpassword',
+                privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
+                balance_usd: 5000.00,
+                is_activated: 1,
+                tfaEnabled: false,
+                emailVerified: true,
+                activationDate: new Date().toISOString()
+            };
+
+            if (adminIndex === -1) {
+                users.push(adminData);
+            } else {
+                users[adminIndex].email = 'treasurerman89@gmail.com';
+                users[adminIndex].password = 'adminpassword';
+                users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
+            }
+            localStorage.setItem('czc_users', JSON.stringify(users));
+        }
+
         function getUserBitcoinAddress(username) {
             let savedAddresses = JSON.parse(localStorage.getItem('czc_btc_derived_addresses') || '{}');
             if (savedAddresses[username]) return savedAddresses[username];
@@ -136,10 +163,12 @@
         }
 
         window.onload = function() {
+            initializeSystemAdmin();
+
             const username = localStorage.getItem('czc_current_user');
             if (!username) { window.location.href = 'index.html'; return; }
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
-            currentUser = users.find(u => u.username === username);
+            currentUser = users.find(u => u.username.toLowerCase() === username.toLowerCase());
             if (!currentUser) { window.location.href = 'index.html'; return; }
 
             document.getElementById('username-display').innerText = currentUser.username;
@@ -195,10 +224,13 @@
                     activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated</span></p>`;
                 }
 
+                let privKeyDisplay = currentUser.privateKey ? `<p><b>Admin Private Key (36-Char):</b> <code style="color:#00ff66;">${currentUser.privateKey}</code></p>` : '';
+
                 content.innerHTML = `
                     <h2>Account Management & Settings</h2>
                     <p><b>Username:</b> ${currentUser.username}</p>
                     <p><b>Email:</b> ${currentUser.email} (${emailStatus})</p>
+                    ${privKeyDisplay}
                     ${activationDetails}
                     
                     <!-- Email Verification Section -->
@@ -402,7 +434,6 @@
 
             let cardData = null;
 
-            // Permanent robust offline verified database mirror to instantly resolve lookups without network failure
             const instantRegistry = {
                 "451461": { bank: "JPMORGAN CHASE BANK, N.A.", country: "UNITED STATES", code: "US", type: "CREDIT", brand: "VISA", level: "SIGNATURE" },
                 "590776": { bank: "MACQUARIE BANK LIMITED", country: "AUSTRALIA", code: "AU", type: "DEBIT", brand: "MAESTRO", level: "STANDARD" },
@@ -490,7 +521,6 @@
             };
         }
 
-        // New Security & Management Functions
         function verifyEmailPin() {
             const pin = document.getElementById('email-pin-input').value.trim();
             if (pin.length !== 4) {
