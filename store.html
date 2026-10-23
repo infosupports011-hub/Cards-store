@@ -25,7 +25,7 @@
         .balance-badge { background-color: #1b263b; border: 1px solid #38b000; color: #38b000; padding: 6px 12px; border-radius: 20px; font-weight: bold; }
         .user-info { font-size: 12px; color: #adb5bd; }
         
-        .content-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 20px; width: 100%; overflow-x: auto; }
+        .content-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 20px; width: 100%; overflow-x: auto; position: relative; }
         .warning-box { background-color: rgba(255, 183, 3, 0.15); border: 1px solid #ffb703; color: #ffb703; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; line-height: 1.6; }
         .crypto-box { background-color: #0d1b2a; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #415a77; word-break: break-all; font-size: 11px; display: flex; align-items: center; gap: 8px; }
         .crypto-logo { font-size: 16px; font-weight: bold; min-width: 50px; text-align: center; }
@@ -33,12 +33,34 @@
         .format-table th, .format-table td { border: 1px solid #415a77; padding: 8px; text-align: center; white-space: nowrap; }
         .format-table th { background-color: #132238; color: #38b000; }
         .btn-buy { background-color: #38b000; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .btn-edit { background-color: #ffb703; color: #000; padding: 4px 8px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; margin-right: 4px; }
+        .btn-delete { background-color: #d90429; color: #fff; padding: 4px 8px; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold; }
         .logout-btn { background-color: #d90429; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; }
         .deposit-form { background-color: #0d1b2a; padding: 15px; border-radius: 8px; border: 1px solid #415a77; margin-top: 15px; }
         .deposit-form input, .deposit-form textarea, .deposit-form select { width: 100%; padding: 10px; margin: 6px 0 12px 0; background: #1b263b; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; font-size: 13px; }
-        .seller-badge { color: #ffb703; font-weight: bold; }
+        .seller-badge { color: #ffb703; font-weight: bold; cursor: pointer; text-decoration: underline; }
         .rating-badge { color: #00ff66; font-weight: bold; }
         .search-bar { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
+
+        /* Hacker Verification Modal Overlay */
+        #hacker-vault-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 5, 10, 0.96); z-index: 9999;
+            display: none; justify-content: center; align-items: center; padding: 20px;
+        }
+        .hacker-modal-content {
+            background: #080f1e; border: 2px solid #00ff66; border-radius: 12px;
+            padding: 30px; width: 100%; max-width: 450px; text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.4); font-family: monospace;
+        }
+        .spinner-circle {
+            width: 70px; height: 70px; border: 4px solid #1e3a5f;
+            border-top: 4px solid #00ff66; border-radius: 50%;
+            animation: spin 1.2s linear infinite; margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hacker-avatar { font-size: 38px; color: #00ff66; margin-bottom: 5px; }
+        .cards-hand { font-size: 28px; letter-spacing: 8px; color: #ffb703; margin: 10px 0; }
 
         @media (min-width: 769px) {
             .sidebar { transform: translateX(0); }
@@ -49,6 +71,20 @@
     </style>
 </head>
 <body>
+
+    <!-- Hacker Verification & 3 Cards Running Overlay -->
+    <div id="hacker-vault-overlay">
+        <div class="hacker-modal-content">
+            <div class="hacker-avatar">🥷💻</div>
+            <h2 style="color: #00ff66; margin-top:0; font-size:16px;">SECURE TUNNEL VERIFICATION</h2>
+            <p style="color: #adb5bd; font-size: 11px;">Decrypting proxy handshake & verifying transaction nodes...</p>
+            <div class="cards-hand">🃏 🃏 🃏</div>
+            <div class="spinner-circle" id="spinner-circle"></div>
+            <p id="verification-timer-text" style="color: #ffb703; font-size: 12px; font-weight: bold;">Secure Tunnel Verification: 180s remaining...</p>
+            <div id="hacker-unlocked-data" style="display:none; background: #050b14; border: 1px dashed #00ff66; padding: 12px; border-radius: 6px; color: #00ff66; font-size: 12px; text-align: left; margin: 15px 0; word-break: break-all;"></div>
+            <button id="vault-confirm-btn" onclick="closeHackerVault()" class="btn-buy" style="padding: 10px 20px; font-size: 13px; display:none;">Confirm & Rate Seller</button>
+        </div>
+    </div>
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -63,8 +99,9 @@
             <li><a onclick="switchPage('dumps')" id="nav-dumps">📋 Dumps Market</a></li>
             <li><a onclick="switchPage('fullz')" id="nav-fullz">💾 Fullz Market</a></li>
             <li><a onclick="switchPage('identity')" id="nav-identity" style="color: #ffb703;">🆔 SSN & ID Market</a></li>
+            <li><a onclick="switchPage('my_orders')" id="nav-my_orders" style="color: #00ff66;">📦 My Orders</a></li>
             <li><a onclick="switchPage('club_partners')" id="nav-club_partners" style="color: #ffb703;">⭐ Club Partners (Apply)</a></li>
-            <li id="seller-portal-nav" style="display:none;"><a href="seller.html" style="color: #38b000;">⚡ Seller Portal</a></li>
+            <li id="seller-hub-nav" style="display:none;"><a onclick="switchPage('seller_hub')" id="nav-seller_hub" style="color: #38b000;">⚡ Seller Hub (My Listings)</a></li>
             <li id="admin-panel-nav" style="display:none;"><a onclick="switchPage('admin_panel')" id="nav-admin_panel" style="color: #ff00ff;">👑 Admin Requests</a></li>
             <li><a onclick="switchPage('refund')" id="nav-refund">Refund / Privacy Notice</a></li>
         </ul>
@@ -79,7 +116,7 @@
             <div class="top-right-panel">
                 <div class="balance-badge">Balance: $<span id="user-balance">0.00</span> USD</div>
                 <div class="user-info">
-                    User: <b id="username-display"></b> | 
+                    User: <b id="username-display"></b> | Role: <b id="user-role-display" style="color:#00ff66;"></b> | 
                     <a href="index.html" class="logout-btn" onclick="localStorage.removeItem('czc_current_user')">Log Out</a>
                 </div>
             </div>
@@ -107,19 +144,22 @@
     <script>
         let isSellerApplicationOpen = true; 
         let currentUser = null;
+        let pendingRatingItem = null;
+        let verificationInterval = null;
 
-        // Auto-seed system admin account with exact email, credentials, and secure 36-char admin private key
         function initializeSystemAdmin() {
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
             let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
             
             let adminData = {
+                name: 'admin',
                 username: 'admin',
                 email: 'treasurerman89@gmail.com',
                 password: 'adminpassword',
                 privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
                 balance_usd: 5000.00,
                 is_activated: 1,
+                role: 'Owner',
                 tfaEnabled: false,
                 emailVerified: true,
                 activationDate: new Date().toISOString()
@@ -128,9 +168,11 @@
             if (adminIndex === -1) {
                 users.push(adminData);
             } else {
+                users[adminIndex].name = 'admin';
                 users[adminIndex].email = 'treasurerman89@gmail.com';
-                users[adminIndex].password = 'adminpassword';
                 users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
+                users[adminIndex].is_activated = 1;
+                users[adminIndex].role = 'Owner';
             }
             localStorage.setItem('czc_users', JSON.stringify(users));
         }
@@ -171,7 +213,25 @@
             currentUser = users.find(u => u.username.toLowerCase() === username.toLowerCase());
             if (!currentUser) { window.location.href = 'index.html'; return; }
 
+            let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
+            let isSeller = approvedSellers.includes(currentUser.username);
+            let isOwner = currentUser.username.toLowerCase() === 'admin' || currentUser.role === 'Owner';
+
+            if (isOwner) {
+                currentUser.role = 'Owner';
+                currentUser.is_activated = 1;
+                document.getElementById('admin-panel-nav').style.display = 'block';
+                document.getElementById('seller-hub-nav').style.display = 'block';
+            } else if (isSeller) {
+                currentUser.role = 'Official Seller';
+                currentUser.is_activated = 1;
+                document.getElementById('seller-hub-nav').style.display = 'block';
+            } else {
+                currentUser.role = 'Member';
+            }
+
             document.getElementById('username-display').innerText = currentUser.username;
+            document.getElementById('user-role-display').innerText = currentUser.role;
             document.getElementById('user-balance').innerText = Number(currentUser.balance_usd).toFixed(2);
 
             const btcAddr = getUserBitcoinAddress(currentUser.username);
@@ -182,21 +242,10 @@
                 document.getElementById('activation-warning').style.display = 'block';
             }
 
-            let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
-            let isSeller = approvedSellers.includes(currentUser.username);
-            let isAdmin = currentUser.username.toLowerCase() === 'admin';
-
-            if (isSeller || isAdmin) {
-                document.getElementById('seller-portal-nav').style.display = 'block';
-            }
-            if (isAdmin) {
-                document.getElementById('admin-panel-nav').style.display = 'block';
-            }
-
             switchPage('account_management');
         };
 
-        function switchPage(page) {
+        function switchPage(page, param) {
             document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
             const activeNav = document.getElementById('nav-' + page);
             if (activeNav) activeNav.classList.add('active');
@@ -209,31 +258,30 @@
                 let emailStatus = currentUser.emailVerified ? '<span style="color:#38b000;">Verified</span>' : '<span style="color:#ffb703;">Unverified</span>';
                 
                 let activationDetails = '';
-                if (currentUser.is_activated === 1 && currentUser.activationDate) {
+                let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
+                let isSellerOrOwner = approvedSellers.includes(currentUser.username) || currentUser.username.toLowerCase() === 'admin' || currentUser.role === 'Owner';
+
+                if (isSellerOrOwner) {
+                    activationDetails = `<p><b>Account Status:</b> <span style="color:#38b000;">${currentUser.role} (Permanently Active)</span></p>`;
+                } else if (currentUser.is_activated === 1 && currentUser.activationDate) {
                     let actDate = new Date(currentUser.activationDate);
                     let dateStr = actDate.toLocaleDateString();
                     let timeStr = actDate.toLocaleTimeString();
                     activationDetails = `<p><b>Account Activation Date & Time:</b> <span style="color:#00ff66;">${dateStr} at ${timeStr}</span></p>`;
-
-                    let now = new Date();
-                    let diffYears = Math.floor((now - actDate) / (1000 * 60 * 60 * 24 * 365.25));
-                    if (diffYears >= 1) {
-                        activationDetails += `<p style="color:#ffb703;"><b>Veteran Status:</b> Account is ${diffYears} Year(s) Old!</p>`;
-                    }
                 } else {
                     activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated</span></p>`;
                 }
 
-                let privKeyDisplay = currentUser.privateKey ? `<p><b>Admin Private Key (36-Char):</b> <code style="color:#00ff66;">${currentUser.privateKey}</code></p>` : '';
+                let privKeyDisplay = currentUser.privateKey ? `<p><b>Private Key (36-Char):</b> <code style="color:#00ff66;">${currentUser.privateKey}</code></p>` : '';
 
                 content.innerHTML = `
                     <h2>Account Management & Settings</h2>
+                    <p><b>Name:</b> ${currentUser.name || currentUser.username}</p>
                     <p><b>Username:</b> ${currentUser.username}</p>
                     <p><b>Email:</b> ${currentUser.email} (${emailStatus})</p>
                     ${privKeyDisplay}
                     ${activationDetails}
                     
-                    <!-- Email Verification Section -->
                     <div class="deposit-form" style="margin-top:20px;">
                         <h3>Email Verification (4-Digit PIN)</h3>
                         <p style="font-size:13px; color:#adb5bd;">Verify your email address using a 4-digit PIN.</p>
@@ -243,7 +291,6 @@
                         ` : '<p style="color:#38b000; font-weight:bold;">Your email is verified successfully!</p>'}
                     </div>
 
-                    <!-- Change Password Section -->
                     <div class="deposit-form" style="margin-top:20px;">
                         <h3>Change Password</h3>
                         <input type="password" id="current-pass" placeholder="Current Password">
@@ -251,7 +298,6 @@
                         <button onclick="changePassword()" class="btn-buy" style="padding:10px; width:100%;">Update Password</button>
                     </div>
 
-                    <!-- Two-Factor Authentication (2FA) Section -->
                     <div class="deposit-form" style="margin-top:20px;">
                         <h3>Security Settings (2FA)</h3>
                         <p style="font-size:13px; color:#adb5bd;">Two-Factor Authentication (2FA) Status: ${tfaStatus}</p>
@@ -283,12 +329,123 @@
                     </div>
                     <div id="card-result-box" style="margin-top:20px;"></div>
                 `;
+            } else if (page === 'my_orders') {
+                let orders = currentUser.myOrders || [];
+                let html = `<h2>📦 My Orders & Purchased Assets</h2><p style="color:#adb5bd; font-size:13px;">Review all your successfully purchased assets and unlocked details below.</p>`;
+                if (orders.length === 0) {
+                    html += `<p style="color:#adb5bd; margin-top:20px;">You have not purchased any items yet.</p>`;
+                } else {
+                    html += `<table class="format-table"><tr><th>Date</th><th>Category</th><th>Asset Details</th><th>Price</th></tr>`;
+                    orders.forEach(o => {
+                        html += `<tr><td>${new Date(o.date).toLocaleString()}</td><td>${o.category.toUpperCase()}</td><td><code>${o.details}</code></td><td>$${o.price.toFixed(2)}</td></tr>`;
+                    });
+                    html += `</table>`;
+                }
+                content.innerHTML = html;
+            } else if (page === 'seller_hub') {
+                let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+                let myItems = allProducts.filter(p => p.seller.toLowerCase() === currentUser.username.toLowerCase());
+                
+                content.innerHTML = `
+                    <h2>⚡ Seller Hub (My Listings Management)</h2>
+                    <p style="color:#adb5bd; font-size:13px;">Add, edit, or delete your own marketplace listings securely.</p>
+                    
+                    <div class="deposit-form">
+                        <h3 id="form-title" style="color:#38b000; margin-top:0;">Add New Product</h3>
+                        <input type="hidden" id="edit-product-id" value="">
+                        <label>Category:</label>
+                        <select id="prod-category" class="form-control">
+                            <option value="cc">CC Market</option>
+                            <option value="dumps">Dumps Market</option>
+                            <option value="fullz">Fullz Market</option>
+                            <option value="identity">SSN & ID Market</option>
+                        </select>
+                        <label>Product Type / Title:</label>
+                        <input type="text" id="prod-type" placeholder="e.g. VISA / GOLD / PASSPORT">
+                        <label>Bins / Document Number:</label>
+                        <input type="text" id="prod-bins" placeholder="e.g. 451461xxxxxx or DL-987654">
+                        <label>Expiry / Doc Info:</label>
+                        <input type="text" id="prod-expiry" placeholder="MM/YY">
+                        <label>Country:</label>
+                        <input type="text" id="prod-country" placeholder="UNITED STATES">
+                        <label>Price ($ USD):</label>
+                        <input type="number" id="prod-price" placeholder="15.00">
+                        <label>CVV Status (For CC):</label>
+                        <select id="prod-cvv" class="form-control">
+                            <option value="with-cvv">With CVV (VVB)</option>
+                            <option value="non-cvv">Non-CVV</option>
+                        </select>
+                        <label>Full Confidential Data (Shown after purchase):</label>
+                        <textarea id="prod-details" rows="3" placeholder="Card full details or ID info..."></textarea>
+                        <button onclick="saveSellerProduct()" class="btn-buy" style="padding:10px; width:100%; margin-top:10px;" id="save-prod-btn">Publish Product</button>
+                    </div>
+
+                    <h3 style="margin-top:25px;">My Active Listings (${myItems.length})</h3>
+                    <div style="overflow-x:auto;">
+                        <table class="format-table">
+                            <tr><th>Category</th><th>Type</th><th>Identifier</th><th>Country</th><th>Price</th><th>Actions</th></tr>
+                            ${myItems.length === 0 ? '<tr><td colspan="6" style="padding:15px; color:#adb5bd;">You have not published any products yet.</td></tr>' : 
+                              myItems.map(item => `
+                                <tr>
+                                    <td>${item.category.toUpperCase()}</td>
+                                    <td>${item.type}</td>
+                                    <td>${item.bins || item.name}</td>
+                                    <td>${item.country}</td>
+                                    <td>$${Number(item.price).toFixed(2)}</td>
+                                    <td>
+                                        <button class="btn-edit" onclick="editProduct(${item.id})">Edit</button>
+                                        <button class="btn-delete" onclick="deleteProduct(${item.id})">Delete</button>
+                                    </td>
+                                </tr>
+                              `).join('')}
+                        </table>
+                    </div>
+                `;
+            } else if (page === 'seller_profile') {
+                let sellerName = param;
+                let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+                let sellerItems = allProducts.filter(p => p.seller.toLowerCase() === sellerName.toLowerCase());
+                
+                let totalScore = 0, count = 0;
+                sellerItems.forEach(i => {
+                    if (i.ratingCount && i.ratingCount > 0) {
+                        totalScore += (i.totalRatingScore || (i.ratingCount * 5.0));
+                        count += i.ratingCount;
+                    }
+                });
+                let avgRating = count > 0 ? (totalScore / count).toFixed(1) : '5.0';
+
+                content.innerHTML = `
+                    <h2>⭐ Seller Profile: <span style="color:#ffb703;">${sellerName}</span></h2>
+                    <div style="background:#0d1b2a; border:1px solid #415a77; padding:15px; border-radius:6px; margin-bottom:20px; font-size:13px;">
+                        <p><b>Seller Username:</b> ${sellerName}</p>
+                        <p><b>Aggregate Rating:</b> <span style="color:#00ff66;">⭐ ${avgRating} / 5.0</span></p>
+                        <p><b>Active Products Listed:</b> ${sellerItems.length}</p>
+                        <p style="color:#adb5bd; font-size:11px; margin-top:5px;">Note: Each seller maintains an isolated profile and inventory on Cards Zones Club.</p>
+                    </div>
+
+                    <h3 style="color:#38b000;">Listings Offered By ${sellerName}</h3>
+                    <table class="format-table">
+                        <tr><th>Category</th><th>Type</th><th>Identifier</th><th>Country</th><th>Price</th><th>Action</th></tr>
+                        ${sellerItems.length === 0 ? '<tr><td colspan="6" style="padding:15px; color:#adb5bd;">No active listings found for this seller.</td></tr>' :
+                          sellerItems.map(item => `
+                            <tr>
+                                <td>${item.category.toUpperCase()}</td>
+                                <td>${item.type}</td>
+                                ${item.category === 'identity' ? `<td>${item.name}</td>` : `<td>${item.bins}</td>`}
+                                <td>${item.country}</td>
+                                <td>$${Number(item.price).toFixed(2)}</td>
+                                <td><button class="btn-buy" onclick="buyItem(${item.id})">Buy</button></td>
+                            </tr>
+                          `).join('')}
+                    </table>
+                `;
             } else if (page === 'club_partners') {
                 let approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]');
                 let isAlreadySeller = approvedSellers.includes(currentUser.username);
 
                 if (isAlreadySeller) {
-                    content.innerHTML = `<h2>Club Partners</h2><div style="background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px;"><b>Congratulations!</b> Your seller application is already approved by admin. You can access the Seller Portal from the sidebar.</div>`;
+                    content.innerHTML = `<h2>Club Partners</h2><div style="background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px;"><b>Congratulations!</b> Your seller application is already approved by admin. You can access the Seller Hub from the sidebar.</div>`;
                 } else if (!isSellerApplicationOpen) {
                     content.innerHTML = `<h2>Club Partners - Seller Application</h2><div style="background:rgba(217,4,41,0.2); border:1px solid #d90429; color:#ffb703; padding:15px; border-radius:6px;"><b>Notice:</b> Seller applications are currently closed by admin.</div>`;
                 } else {
@@ -381,7 +538,7 @@
                     let cvvText = item.cvvStatus === 'with-cvv' ? '<span style="color:#00ff66;">With CVV (VVB)</span>' : '<span style="color:#ffb703;">Non-CVV</span>';
                     
                     html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
-                        <td><span class="seller-badge">${item.seller}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
+                        <td><span class="seller-badge" onclick="switchPage('seller_profile', '${item.seller}')">${item.seller}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
                         <td><span class="rating-badge">⭐ ${avgRating} (${item.ratingCount || 0})</span></td>
                         <td>${item.type}</td>
                         <td>${isIdPage ? item.name : item.bins}</td>
@@ -394,6 +551,103 @@
             }
             html += `</table>`;
             return html;
+        }
+
+        function saveSellerProduct() {
+            let id = document.getElementById('edit-product-id').value;
+            let category = document.getElementById('prod-category').value;
+            let type = document.getElementById('prod-type').value.trim();
+            let identifier = document.getElementById('prod-bins').value.trim();
+            let expiry = document.getElementById('prod-expiry').value.trim();
+            let country = document.getElementById('prod-country').value.trim();
+            let price = parseFloat(document.getElementById('prod-price').value);
+            let cvvStatus = document.getElementById('prod-cvv').value;
+            let details = document.getElementById('prod-details').value.trim();
+
+            if (!type || !identifier || !country || !price || !details) {
+                alert('Please fill out all required fields.');
+                return;
+            }
+
+            let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+
+            if (id) {
+                // Editing existing product
+                let index = allProducts.findIndex(p => p.id == id);
+                if (index !== -1 && allProducts[index].seller.toLowerCase() === currentUser.username.toLowerCase()) {
+                    allProducts[index].category = category;
+                    allProducts[index].type = type;
+                    if (category === 'identity') {
+                        allProducts[index].name = identifier;
+                        allProducts[index].docNumber = identifier;
+                        allProducts[index].address = "Secured Address";
+                    } else {
+                        allProducts[index].bins = identifier;
+                        allProducts[index].expiry = expiry;
+                        allProducts[index].cvvStatus = cvvStatus;
+                    }
+                    allProducts[index].country = country.toUpperCase();
+                    allProducts[index].price = price;
+                }
+                alert('Product updated successfully!');
+            } else {
+                // Adding new product
+                let newProd = {
+                    id: Date.now(),
+                    seller: currentUser.username,
+                    category: category,
+                    type: type.toUpperCase(),
+                    country: country.toUpperCase(),
+                    price: price,
+                    totalRatingScore: 5.0,
+                    ratingCount: 1
+                };
+                if (category === 'identity') {
+                    newProd.name = identifier;
+                    newProd.docNumber = identifier;
+                    newProd.address = "Secured Address";
+                } else {
+                    newProd.bins = identifier;
+                    newProd.expiry = expiry || '12/28';
+                    newProd.cvvStatus = cvvStatus;
+                    newProd.name = "Verified Holder";
+                    newProd.address = "USA Resident";
+                    newProd.bank = "GLOBAL ISSUING BANK";
+                }
+                allProducts.push(newProd);
+                alert('Product published successfully!');
+            }
+
+            localStorage.setItem('czc_products', JSON.stringify(allProducts));
+            switchPage('seller_hub');
+        }
+
+        function editProduct(id) {
+            let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+            let item = allProducts.find(p => p.id === id);
+            if (!item || item.seller.toLowerCase() !== currentUser.username.toLowerCase()) return;
+
+            document.getElementById('edit-product-id').value = item.id;
+            document.getElementById('prod-category').value = item.category;
+            document.getElementById('prod-type').value = item.type;
+            document.getElementById('prod-bins').value = item.bins || item.name;
+            document.getElementById('prod-expiry').value = item.expiry || '';
+            document.getElementById('prod-country').value = item.country;
+            document.getElementById('prod-price').value = item.price;
+            document.getElementById('prod-cvv').value = item.cvvStatus || 'with-cvv';
+            document.getElementById('prod-details').value = item.bins ? `Bins: ${item.bins} | Expiry: ${item.expiry}` : `Doc: ${item.name}`;
+
+            document.getElementById('form-title').innerText = 'Edit Product';
+            document.getElementById('save-prod-btn').innerText = 'Update Product';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteProduct(id) {
+            if (!confirm('Are you sure you want to delete this listing?')) return;
+            let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+            let filtered = allProducts.filter(p => !(p.id === id && p.seller.toLowerCase() === currentUser.username.toLowerCase()));
+            localStorage.setItem('czc_products', JSON.stringify(filtered));
+            switchPage('seller_hub');
         }
 
         function filterMarketTable() {
@@ -628,26 +882,64 @@
             }
             updateStorage();
 
-            let userRating = prompt("Purchase Successful! Please rate this seller from 1 to 5 stars:", "5");
-            let ratingVal = parseInt(userRating);
-            if (ratingVal >= 1 && ratingVal <= 5) {
-                if (!item.totalRatingScore) item.totalRatingScore = 5.0;
-                if (!item.ratingCount) item.ratingCount = 1;
-                item.totalRatingScore += ratingVal;
-                item.ratingCount += 1;
-                allProducts[itemIndex] = item;
-                localStorage.setItem('czc_products', JSON.stringify(allProducts));
-            }
-
             let unlockedDetails = item.category === 'identity' 
                 ? `Doc Type: ${item.type} | Doc Number: ${item.docNumber} | Name: ${item.name} | Address: ${item.address}, ${item.country}`
                 : `Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}`;
 
-            document.getElementById('alert-box').innerHTML = `<div style='background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px; margin-bottom:15px;'>
-                <b>Success! Unlocked Details:</b> ${unlockedDetails}
-            </div>`;
+            if (!currentUser.myOrders) currentUser.myOrders = [];
+            currentUser.myOrders.push({
+                category: item.category,
+                details: unlockedDetails,
+                price: item.price,
+                date: new Date().toISOString()
+            });
+            updateStorage();
+
+            pendingRatingItem = { allProducts, itemIndex, category: item.category };
+
+            let timeLeft = 10;
+            document.getElementById('verification-timer-text').innerText = `Secure Tunnel Verification: ${timeLeft}s remaining...`;
+            document.getElementById('spinner-circle').style.display = 'block';
+            document.getElementById('hacker-unlocked-data').style.display = 'none';
+            document.getElementById('vault-confirm-btn').style.display = 'none';
+            document.getElementById('hacker-vault-overlay').style.display = 'flex';
+
+            if (verificationInterval) clearInterval(verificationInterval);
+            verificationInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    document.getElementById('verification-timer-text').innerText = `Secure Tunnel Verification: ${timeLeft}s remaining...`;
+                } else {
+                    clearInterval(verificationInterval);
+                    document.getElementById('spinner-circle').style.display = 'none';
+                    document.getElementById('verification-timer-text').innerText = `✅ Verification Successful & Decrypted!`;
+                    document.getElementById('hacker-unlocked-data').innerText = unlockedDetails;
+                    document.getElementById('hacker-unlocked-data').style.display = 'block';
+                    document.getElementById('vault-confirm-btn').style.display = 'inline-block';
+                }
+            }, 1000);
+        }
+
+        function closeHackerVault() {
+            document.getElementById('hacker-vault-overlay').style.display = 'none';
+
+            let userRating = prompt("Please rate this seller from 1 to 5 stars based on your purchase experience:", "5");
+            let ratingVal = parseInt(userRating);
+            if (ratingVal >= 1 && ratingVal <= 5 && pendingRatingItem) {
+                let { allProducts, itemIndex, category } = pendingRatingItem;
+                let item = allProducts[itemIndex];
+
+                if (!item.totalRatingScore) item.totalRatingScore = 5.0;
+                if (!item.ratingCount) item.ratingCount = 1;
+                item.totalRatingScore += ratingVal;
+                item.ratingCount += 1;
+                
+                allProducts[itemIndex] = item;
+                localStorage.setItem('czc_products', JSON.stringify(allProducts));
+                switchPage(category);
+            }
+            pendingRatingItem = null;
             document.getElementById('user-balance').innerText = currentUser.balance_usd.toFixed(2);
-            switchPage(item.category);
         }
 
         function updateStorage() {
