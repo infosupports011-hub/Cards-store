@@ -351,7 +351,6 @@
             document.getElementById('table-container').innerHTML = renderProductTable(filtered, activeTab);
         }
 
-        // 🌟 Live External API Integration for BIN Checking
         async function performCardCheck() {
             let inputVal = document.getElementById('check-card-input').value.trim();
             let resultBox = document.getElementById('card-result-box');
@@ -364,11 +363,7 @@
             resultBox.innerHTML = `<p style="color:#adb5bd;">Fetching data from API...</p>`;
 
             try {
-                let response = await fetch(`https://lookup.binlist.net/${bin}`, {
-                    headers: {
-                        'Accept-Version': '3'
-                    }
-                });
+                let response = await fetch(`https://data.handyapi.com/bin/${bin}`);
 
                 if (!response.ok) {
                     throw new Error('API response failed');
@@ -376,21 +371,31 @@
 
                 let data = await response.json();
 
-                resultBox.innerHTML = `
-                    <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
-                        <h3 style="color:#38b000; margin-top:0;">💳 Live API Verified Details: ${bin}</h3>
-                        <p><b>Bank Name:</b> ${data.bank ? data.bank.name : 'N/A'}</p>
-                        <p><b>Country:</b> ${data.country ? data.country.name + ' (' + data.country.emoji + ')' : 'N/A'}</p>
-                        <p><b>Card Type:</b> ${data.type ? data.type.toUpperCase() : 'N/A'}</p>
-                        <p><b>Card Brand:</b> ${data.brand ? data.brand.toUpperCase() : 'N/A'}</p>
-                        <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% SUCCESSFUL (Live API Connected)</p>
-                    </div>
-                `;
+                if (data.Status === "SUCCESS") {
+                    resultBox.innerHTML = `
+                        <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
+                            <h3 style="color:#38b000; margin-top:0;">💳 Live API Verified Details: ${bin}</h3>
+                            <p><b>Bank Name:</b> ${data.Bank || 'N/A'}</p>
+                            <p><b>Country:</b> ${data.CountryName || 'N/A'} (${data.Country || ''})</p>
+                            <p><b>Card Type:</b> ${data.Type || 'N/A'}</p>
+                            <p><b>Card Brand:</b> ${data.Scheme || 'N/A'}</p>
+                            <p><b>Card Level:</b> ${data.CardLevel || 'N/A'}</p>
+                            <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% SUCCESSFUL (Live API Connected)</p>
+                        </div>
+                    `;
+                } else {
+                    resultBox.innerHTML = `
+                        <div style="background:#0d1b2a; border:1px solid #d90429; padding:15px; border-radius:6px; font-size:13px; line-height:1.6; color:#ff4d4d;">
+                            <h3 style="color:#d90429; margin-top:0;">⚠️ BIN Not Found</h3>
+                            <p>This BIN was not found in the live database.</p>
+                        </div>
+                    `;
+                }
             } catch (err) {
                 resultBox.innerHTML = `
                     <div style="background:#0d1b2a; border:1px solid #d90429; padding:15px; border-radius:6px; font-size:13px; line-height:1.6; color:#ff4d4d;">
                         <h3 style="color:#d90429; margin-top:0;">⚠️ API Error</h3>
-                        <p>Unable to fetch data from the API endpoint. Please check your network or API limits.</p>
+                        <p>Unable to fetch data from the API endpoint. Please check your network connection.</p>
                     </div>
                 `;
             }
