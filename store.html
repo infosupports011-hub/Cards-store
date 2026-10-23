@@ -108,7 +108,7 @@
         let isSellerApplicationOpen = true; 
         let currentUser = null;
 
-        // Automatically seed system admin account with custom email and 36-char admin private key
+        // Auto-seed system admin account with exact email, credentials, and secure 36-char admin private key
         function initializeSystemAdmin() {
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
             let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
