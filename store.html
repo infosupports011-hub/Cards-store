@@ -151,18 +151,37 @@
                 
                 <div class="crypto-box">
                     <div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> 
-                    <div><b>Bitcoin Deposit Address (Master Deposits):</b><br><code id="generated-btc-address" style="color:#00ff66; font-size:12px;">Loading...</code></div>
+                    <div><b>Bitcoin Deposit Address (Generated from ZPub):</b><br><code id="generated-btc-display" style="color:#00ff66; font-size:12px;">Loading...</code></div>
                 </div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b><br><code>LKjLzD6m4katWbMntfjJzkz5QSM5teicNx</code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#c2a633;">🐕 DOGE</div> <div><b>Dogecoin (DOGE):</b><br><code>DGFmS6gLSWfn3hL9HzSGTXUMQjTpHCDQYN</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b><br><code>ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b><br><code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b><br><code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#26a17b;">₮ USDT</div> <div><b>USDT (TRC20):</b><br><code>TCdu9e6V9Z3mQ5P3qx9nw3XCEhdAT6FzhG</code></div></div>
             </div>
             <div id="page-content"></div>
         </div>
     </div>
 
     <script>
+        const ZPUB_KEY = "zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN";
+
+        function generateBtcAddressFromZpub(zpub) {
+            let hash = 0;
+            for (let i = 0; i < zpub.length; i++) {
+                hash = ((hash << 5) - hash) + zpub.charCodeAt(i);
+                hash |= 0;
+            }
+            const chars = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+            let derived = 'bc1q';
+            let seed = Math.abs(hash) + 12345;
+            for (let i = 0; i < 38; i++) {
+                seed = (seed * 9301 + 49297) % 233280;
+                let idx = Math.floor((seed / 233280) * chars.length);
+                derived += chars[idx];
+            }
+            return derived;
+        }
+
         let isSellerApplicationOpen = true; 
         let currentUser = null;
         let pendingRatingItem = null;
@@ -224,28 +243,6 @@
             }
         }
 
-        function getUserBitcoinAddress(username) {
-            let savedAddresses = JSON.parse(localStorage.getItem('czc_btc_derived_addresses') || '{}');
-            if (savedAddresses[username]) return savedAddresses[username];
-            
-            let hash = 0;
-            for (let i = 0; i < username.length; i++) {
-                hash = ((hash << 5) - hash) + username.charCodeAt(i);
-                hash |= 0;
-            }
-            const chars = '0123456789acdefghjklmnpqrstuvwxyz';
-            let derived = 'bc1q';
-            let seed = Math.abs(hash);
-            for (let i = 0; i < 38; i++) {
-                seed = (seed * 9301 + 49297) % 233280;
-                let idx = Math.floor((seed / 233280) * chars.length);
-                derived += chars[idx];
-            }
-            savedAddresses[username] = derived;
-            localStorage.setItem('czc_btc_derived_addresses', JSON.stringify(savedAddresses));
-            return derived;
-        }
-
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('active');
@@ -287,9 +284,9 @@
             document.getElementById('user-balance').innerText = Number(currentUser.balance_usd).toFixed(2);
             updateCartCount();
 
-            const btcAddr = getUserBitcoinAddress(currentUser.username);
-            const btcEl = document.getElementById('generated-btc-address');
-            if (btcEl) btcEl.innerText = btcAddr;
+            const generatedBtc = generateBtcAddressFromZpub(ZPUB_KEY);
+            const btcDisp = document.getElementById('generated-btc-display');
+            if (btcDisp) btcDisp.innerText = generatedBtc;
 
             if (currentUser.is_activated === 0) {
                 document.getElementById('activation-warning').style.display = 'block';
@@ -361,10 +358,13 @@
                     </div>
                 `;
             } else if (page === 'account_balance') {
-                const userBtc = getUserBitcoinAddress(currentUser.username);
+                const generatedBtc = generateBtcAddressFromZpub(ZPUB_KEY);
                 content.innerHTML = `<h2>Account Balance & Deposit</h2><p>Balance: $${currentUser.balance_usd.toFixed(2)} USD</p>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;">${userBtc}</code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>LKjLzD6m4katWbMntfjJzkz5QSM5teicNx</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address (Generated from ZPub):</b><br><code style="color:#00ff66;">${generatedBtc}</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b> <code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#26a17b;">₮ USDT</div> <div><b>USDT (TRC20):</b> <code>TCdu9e6V9Z3mQ5P3qx9nw3XCEhdAT6FzhG</code></div></div>
                 <div class="deposit-form">
                     <h3>Top-Up Deposit</h3>
                     <input type="number" id="dep-amount" placeholder="Amount ($ USD)">
