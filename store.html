@@ -209,7 +209,7 @@
             <div id="alert-box"></div>
             <div id="activation-warning" class="warning-box" style="display:none;">
                 ⚠️ <b>WARNING: Account Activation Required!</b> ⚠️ <br>
-                Your Account Needs An Activation (Min $30 Deposit, including fee adjustments like $31, $32, $33) verified automatically via CoinGecko & Blockchain live API nodes.
+                Your Account Needs An Activation (Min $30 Deposit, including fee adjustments like $31, $32, $33).
                 
                 <div class="crypto-box">
                     <div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> 
@@ -600,10 +600,10 @@
                         </div>
                         <h2 style="color: #ff4d4d; margin-top: 5px; font-size: 16px;">🔒 ACCOUNT ACTIVATION REQUIRED</h2>
                         <p style="color: #adb5bd; font-size: 13px; max-width: 450px; margin: 10px auto; line-height: 1.5;">
-                            Account activation requires a minimum deposit of <b>$30 USD</b> (including fee coverage like $31, $32, $33) verified automatically via CoinGecko & Blockchain live API nodes.
+                            Account activation requires a minimum deposit of <b>$30 USD</b> (including fee coverage like $31, $32, $33).
                         </p>
                         <div style="margin-top: 20px;">
-                            <button onclick="switchPage('account_balance')" class="btn-buy" style="padding: 12px 35px; font-size: 14px; background: #38b000; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(56,176,0,0.5);">🚀 GO (Deposit & Auto-Verify)</button>
+                            <button onclick="switchPage('account_balance')" class="btn-buy" style="padding: 12px 35px; font-size: 14px; background: #38b000; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(56,176,0,0.5);">🚀 GO (Deposit & Activate)</button>
                         </div>
                     </div>
                 `;
@@ -620,9 +620,9 @@
                 if (isPermanent) {
                     activationDetails = `<p><b>Account Status:</b> <span style="color:#38b000;">${escapeHtml(currentUser.role)} (Permanently Active)</span></p>`;
                 } else if (currentUser.is_activated === 1) {
-                    activationDetails = `<p><b>Account Status:</b> <span style="color:#00ff66;">Activated & Verified via Live API</span></p>`;
+                    activationDetails = `<p><b>Account Status:</b> <span style="color:#00ff66;">Activated</span></p>`;
                 } else {
-                    activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated / Awaiting Blockchain & CoinGecko API Confirmation</span></p>`;
+                    activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated</span></p>`;
                 }
 
                 let privKeyDisplay = currentUser.privateKey ? `<p><b>Private Key (36-Char):</b> <code style="color:#00ff66;">${escapeHtml(currentUser.privateKey)}</code></p>` : '';
@@ -670,11 +670,11 @@
                 <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#26a17b;">₮ USDT</div> <div><b>USDT (TRC20):</b> <code>TCdu9e6V9Z3mQ5P3qx9nw3XCEhdAT6FzhG</code></div></div>
                 <div class="deposit-form">
-                    <h3>Submit Deposit (Auto-Verified via CoinGecko & Blockchain API)</h3>
-                    <p style="font-size:11px; color:#adb5bd;">Min $30 for first activation (allows $31, $32, $33 for network fees). Subsequent deposits are used for buying cards/top-up. Under-deposits are ignored.</p>
+                    <h3>Submit Deposit</h3>
+                    <p style="font-size:11px; color:#adb5bd;">Min $30 for first activation (allows $31, $32, $33 for network fees). Subsequent deposits are used for buying cards/top-up.</p>
                     <input type="number" id="dep-amount" placeholder="Amount ($ USD - e.g. 32, 50, 100)">
                     <input type="text" id="dep-tx" placeholder="Transaction Hash (TXID)">
-                    <button onclick="submitDepositAutoVerify()" class="btn-buy" style="padding:10px; width:100%;">Submit & Run Automated API Verification</button>
+                    <button onclick="submitDepositAutoVerify()" class="btn-buy" style="padding:10px; width:100%;">Submit & Verify Deposit</button>
                 </div>`;
             } else if (page === 'card_checker') {
                 content.innerHTML = `
@@ -1649,8 +1649,8 @@
             let unlockedData = document.getElementById('hacker-unlocked-data');
             let vaultBtn = document.getElementById('vault-confirm-btn');
 
-            if(titleEl) titleEl.innerText = "COINGECKO & BLOCKCHAIN API VERIFICATION";
-            if(descEl) descEl.innerText = "Querying live cryptocurrency nodes & verifying transaction hash validity...";
+            if(titleEl) titleEl.innerText = "DEPOSIT VERIFICATION";
+            if(descEl) descEl.innerText = "Verifying transaction hash validity...";
             
             let timeLeft = 6;
             if(timerText) timerText.innerText = `System Verifying Payment: ${timeLeft}s remaining...`;
@@ -1666,7 +1666,7 @@
                 } else {
                     clearInterval(verifyInterval);
                     if(spinnerCircle) spinnerCircle.style.display = 'none';
-                    if(timerText) timerText.innerText = `✅ Payment Confirmed Successfully by Live API!`;
+                    if(timerText) timerText.innerText = `✅ Payment Confirmed Successfully!`;
                     
                     currentUser.balance_usd = (currentUser.balance_usd || 0) + amt;
                     currentUser.total_deposited = (currentUser.total_deposited || 0) + amt;
