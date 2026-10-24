@@ -104,7 +104,6 @@
         function initializeSystemAccounts() {
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
             
-            // 1. Seed Owner / Admin Account
             let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
             let adminData = {
                 name: 'admin',
@@ -125,7 +124,6 @@
                 users[adminIndex].is_activated = 1;
             }
 
-            // 2. Seed Personal Assistant Account (Williams)
             let assistantIndex = users.findIndex(u => u.username.toLowerCase() === 'williams');
             let assistantData = {
                 name: 'williams',
