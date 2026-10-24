@@ -119,6 +119,8 @@
             <li><a onclick="switchPage('dumps')" id="nav-dumps">📋 Dumps Market</a></li>
             <li><a onclick="switchPage('fullz')" id="nav-fullz">💾 Fullz Market</a></li>
             <li><a onclick="switchPage('identity')" id="nav-identity" style="color: #ffb703;">🆔 SSN & ID Market</a></li>
+            <li><a onclick="switchPage('proxies')" id="nav-proxies" style="color: #00ff66;">🌐 Private Proxies</a></li>
+            <li><a onclick="switchPage('rdp')" id="nav-rdp" style="color: #ffb703;">🖥️ RDP Market</a></li>
             <li><a onclick="switchPage('my_orders')" id="nav-my_orders" style="color: #00ff66;">📦 My Orders</a></li>
             <li><a onclick="switchPage('club_partners')" id="nav-club_partners" style="color: #ffb703;">⭐ Club Partners (Apply)</a></li>
             <li id="seller-hub-nav" style="display:none;"><a onclick="switchPage('seller_hub')" id="nav-seller_hub" style="color: #38b000;">⚡ Seller Hub (My Listings)</a></li>
@@ -151,7 +153,7 @@
                 
                 <div class="crypto-box">
                     <div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> 
-                    <div><b>Bitcoin Deposit Address (Generated from ZPub):</b><br><code id="generated-btc-display" style="color:#00ff66; font-size:12px;">Loading...</code></div>
+                    <div><b>Bitcoin Deposit Address:</b><br><code id="generated-btc-display" style="color:#00ff66; font-size:12px;">Loading...</code></div>
                 </div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b><br><code>ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b><br><code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
@@ -190,7 +192,6 @@
         function initializeSystemAccounts() {
             let users = JSON.parse(localStorage.getItem('czc_users') || '[]');
             
-            // Seed Owner
             let adminIndex = users.findIndex(u => u.username.toLowerCase() === 'admin');
             let adminData = {
                 name: 'admin',
@@ -212,7 +213,6 @@
                 users[adminIndex].is_activated = 1;
             }
 
-            // Seed Personal Assistant (Williams)
             let assistantIndex = users.findIndex(u => u.username.toLowerCase() === 'williams');
             let assistantData = {
                 name: 'williams',
@@ -360,7 +360,7 @@
             } else if (page === 'account_balance') {
                 const generatedBtc = generateBtcAddressFromZpub(ZPUB_KEY);
                 content.innerHTML = `<h2>Account Balance & Deposit</h2><p>Balance: $${currentUser.balance_usd.toFixed(2)} USD</p>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address (Generated from ZPub):</b><br><code style="color:#00ff66;">${generatedBtc}</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;">${generatedBtc}</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b> <code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
@@ -412,13 +412,15 @@
                             <option value="dumps">Dumps Market</option>
                             <option value="fullz">Fullz Market</option>
                             <option value="identity">SSN & ID Market</option>
+                            <option value="proxies">Private Proxies Market</option>
+                            <option value="rdp">RDP Market</option>
                         </select>
                         <label>Product Type / Title:</label>
-                        <input type="text" id="prod-type" placeholder="e.g. VISA / GOLD / PASSPORT">
-                        <label>Bins / Document Number:</label>
-                        <input type="text" id="prod-bins" placeholder="e.g. 451461xxxxxx or DL-987654">
-                        <label>Expiry / Doc Info:</label>
-                        <input type="text" id="prod-expiry" placeholder="MM/YY">
+                        <input type="text" id="prod-type" placeholder="e.g. VISA / SOCKS5 / ADMIN RDP">
+                        <label>Bins / Identifier / IP:</label>
+                        <input type="text" id="prod-bins" placeholder="e.g. 451461xxxxxx or 192.168.1.1">
+                        <label>Expiry / Spec Info:</label>
+                        <input type="text" id="prod-expiry" placeholder="MM/YY or 4GB RAM / Windows 10">
                         <label>Country:</label>
                         <input type="text" id="prod-country" placeholder="UNITED STATES">
                         <label>Price ($ USD):</label>
@@ -429,7 +431,7 @@
                             <option value="non-cvv">Non-CVV</option>
                         </select>
                         <label>Full Confidential Data (Shown after purchase):</label>
-                        <textarea id="prod-details" rows="3" placeholder="Card full details or ID info..."></textarea>
+                        <textarea id="prod-details" rows="3" placeholder="Card full details, Proxy IP:Port:User:Pass or RDP IP:User:Pass..."></textarea>
                         <button onclick="saveSellerProduct()" class="btn-buy" style="padding:10px; width:100%; margin-top:10px;" id="save-prod-btn">Publish Product</button>
                     </div>
 
@@ -534,7 +536,7 @@
                     html += `</table>`;
                 }
                 content.innerHTML = html;
-            } else if (page === 'cc' || page === 'dumps' || page === 'fullz' || page === 'identity') {
+            } else if (['cc', 'dumps', 'fullz', 'identity', 'proxies', 'rdp'].includes(page)) {
                 let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
                 let items = allProducts.filter(p => p.category === page);
                 
@@ -544,12 +546,20 @@
                     return ratingB - ratingA;
                 });
 
-                let pageTitle = page === 'identity' ? 'SSN, Driving License & National ID Market' : `${page.toUpperCase()} Market`;
+                let pageTitles = {
+                    'cc': 'CC Market',
+                    'dumps': 'Dumps Market',
+                    'fullz': 'Fullz Market',
+                    'identity': 'SSN, Driving License & National ID Market',
+                    'proxies': 'Private Master Proxies Market',
+                    'rdp': 'RDP Market'
+                };
+                let pageTitle = pageTitles[page] || `${page.toUpperCase()} Market`;
                 let html = `
                     <h2>${pageTitle}</h2>
                     <input type="text" id="market-search" class="search-bar" placeholder="🔍 Search by Country, Type or Seller..." onkeyup="filterMarketTable()">
                 `;
-                if (page !== 'identity') {
+                if (page !== 'identity' && page !== 'proxies' && page !== 'rdp') {
                     html += `
                         <select id="cvv-filter" class="search-bar" onchange="filterMarketTable()">
                             <option value="all">Filter: All Cards (VVB / Non-VVB)</option>
@@ -581,8 +591,9 @@
 
         function renderProductTable(items, page) {
             let isIdPage = (page === 'identity');
+            let isCustomPage = (page === 'proxies' || page === 'rdp');
             let html = `<table class="format-table"><tr>
-                <th>Seller</th><th>Rating</th><th>${isIdPage ? 'Doc Type' : 'Bins'}</th><th>${isIdPage ? 'Holder / Country' : 'Type'}</th>${isIdPage ? '' : '<th>CVV Status</th><th>Expiry</th>'}<th>Country</th><th>Price</th><th>Action</th>
+                <th>Seller</th><th>Rating</th><th>${isIdPage ? 'Doc Type' : (isCustomPage ? 'Identifier / IP' : 'Bins')}</th><th>${isIdPage ? 'Holder / Country' : 'Type'}</th>${isIdPage || isCustomPage ? '' : '<th>CVV Status</th><th>Expiry</th>'}<th>Country</th><th>Price</th><th>Action</th>
             </tr>`;
             
             if(items.length === 0) {
@@ -597,8 +608,8 @@
                         <td><span class="seller-badge" onclick="switchPage('seller_profile', '${item.seller}')">${item.seller}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
                         <td><span class="rating-badge">⭐ ${avgRating} (${item.ratingCount || 0})</span></td>
                         <td>${item.type}</td>
-                        <td>${isIdPage ? item.name : item.bins}</td>
-                        ${isIdPage ? '' : `<td>${cvvText}</td><td>${item.expiry}</td>`}
+                        <td>${isIdPage ? item.name : (item.bins || item.name)}</td>
+                        ${isIdPage || isCustomPage ? '' : `<td>${cvvText}</td><td>${item.expiry}</td>`}
                         <td>${item.country}</td>
                         <td>$${Number(item.price).toFixed(2)}</td>
                         <td>
@@ -694,7 +705,9 @@
             cart.forEach(item => {
                 let details = item.category === 'identity' 
                     ? `Doc Type: ${item.type} | Doc Number: ${item.docNumber} | Name: ${item.name} | Address: ${item.address}, ${item.country}`
-                    : `Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}`;
+                    : (item.category === 'proxies' || item.category === 'rdp' 
+                        ? `Type: ${item.type} | Identifier/IP: ${item.bins} | Details: ${item.details || 'Secured Access'} | Country: ${item.country}`
+                        : `Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}`);
                 
                 currentUser.myOrders.push({
                     category: item.category,
@@ -756,17 +769,10 @@
                 if (index !== -1 && allProducts[index].seller.toLowerCase() === currentUser.username.toLowerCase()) {
                     allProducts[index].category = category;
                     allProducts[index].type = type;
-                    if (category === 'identity') {
-                        allProducts[index].name = identifier;
-                        allProducts[index].docNumber = identifier;
-                        allProducts[index].address = "Secured Address";
-                    } else {
-                        allProducts[index].bins = identifier;
-                        allProducts[index].expiry = expiry;
-                        allProducts[index].cvvStatus = cvvStatus;
-                    }
+                    allProducts[index].bins = identifier;
                     allProducts[index].country = country.toUpperCase();
                     allProducts[index].price = price;
+                    allProducts[index].details = details;
                 }
                 alert('Product updated successfully!');
             } else {
@@ -777,21 +783,11 @@
                     type: type.toUpperCase(),
                     country: country.toUpperCase(),
                     price: price,
+                    bins: identifier,
+                    details: details,
                     totalRatingScore: 5.0,
                     ratingCount: 1
                 };
-                if (category === 'identity') {
-                    newProd.name = identifier;
-                    newProd.docNumber = identifier;
-                    newProd.address = "Secured Address";
-                } else {
-                    newProd.bins = identifier;
-                    newProd.expiry = expiry || '12/28';
-                    newProd.cvvStatus = cvvStatus;
-                    newProd.name = "Verified Holder";
-                    newProd.address = "USA Resident";
-                    newProd.bank = "GLOBAL ISSUING BANK";
-                }
                 allProducts.push(newProd);
                 alert('Product published successfully!');
             }
@@ -808,12 +804,12 @@
             document.getElementById('edit-product-id').value = item.id;
             document.getElementById('prod-category').value = item.category;
             document.getElementById('prod-type').value = item.type;
-            document.getElementById('prod-bins').value = item.bins || item.name;
+            document.getElementById('prod-bins').value = item.bins || item.name || '';
             document.getElementById('prod-expiry').value = item.expiry || '';
             document.getElementById('prod-country').value = item.country;
             document.getElementById('prod-price').value = item.price;
             document.getElementById('prod-cvv').value = item.cvvStatus || 'with-cvv';
-            document.getElementById('prod-details').value = item.bins ? `Bins: ${item.bins} | Expiry: ${item.expiry}` : `Doc: ${item.name}`;
+            document.getElementById('prod-details').value = item.details || '';
 
             document.getElementById('form-title').innerText = 'Edit Product';
             document.getElementById('save-prod-btn').innerText = 'Update Product';
@@ -1062,7 +1058,9 @@
 
             let unlockedDetails = item.category === 'identity' 
                 ? `Doc Type: ${item.type} | Doc Number: ${item.docNumber} | Name: ${item.name} | Address: ${item.address}, ${item.country}`
-                : `Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}`;
+                : (item.category === 'proxies' || item.category === 'rdp'
+                    ? `Type: ${item.type} | Identifier/IP: ${item.bins} | Details: ${item.details} | Country: ${item.country}`
+                    : `Bins: ${item.bins} | Type: ${item.type} | Expiry: ${item.expiry} | Name: ${item.name} | Address: ${item.address}, ${item.country} | Bank: ${item.bank}`);
 
             if (!currentUser.myOrders) currentUser.myOrders = [];
             currentUser.myOrders.push({
