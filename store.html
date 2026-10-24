@@ -150,14 +150,14 @@
         </div>
     </div>
 
-    <!-- Realistic Secure Tunnel Verification Overlay -->
+    <!-- Realistic Secure Tunnel & VPN Verification Overlay -->
     <div id="hacker-vault-overlay">
         <div class="hacker-modal-content">
             <div style="margin-bottom:10px;">
                 <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#00ff66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             </div>
-            <h2 style="color: #00ff66; margin-top:0; font-size:16px;">SECURE TUNNEL VERIFICATION</h2>
-            <p style="color: #adb5bd; font-size: 11px;">Decrypting proxy handshake & verifying transaction nodes...</p>
+            <h2 style="color: #00ff66; margin-top:0; font-size:16px;" id="vault-title-heading">SECURE TUNNEL VERIFICATION</h2>
+            <p style="color: #adb5bd; font-size: 11px;" id="vault-desc-sub">Decrypting proxy handshake & verifying transaction nodes...</p>
             <div style="display:flex; justify-content:center; gap:8px; margin: 15px 0;">
                 <div class="mini-card-realistic amex"><span>AMEX</span><div class="card-chip"></div></div>
                 <div class="mini-card-realistic mc"><span>MC</span><div class="card-chip"></div></div>
@@ -166,7 +166,7 @@
             <div class="spinner-circle" id="spinner-circle"></div>
             <p id="verification-timer-text" style="color: #ffb703; font-size: 12px; font-weight: bold;">Secure Tunnel Verification: 180s remaining...</p>
             <div id="hacker-unlocked-data" style="display:none; background: #050b14; border: 1px dashed #00ff66; padding: 12px; border-radius: 6px; color: #00ff66; font-size: 12px; text-align: left; margin: 15px 0; word-break: break-all;"></div>
-            <button id="vault-confirm-btn" onclick="closeHackerVault()" class="btn-buy" style="padding: 10px 20px; font-size: 13px; display:none;">Confirm & Rate Seller</button>
+            <button id="vault-confirm-btn" onclick="closeHackerVault()" class="btn-buy" style="padding: 10px 20px; font-size: 13px; display:none;">Confirm & Proceed</button>
         </div>
     </div>
 
@@ -301,7 +301,7 @@
                 if(!users[assistantIndex].password) users[assistantIndex].password = 'williams123';
             }
 
-            // 3. Official Sellers List ($0.00 balance)
+            // 3. Official Sellers List (All $0.00 Balance & Unblocked)
             const preSellers = [
                 { username: 'shadow_seller', name: 'Shadow Seller', password: 'seller123_a', email: 'shadow@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123451', balance_usd: 0.00 },
                 { username: 'viper_cards', name: 'Viper Cards', password: 'seller123_b', email: 'viper@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123452', balance_usd: 0.00 },
@@ -408,6 +408,13 @@
             currentUser = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
             if (!currentUser) { window.location.href = 'index.html'; return; }
 
+            // High Security VPN Checkpoint (Allows VPN with mandatory handshake verification instead of blocking)
+            let vpnVerifiedSession = sessionStorage.getItem('czc_vpn_secure_verified');
+            if (!vpnVerifiedSession) {
+                triggerVpnSecurityHandshake();
+                return;
+            }
+
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
             
@@ -463,6 +470,50 @@
 
             switchPage('account_management');
         };
+
+        function triggerVpnSecurityHandshake() {
+            let vaultOverlay = document.getElementById('hacker-vault-overlay');
+            let titleEl = document.getElementById('vault-title-heading');
+            let descEl = document.getElementById('vault-desc-sub');
+            let timerText = document.getElementById('verification-timer-text');
+            let spinnerCircle = document.getElementById('spinner-circle');
+            let unlockedData = document.getElementById('hacker-unlocked-data');
+            let vaultBtn = document.getElementById('vault-confirm-btn');
+
+            if(titleEl) titleEl.innerText = "HIGH SECURITY VPN HANDSHAKE";
+            if(descEl) descEl.innerText = "Proxy/VPN tunnel detected. Verifying secure user credentials & session integrity...";
+            
+            let timeLeft = 5;
+            if(timerText) timerText.innerText = `VPN Secure Handshake: ${timeLeft}s remaining...`;
+            if(spinnerCircle) spinnerCircle.style.display = 'block';
+            if(unlockedData) unlockedData.style.display = 'none';
+            if(vaultBtn) vaultBtn.style.display = 'none';
+            if(vaultOverlay) vaultOverlay.style.display = 'flex';
+
+            let handshakeInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    if(timerText) timerText.innerText = `VPN Secure Handshake: ${timeLeft}s remaining...`;
+                } else {
+                    clearInterval(handshakeInterval);
+                    if(spinnerCircle) spinnerCircle.style.display = 'none';
+                    if(timerText) timerText.innerText = `✅ VPN Session Verified Successfully! Unblocked & Secure.`;
+                    if(unlockedData) {
+                        unlockedData.innerText = `User: ${currentUser.username} | VPN Proxy Tunnel Status: ALLOWED & SECURED (No Bypass)`;
+                        unlockedData.style.display = 'block';
+                    }
+                    if(vaultBtn) {
+                        vaultBtn.innerText = "Proceed to Dashboard";
+                        vaultBtn.style.display = 'inline-block';
+                        vaultBtn.onclick = function() {
+                            sessionStorage.setItem('czc_vpn_secure_verified', 'true');
+                            vaultOverlay.style.display = 'none';
+                            location.reload();
+                        };
+                    }
+                }
+            }, 1000);
+        }
 
         function switchPage(page, param) {
             document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
