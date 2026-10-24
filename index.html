@@ -3,75 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏴‍☠️Cards Zones Club🏴‍☠️ - Secure Gateway</title>
+    <title>CARD ZONE CLUB LOGIN</title>
     <style>
         * { box-sizing: border-box; }
-        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .auth-container { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 30px; width: 100%; max-width: 400px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-        h2 { color: #38b000; text-align: center; margin-bottom: 20px; font-size: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 13px; color: #adb5bd; }
-        input { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 6px; font-size: 14px; }
-        button { width: 100%; background-color: #38b000; color: #fff; padding: 12px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        button:hover { background-color: #2b8a00; }
-        .switch-text { text-align: center; margin-top: 15px; font-size: 13px; color: #adb5bd; cursor: pointer; }
-        .switch-text span { color: #38b000; font-weight: bold; }
-        .error-msg { background: rgba(217,4,41,0.2); border: 1px solid #d90429; color: #ff4d4d; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 15px; display: none; text-align: center; }
-        
-        .realistic-cards-row {
+        body {
+            background-color: #050b14;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            perspective: 1000px;
-        }
-        .mini-card-realistic {
-            width: 75px;
-            height: 48px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 8px;
-            color: #fff;
+            align-items: center;
+            min-height: 100vh;
             position: relative;
-            animation: cardFloat 3s ease-in-out infinite;
+            overflow-x: hidden;
         }
-        .mini-card-realistic.amex { background: linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC); }
-        .mini-card-realistic.mc { background: linear-gradient(135deg, #f12711, #f5af19); }
-        .mini-card-realistic.visa { background: linear-gradient(135deg, #11998e, #38ef7d); }
-        .card-chip {
-            width: 14px;
-            height: 10px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            border-radius: 2px;
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(5,11,20,0.85), rgba(5,11,20,0.95)), 
+                        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,255,100,0.03) 40px, rgba(0,255,100,0.03) 41px),
+                        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,150,255,0.03) 40px, rgba(0,150,255,0.03) 41px);
+            z-index: 1;
         }
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0px) rotateX(0deg); }
-            50% { transform: translateY(-5px) rotateX(5deg); }
+        .auth-container {
+            position: relative;
+            z-index: 2;
+            background-color: rgba(17, 24, 39, 0.95);
+            border: 1px solid #1e3a8a;
+            border-radius: 8px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        h2 {
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #9ca3af;
+            font-family: monospace;
+        }
+        input {
+            width: 100%;
+            padding: 9px 12px;
+            background: #0b132b;
+            border: 1px solid #1d4ed8;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+        input:focus {
+            border-color: #4ade80;
+        }
+        button {
+            width: 100%;
+            background-color: #2563eb;
+            color: #fff;
+            padding: 11px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        .switch-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #9ca3af;
+            cursor: pointer;
+        }
+        .switch-text span {
+            color: #4ade80;
+            font-weight: bold;
+        }
+        .error-msg {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #f87171;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: none;
+            text-align: center;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: #111827;
+            border: 1px solid #4ade80;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+        .private-key-box {
+            background: #0b132b;
+            border: 1px dashed #4ade80;
+            color: #4ade80;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 13px;
+            word-break: break-all;
+            margin: 15px 0;
+            border-radius: 4px;
         }
     </style>
-    <script>
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-    </script>
 </head>
 <body>
 
     <div class="auth-container" id="auth-box">
-        <div class="realistic-cards-row">
-            <div class="mini-card-realistic amex"><span>AMEX</span><div class="card-chip"></div></div>
-            <div class="mini-card-realistic mc"><span>MC</span><div class="card-chip"></div></div>
-            <div class="mini-card-realistic visa"><span>VISA</span><div class="card-chip"></div></div>
-        </div>
-        
-        <h2 id="form-title">🏴‍☠️ Cards Zones Club 🏴‍☠️</h2>
+        <h2 id="form-title">CARD ZONE CLUB LOGIN.php</h2>
         <div id="error-alert" class="error-msg"></div>
 
         <div id="login-form">
@@ -80,21 +152,25 @@
                 <input type="text" id="login-user" placeholder="Enter username or email" autocomplete="off">
             </div>
             <div class="form-group">
-                <label>Password:</label>
-                <input type="password" id="login-pass" placeholder="Enter password" autocomplete="off">
+                <label>Password / Private Key:</label>
+                <input type="password" id="login-pass" placeholder="Enter password or 36-digit key" autocomplete="off">
             </div>
-            <button onclick="handleLogin()">Secure Login</button>
+            <button onclick="handleLogin()">Verify & Continue</button>
             <div class="switch-text" onclick="toggleAuthMode()">Don't have an account? <span>Sign Up</span></div>
         </div>
 
         <div id="signup-form" style="display:none;">
             <div class="form-group">
+                <label>Name:</label>
+                <input type="text" id="signup-name" placeholder="Alexander Hamilton" autocomplete="off">
+            </div>
+            <div class="form-group">
                 <label>Username:</label>
                 <input type="text" id="signup-user" placeholder="Choose username" autocomplete="off">
             </div>
             <div class="form-group">
-                <label>Email:</label>
-                <input type="email" id="signup-email" placeholder="Enter your email" autocomplete="off">
+                <label>Gmail:</label>
+                <input type="email" id="signup-email" placeholder="hellokitty11@gmail.com" autocomplete="off">
             </div>
             <div class="form-group">
                 <label>Password:</label>
@@ -105,38 +181,140 @@
         </div>
     </div>
 
+    <div class="modal" id="key-modal">
+        <div class="modal-content">
+            <h3 style="color: #4ade80; margin-top:0;">⚠️ Save Your Private Key!</h3>
+            <p style="font-size: 13px; color: #9ca3af;">This is your 36-character private key. Save it securely; it will be used to recognize and access your account.</p>
+            <div class="private-key-box" id="display-private-key"></div>
+            <button onclick="proceedToStore()">I have saved it, Continue</button>
+        </div>
+    </div>
+
     <script>
         function initializeDefaultAccounts() {
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
-            
-            let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'admin');
-            let adminData = {
-                name: 'admin', username: 'admin', password: 'admin123',
-                email: 'treasurerman89@gmail.com', privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
-                balance_usd: 5000.00, is_activated: 1, role: 'Owner',
-                tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
-            };
-            if (adminIndex === -1) { users.push(adminData); } else { users[adminIndex].password = 'admin123'; users[adminIndex].role = 'Owner'; }
 
-            let assistantIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'williams');
-            let assistantData = {
-                name: 'williams', username: 'williams', password: 'williams123',
-                email: 'williams39@gmail.com', privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
-                balance_usd: 1500.00, is_activated: 1, role: 'Personal Assistant',
-                tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
-            };
-            if (assistantIndex === -1) { users.push(assistantData); } else { users[assistantIndex].password = 'williams123'; users[assistantIndex].role = 'Personal Assistant'; }
+            const defaultAccounts = [
+                {
+                    name: 'Alexander Hamilton',
+                    username: 'alexander_hamilton',
+                    email: 'hellokitty11@gmail.com',
+                    password: 'Alex Devil',
+                    privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
+                    balance_usd: 5000.00,
+                    role: 'Owner'
+                },
+                {
+                    name: 'Williams',
+                    username: 'williams',
+                    email: 'williams39@gmail.com',
+                    password: 'Willams123',
+                    privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
+                    balance_usd: 1500.00,
+                    role: 'Personal Assistant'
+                },
+                {
+                    name: 'Nexus Vendor',
+                    username: 'nexus_vendor',
+                    email: 'nexus_vendor@czc.club',
+                    password: 'seller123_d',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123454',
+                    balance_usd: 1000.00,
+                    role: 'Vendor'
+                },
+                {
+                    name: 'Matrix Node',
+                    username: 'matrix_node',
+                    email: 'matrix_node@czc.club',
+                    password: 'seller123_c',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123453',
+                    balance_usd: 1000.00,
+                    role: 'Vendor'
+                },
+                {
+                    name: 'Admin',
+                    username: 'admin',
+                    email: 'treasurerman89@gmail.com',
+                    password: 'admin201215',
+                    privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
+                    balance_usd: 5000.00,
+                    role: 'Owner'
+                },
+                {
+                    name: 'Shadow Seller',
+                    username: 'shadow_seller',
+                    email: 'shadow_seller@czc.club',
+                    password: 'seller123_a',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123451',
+                    balance_usd: 1000.00,
+                    role: 'Seller'
+                },
+                {
+                    name: 'Viper Cards',
+                    username: 'viper_cards',
+                    email: 'viper_cards@czc.club',
+                    password: 'seller123_b',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123452',
+                    balance_usd: 1000.00,
+                    role: 'Seller'
+                },
+                {
+                    name: 'Phantom Store',
+                    username: 'phantom_store',
+                    email: 'phantom@czc.club',
+                    password: 'seller123_g',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123457',
+                    balance_usd: 1000.00,
+                    role: 'Vendor'
+                },
+                {
+                    name: 'Apex Vendor',
+                    username: 'apex_vendor',
+                    email: 'apex@czc.club',
+                    password: 'seller123_h',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123458',
+                    balance_usd: 1000.00,
+                    role: 'Vendor'
+                },
+                {
+                    name: 'Zenith Merchant',
+                    username: 'zenith_merchant',
+                    email: 'zenith@czc.club',
+                    password: 'seller123_i',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123459',
+                    balance_usd: 1000.00,
+                    role: 'Merchant'
+                }
+            ];
+
+            defaultAccounts.forEach(acc => {
+                let index = users.findIndex(u => u.username.toLowerCase() === acc.username.toLowerCase());
+                if (index === -1) {
+                    users.push(acc);
+                } else {
+                    users[index].password = acc.password;
+                    users[index].privateKey = acc.privateKey;
+                    users[index].email = acc.email;
+                    users[index].role = acc.role;
+                }
+            });
 
             localStorage.setItem('czc_users', JSON.stringify(users));
         }
 
         window.onload = function() {
             initializeDefaultAccounts();
-            if (localStorage.getItem('czc_current_user')) {
-                window.location.href = 'store.html';
-            }
         };
+
+        function generate36DigitKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 36; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
 
         function toggleAuthMode() {
             let loginForm = document.getElementById('login-form');
@@ -148,11 +326,11 @@
             if (loginForm.style.display === 'none') {
                 loginForm.style.display = 'block';
                 signupForm.style.display = 'none';
-                title.innerText = '🏴‍☠️ Cards Zones Club 🏴‍☠️';
+                title.innerText = 'CARD ZONE CLUB LOGIN.php';
             } else {
                 loginForm.style.display = 'none';
                 signupForm.style.display = 'block';
-                title.innerText = 'Create New Account';
+                title.innerText = 'CREATE NEW ACCOUNT';
             }
         }
 
@@ -160,6 +338,49 @@
             let err = document.getElementById('error-alert');
             err.innerText = msg;
             err.style.display = 'block';
+        }
+
+        function handleSignup() {
+            let nameInp = document.getElementById('signup-name').value.trim();
+            let userInp = document.getElementById('signup-user').value.trim();
+            let emailInp = document.getElementById('signup-email').value.trim();
+            let passInp = document.getElementById('signup-pass').value.trim();
+
+            if (!nameInp || !userInp || !emailInp || !passInp) {
+                showAlert('Please fill in all fields.');
+                return;
+            }
+
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
+
+            if (users.some(u => u.username.toLowerCase() === userInp.toLowerCase())) {
+                showAlert('Username already taken.');
+                return;
+            }
+
+            let privateKey = generate36DigitKey();
+
+            let newUser = {
+                name: nameInp,
+                username: userInp,
+                email: emailInp,
+                password: passInp,
+                privateKey: privateKey,
+                balance_usd: 0.00,
+                role: 'Member'
+            };
+
+            users.push(newUser);
+            localStorage.setItem('czc_users', JSON.stringify(users));
+            localStorage.setItem('czc_current_user', newUser.username);
+
+            document.getElementById('display-private-key').innerText = privateKey;
+            document.getElementById('key-modal').style.display = 'flex';
+        }
+
+        function proceedToStore() {
+            window.location.href = 'store.html';
         }
 
         function handleLogin() {
@@ -174,51 +395,17 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
 
-            let found = users.find(u => (u.username.toLowerCase() === userInp.toLowerCase() || u.email.toLowerCase() === userInp.toLowerCase()) && u.password === passInp);
+            let found = users.find(u => 
+                (u.username.toLowerCase() === userInp.toLowerCase() || u.email.toLowerCase() === userInp.toLowerCase()) && 
+                (u.password === passInp || u.privateKey === passInp)
+            );
 
             if (found) {
                 localStorage.setItem('czc_current_user', found.username);
                 window.location.href = 'store.html';
             } else {
-                showAlert('Invalid username/email or password.');
+                showAlert('Invalid username/email or password/private key.');
             }
-        }
-
-        function handleSignup() {
-            let userInp = document.getElementById('signup-user').value.trim();
-            let emailInp = document.getElementById('signup-email').value.trim();
-            let passInp = document.getElementById('signup-pass').value.trim();
-
-            if (!userInp || !emailInp || !passInp) {
-                showAlert('Please fill in all fields.');
-                return;
-            }
-
-            let users = [];
-            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
-
-            if (users.some(u => u.username.toLowerCase() === userInp.toLowerCase())) {
-                showAlert('Username already taken.');
-                return;
-            }
-
-            let newUser = {
-                name: escapeHtml(userInp),
-                username: escapeHtml(userInp),
-                email: escapeHtml(emailInp),
-                password: passInp,
-                privateKey: 'CZC' + Math.random().toString(36).substring(2, 15).toUpperCase() + Math.random().toString(36).substring(2, 15).toUpperCase(),
-                balance_usd: 0.00,
-                is_activated: 0,
-                role: 'Member',
-                tfaEnabled: false,
-                emailVerified: false
-            };
-
-            users.push(newUser);
-            localStorage.setItem('czc_users', JSON.stringify(users));
-            localStorage.setItem('czc_current_user', newUser.username);
-            window.location.href = 'store.html';
         }
     </script>
 </body>
