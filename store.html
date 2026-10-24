@@ -189,7 +189,7 @@
             <li><a onclick="switchPage('club_partners')" id="nav-club_partners" style="color: #ffb703;">⭐ Club Partners (Apply)</a></li>
             <li id="seller-hub-nav" style="display:none;"><a onclick="switchPage('seller_hub')" id="nav-seller_hub" style="color: #38b000;">⚡ Seller Hub (My Listings)</a></li>
             <li id="admin-panel-nav" style="display:none;"><a onclick="switchPage('admin_panel')" id="nav-admin_panel" style="color: #ff00ff;">👑 Admin Requests</a></li>
-            <li><a onclick="switchPage('refund')" id="nav-refund">Refund / Privacy Notice</a></li>
+            <li><a onclick="switchPage('refund')" id="nav-refund">Refund Policy & Security</a></li>
         </ul>
     </div>
 
@@ -258,7 +258,6 @@
             return derived;
         }
 
-        let isSellerApplicationOpen = true; 
         let currentUser = null;
         let pendingRatingItem = null;
         let verificationInterval = null;
@@ -617,10 +616,11 @@
                 let approvedSellers = [];
                 try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
                 let isAlreadySeller = approvedSellers.includes(currentUser.username);
+                let isAppOpen = localStorage.getItem('czc_seller_app_open') !== 'false';
 
                 if (isAlreadySeller) {
                     content.innerHTML = `<h2>Club Partners</h2><div style="background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px;"><b>Congratulations!</b> Your seller application is already approved by admin. You can access the Seller Hub from the sidebar.</div>`;
-                } else if (!isSellerApplicationOpen) {
+                } else if (!isAppOpen) {
                     content.innerHTML = `<h2>Club Partners - Seller Application</h2><div style="background:rgba(217,4,41,0.2); border:1px solid #d90429; color:#ffb703; padding:15px; border-radius:6px;"><b>Notice:</b> Seller applications are currently closed by admin.</div>`;
                 } else {
                     content.innerHTML = `<h2>Club Partners - Seller Application Portal</h2>
@@ -642,16 +642,60 @@
             } else if (page === 'admin_panel') {
                 let applications = [];
                 try { applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]'); } catch(e) { applications = []; }
-                let html = `<h2>Admin Panel - Pending Seller Requests</h2>`;
+                let approvedSellers = [];
+                try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
+                let allProducts = [];
+                try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
+                let isAppOpen = localStorage.getItem('czc_seller_app_open') !== 'false';
+
+                let html = `<h2>Admin Panel - Seller Requests & Live Directory</h2>
+                    
+                    <div style="background:#0d1b2a; border:1px solid #415a77; padding:15px; border-radius:6px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <div>
+                            <p style="margin:0 0 5px 0;"><b>Seller Application Portal Status:</b> <span style="color:${isAppOpen ? '#38b000' : '#d90429'};">${isAppOpen ? 'OPEN (Active)' : 'CLOSED'}</span></p>
+                            <span style="font-size:11px; color:#adb5bd;">Control whether users can submit new seller applications.</span>
+                        </div>
+                        <button onclick="togglePortalStatus()" class="btn-buy" style="background:${isAppOpen ? '#d90429' : '#38b000'}; padding:8px 15px;">${isAppOpen ? 'Close Portal' : 'Open Portal'}</button>
+                    </div>
+
+                    <h3 style="color:#ffb703; margin-top:15px;">Pending Seller Requests (${applications.length})</h3>`;
+
                 if(applications.length === 0) {
                     html += `<p style="color:#adb5bd;">No pending seller applications.</p>`;
                 } else {
-                    html += `<table class="format-table"><tr><th>Username</th><th>Name</th><th>Email</th><th>Details</th><th>Action</th></tr>`;
+                    html += `<table class="format-table"><tr><th>Username</th><th>Name</th><th>Email</th><th>Details</th><th>Actions</th></tr>`;
                     applications.forEach((app, index) => {
-                        html += `<tr><td><b>${escapeHtml(app.username)}</b></td><td>${escapeHtml(app.name)}</td><td>${escapeHtml(app.email)}</td><td>${escapeHtml(app.details)}</td><td><button class="btn-buy" onclick="approveSeller(${index})">Accept / Approve</button></td></tr>`;
+                        html += `<tr>
+                            <td><b>${escapeHtml(app.username)}</b></td>
+                            <td>${escapeHtml(app.name)}</td>
+                            <td>${escapeHtml(app.email)}</td>
+                            <td>${escapeHtml(app.details)}</td>
+                            <td>
+                                <button class="btn-buy" onclick="approveSeller(${index})">Accept</button>
+                                <button class="btn-delete" onclick="rejectSeller(${index})" style="margin-left:4px;">Reject</button>
+                            </td>
+                        </tr>`;
                     });
                     html += `</table>`;
                 }
+
+                html += `<h3 style="color:#38b000; margin-top:25px;">Approved Sellers Live Directory & Inventory (${approvedSellers.length})</h3>`;
+                if(approvedSellers.length === 0) {
+                    html += `<p style="color:#adb5bd;">No approved sellers yet.</p>`;
+                } else {
+                    html += `<table class="format-table"><tr><th>Seller Username</th><th>Active Listings Count</th><th>Status</th><th>Action</th></tr>`;
+                    approvedSellers.forEach(sName => {
+                        let sellerProdCount = allProducts.filter(p => p.seller && p.seller.toLowerCase() === sName.toLowerCase()).length;
+                        html += `<tr>
+                            <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(sName)}')">${escapeHtml(sName)}</span></td>
+                            <td>${sellerProdCount} Active Items</td>
+                            <td><span style="color:#00ff66;">Active / Online</span></td>
+                            <td><button class="btn-delete" onclick="revokeSeller('${escapeHtml(sName)}')">Revoke / Remove</button></td>
+                        </tr>`;
+                    });
+                    html += `</table>`;
+                }
+
                 content.innerHTML = html;
             } else if (['cc', 'dumps', 'fullz', 'identity', 'proxies', 'rdp'].includes(page)) {
                 let allProducts = [];
@@ -692,13 +736,13 @@
                 }
             } else if (page === 'refund') {
                 content.innerHTML = `
-                    <h2>Refund Policy & Privacy Notice</h2>
+                    <h2>Refund Policy & Security Notice</h2>
                     <div style="line-height: 1.6; font-size: 13px; color: #adb5bd;">
-                        <h3 style="color: #38b000; margin-top: 15px;">1. Refund & Replacement Policy</h3>
-                        <p>Due to the digital and sensitive nature of our assets, <b>all sales are final</b>. Refunds, account balance returns, or replacements are provided strictly if the asset is checked and reported invalid within <b>15 minutes</b> of purchase.</p>
+                        <h3 style="color: #38b000; margin-top: 15px;">1. Refund & Replacement Conditions</h3>
+                        <p>All sales depend on product listing terms. If an item is explicitly marked as <b>Refundable</b> and is checked and reported invalid within <b>15 minutes</b> of purchase, the buyer will receive a full refund or replacement. If an item is listed as <b>Non-Refundable</b>, no refunds or balance returns will be processed under any circumstances.</p>
                         
-                        <h3 style="color: #38b000; margin-top: 20px;">2. Privacy Notice & Zero-Logs Policy</h3>
-                        <p>We operate strictly on a Zero-Logs Policy. We do not store, track, or share your personal identities, IP addresses, or browsing activity on any backend servers.</p>
+                        <h3 style="color: #38b000; margin-top: 20px;">2. 3D Secure & 24/7 Fraud Monitoring</h3>
+                        <p>Our infrastructure operates with advanced <b>3D Secure</b> protection and active <b>24/7 Fraud Monitoring</b>. All transactions and gateway sessions are continuously scanned and monitored against unauthorized access and suspicious activities.</p>
                         
                         <h3 style="color: #38b000; margin-top: 20px;">3. Security & Liability</h3>
                         <p>Users are solely responsible for safeguarding their 36-character Private Key. Cards Zones Club will not be held liable for any loss of account access resulting from misplaced keys.</p>
@@ -1355,6 +1399,36 @@
             localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
             applications.splice(index, 1);
             localStorage.setItem('czc_seller_applications', JSON.stringify(applications));
+            alert(`Seller ${app.username} approved successfully!`);
+            switchPage('admin_panel');
+        }
+
+        function rejectSeller(index) {
+            let applications = [];
+            try { applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]'); } catch(e) {}
+            if(!applications[index]) return;
+            let rejectedApp = applications[index];
+            applications.splice(index, 1);
+            localStorage.setItem('czc_seller_applications', JSON.stringify(applications));
+            alert(`Seller application for ${rejectedApp.username} rejected.`);
+            switchPage('admin_panel');
+        }
+
+        function revokeSeller(sellerName) {
+            if (!confirm(`Are you sure you want to revoke seller privileges for ${sellerName}?`)) return;
+            let approvedSellers = [];
+            try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) {}
+            let filtered = approvedSellers.filter(s => s.toLowerCase() !== sellerName.toLowerCase());
+            localStorage.setItem('czc_approved_sellers', JSON.stringify(filtered));
+            alert(`Seller ${sellerName} privileges revoked.`);
+            switchPage('admin_panel');
+        }
+
+        function togglePortalStatus() {
+            let currentStatus = localStorage.getItem('czc_seller_app_open') !== 'false';
+            let newStatus = !currentStatus;
+            localStorage.setItem('czc_seller_app_open', newStatus);
+            alert(`Seller application portal is now ${newStatus ? 'OPEN' : 'CLOSED'}.`);
             switchPage('admin_panel');
         }
 
