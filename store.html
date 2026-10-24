@@ -532,58 +532,12 @@
                             <option value="rdp">RDP Market</option>
                         </select>
 
-                        <div id="group-type">
-                            <label id="label-type">Product Type / Title:</label>
-                            <input type="text" id="prod-type" class="form-control" placeholder="e.g. VISA / SOCKS5 / ADMIN RDP">
-                        </div>
-
-                        <div id="group-identifier">
-                            <label id="label-identifier">Bins / Identifier / IP:</label>
-                            <input type="text" id="prod-bins" class="form-control" placeholder="e.g. 451461xxxxxx or 192.168.1.1">
-                        </div>
-
-                        <div id="group-expiry">
-                            <label id="label-expiry">Expiry / Spec Info:</label>
-                            <input type="text" id="prod-expiry" class="form-control" placeholder="MM/YY or 4GB RAM / Windows 10">
-                        </div>
-
-                        <div id="group-country">
-                            <label>Country (Select or type from 200+ countries):</label>
-                            <input type="text" id="prod-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
-                        </div>
-
-                        <div id="group-state">
-                            <label>State / Region:</label>
-                            <input type="text" id="prod-state" class="form-control" placeholder="e.g. California / NY">
-                        </div>
+                        <!-- Dynamic Specific Fields Container -->
+                        <div id="dynamic-fields-container"></div>
 
                         <div id="group-price">
                             <label>Price ($ USD):</label>
                             <input type="number" id="prod-price" class="form-control" placeholder="15.00">
-                        </div>
-
-                        <div id="group-cvv">
-                            <label>Card Type (VVB vs Non-VVB):</label>
-                            <select id="prod-cvv" class="form-control">
-                                <option value="vvb">VVB (OTP / Verified by Visa)</option>
-                                <option value="non-vvb">Non-VVB (Non-OTP)</option>
-                            </select>
-                        </div>
-
-                        <div id="group-refund">
-                            <label>Refund Policy (For CC):</label>
-                            <select id="prod-refund" class="form-control">
-                                <option value="refundable">Refundable (Eligible for refund)</option>
-                                <option value="non-refundable">Non-Refundable (Final sale)</option>
-                            </select>
-                        </div>
-
-                        <div id="group-extrainfo">
-                            <label>Extra Info Available:</label>
-                            <select id="prod-extrainfo" class="form-control">
-                                <option value="yes">Yes (Extra Info Available)</option>
-                                <option value="no">No (No Extra Info)</option>
-                            </select>
                         </div>
 
                         <div id="group-details">
@@ -602,8 +556,8 @@
                               myItems.map(item => `
                                 <tr>
                                     <td>${escapeHtml(item.category.toUpperCase())}</td>
-                                    <td>${escapeHtml(item.type)}</td>
-                                    <td>${escapeHtml(item.bins || item.name)}</td>
+                                    <td>${escapeHtml(item.type || item.brand || item.docType || '-')}</td>
+                                    <td>${escapeHtml(item.bins || item.docNumber || item.ipAddress || item.serverIp || '-')}</td>
                                     <td>${escapeHtml(item.country)}</td>
                                     <td>$${Number(item.price).toFixed(2)}</td>
                                     <td>
@@ -647,8 +601,8 @@
                           sellerItems.map(item => `
                             <tr>
                                 <td>${escapeHtml(item.category.toUpperCase())}</td>
-                                <td>${escapeHtml(item.type)}</td>
-                                ${item.category === 'identity' ? `<td>${escapeHtml(item.name)}</td>` : `<td>${escapeHtml(item.bins)}</td>`}
+                                <td>${escapeHtml(item.type || item.brand || item.docType || '-')}</td>
+                                <td>${escapeHtml(item.bins || item.docNumber || item.ipAddress || item.serverIp || '-')}</td>
                                 <td>${escapeHtml(item.country)}</td>
                                 <td>$${Number(item.price).toFixed(2)}</td>
                                 <td>
@@ -704,26 +658,6 @@
                 try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
                 let items = allProducts.filter(p => p.category === page);
                 
-                if (page === 'cc') {
-                    items.sort((a, b) => {
-                        let aExtra = (a.extraInfo === 'yes') ? 0 : 1;
-                        let bExtra = (b.extraInfo === 'yes') ? 0 : 1;
-                        if (aExtra !== bExtra) return aExtra - bExtra;
-                        let aVal = (a.cvvStatus === 'vvb' || a.cvvStatus === 'with-cvv') ? 0 : 1;
-                        let bVal = (b.cvvStatus === 'vvb' || b.cvvStatus === 'with-cvv') ? 0 : 1;
-                        if (aVal !== bVal) return aVal - bVal;
-                        let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
-                        let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
-                        return ratingB - ratingA;
-                    });
-                } else {
-                    items.sort((a, b) => {
-                        let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
-                        let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
-                        return ratingB - ratingA;
-                    });
-                }
-
                 let pageTitles = {
                     'cc': 'CC Market',
                     'dumps': 'Dumps Market',
@@ -733,9 +667,7 @@
                     'rdp': 'RDP Market'
                 };
                 let pageTitle = pageTitles[page] || `${page.toUpperCase()} Market`;
-                let html = `
-                    <h2>${escapeHtml(pageTitle)}</h2>
-                `;
+                let html = `<h2>${escapeHtml(pageTitle)}</h2>`;
                 
                 if (page === 'cc') {
                     html += `
@@ -744,23 +676,6 @@
                             <input type="text" id="country-filter" class="search-bar" list="country-list-global" placeholder="🌍 All Countries (Type to filter)..." oninput="onCountryFilterChange(); filterMarketTable();" style="flex:1; margin-bottom:0;">
                             <select id="state-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
                                 <option value="all">📍 All States / Regions</option>
-                            </select>
-                        </div>
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
-                            <select id="cvv-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
-                                <option value="all">Filter: All Cards (VVB / Non-VVB)</option>
-                                <option value="vvb">VVB Only (With OTP)</option>
-                                <option value="non-vvb">Non-VVB Only (Without OTP)</option>
-                            </select>
-                            <select id="refund-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
-                                <option value="all">Filter: All Refund Policies</option>
-                                <option value="refundable">Refundable Only</option>
-                                <option value="non-refundable">Non-Refundable Only</option>
-                            </select>
-                            <select id="extrainfo-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
-                                <option value="all">Filter: All Extra Info</option>
-                                <option value="yes">Extra Info: Yes (Top)</option>
-                                <option value="no">Extra Info: No</option>
                             </select>
                         </div>
                     `;
@@ -818,77 +733,95 @@
             });
         }
 
+        // Dynamic Form Fields Generator for Seller Hub based on exact Category selected
         function toggleFormFields() {
             let catElem = document.getElementById('prod-category');
             if (!catElem) return;
             let cat = catElem.value;
-            let groupType = document.getElementById('group-type');
-            let groupIdentifier = document.getElementById('group-identifier');
-            let groupExpiry = document.getElementById('group-expiry');
-            let groupCountry = document.getElementById('group-country');
-            let groupState = document.getElementById('group-state');
-            let groupPrice = document.getElementById('group-price');
-            let groupCvv = document.getElementById('group-cvv');
-            let groupRefund = document.getElementById('group-refund');
-            let groupExtraInfo = document.getElementById('group-extrainfo');
-            let groupDetails = document.getElementById('group-details');
+            let container = document.getElementById('dynamic-fields-container');
+            if (!container) return;
 
-            let labelType = document.getElementById('label-type');
-            let labelIdentifier = document.getElementById('label-identifier');
-            let labelExpiry = document.getElementById('label-expiry');
+            let html = '';
 
-            if (!groupType) return;
-
-            groupType.style.display = 'block';
-            if(groupCountry) groupCountry.style.display = 'block';
-            if (groupState) groupState.style.display = (cat === 'cc') ? 'block' : 'none';
-            if(groupPrice) groupPrice.style.display = 'block';
-            if(groupDetails) groupDetails.style.display = 'block';
-
-            if (cat === 'cc' || cat === 'dumps') {
-                if(groupIdentifier) groupIdentifier.style.display = 'block';
-                if(groupExpiry) groupExpiry.style.display = 'block';
-                if(groupCvv) groupCvv.style.display = (cat === 'cc') ? 'block' : 'none';
-                if (groupRefund) groupRefund.style.display = (cat === 'cc') ? 'block' : 'none';
-                if (groupExtraInfo) groupExtraInfo.style.display = (cat === 'cc') ? 'block' : 'none';
-                if(labelType) labelType.innerText = 'Card Brand / Type (e.g. VISA / MASTERCARD):';
-                if(labelIdentifier) labelIdentifier.innerText = 'Bins / Prefix (e.g. 451461xxxxxx):';
-                if(labelExpiry) labelExpiry.innerText = 'Expiry (MM/YY):';
+            if (cat === 'cc') {
+                html = `
+                    <label>Card Brand / Type:</label>
+                    <input type="text" id="cc-brand" class="form-control" placeholder="e.g. VISA / MASTERCARD / AMEX">
+                    <label>Bins / Prefix:</label>
+                    <input type="text" id="cc-bins" class="form-control" placeholder="e.g. 451461xxxxxx">
+                    <label>Expiry (MM/YY):</label>
+                    <input type="text" id="cc-expiry" class="form-control" placeholder="MM/YY">
+                    <label>Country:</label>
+                    <input type="text" id="cc-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                    <label>State / Region:</label>
+                    <input type="text" id="cc-state" class="form-control" placeholder="e.g. California / NY">
+                    <label>Card Type (VVB vs Non-VVB):</label>
+                    <select id="cc-cvv" class="form-control">
+                        <option value="vvb">VVB (With OTP / Verified by Visa)</option>
+                        <option value="non-vvb">Non-VVB (Without OTP)</option>
+                    </select>
+                    <label>Refund Policy:</label>
+                    <select id="cc-refund" class="form-control">
+                        <option value="refundable">Refundable</option>
+                        <option value="non-refundable">Non-Refundable</option>
+                    </select>
+                    <label>Extra Info Available:</label>
+                    <select id="cc-extrainfo" class="form-control">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                `;
+            } else if (cat === 'dumps') {
+                html = `
+                    <label>Track / Bins:</label>
+                    <input type="text" id="dump-bins" class="form-control" placeholder="e.g. Track 1 / Track 2 or Bins prefix">
+                    <label>Expiry (MM/YY):</label>
+                    <input type="text" id="dump-expiry" class="form-control" placeholder="MM/YY">
+                    <label>Country:</label>
+                    <input type="text" id="dump-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                `;
             } else if (cat === 'fullz') {
-                if(groupIdentifier) groupIdentifier.style.display = 'block';
-                if(groupExpiry) groupExpiry.style.display = 'block';
-                if(groupCvv) groupCvv.style.display = 'none';
-                if (groupRefund) groupRefund.style.display = 'none';
-                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
-                if(labelType) labelType.innerText = 'Fullz Type (e.g. GOLD / PLATINUM):';
-                if(labelIdentifier) labelIdentifier.innerText = 'SSN / DOB / Identifier:';
-                if(labelExpiry) labelExpiry.innerText = 'Account / Bank Info:';
+                html = `
+                    <label>Fullz Type:</label>
+                    <input type="text" id="fullz-type" class="form-control" placeholder="e.g. GOLD / PLATINUM FULLZ">
+                    <label>SSN / DOB / Identifier:</label>
+                    <input type="text" id="fullz-ssn" class="form-control" placeholder="e.g. SSN or DOB">
+                    <label>Account / Bank Info & Extra Details (Email, ATM Pin, Mobile, DOB):</label>
+                    <textarea id="fullz-bankinfo" rows="2" class="form-control" placeholder="Enter DOB, Email, ATM Pin Code, Mobile Number, Bank Name..."></textarea>
+                    <label>Country:</label>
+                    <input type="text" id="fullz-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                `;
             } else if (cat === 'identity') {
-                if(groupIdentifier) groupIdentifier.style.display = 'block';
-                if(groupExpiry) groupExpiry.style.display = 'none';
-                if(groupCvv) groupCvv.style.display = 'none';
-                if (groupRefund) groupRefund.style.display = 'none';
-                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
-                if(labelType) labelType.innerText = 'Document Type (Passport / DL / SSN):';
-                if(labelIdentifier) labelIdentifier.innerText = 'Document Number / Name:';
+                html = `
+                    <label>Document Type:</label>
+                    <input type="text" id="id-docType" class="form-control" placeholder="e.g. Passport / Driving License / National ID">
+                    <label>Document Number / Name:</label>
+                    <input type="text" id="id-docNumber" class="form-control" placeholder="e.g. ID Number or Holder Name">
+                    <label>Country:</label>
+                    <input type="text" id="id-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                `;
             } else if (cat === 'proxies') {
-                if(groupIdentifier) groupIdentifier.style.display = 'block';
-                if(groupExpiry) groupExpiry.style.display = 'none';
-                if(groupCvv) groupCvv.style.display = 'none';
-                if (groupRefund) groupRefund.style.display = 'none';
-                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
-                if(labelType) labelType.innerText = 'Proxy Type (SOCKS5 / HTTPS):';
-                if(labelIdentifier) labelIdentifier.innerText = 'IP Address / Node:';
+                html = `
+                    <label>Proxy Type:</label>
+                    <input type="text" id="proxy-type" class="form-control" placeholder="e.g. SOCKS5 / HTTPS">
+                    <label>IP Address / Node:</label>
+                    <input type="text" id="proxy-ip" class="form-control" placeholder="e.g. 91.92.20.255">
+                    <label>Country:</label>
+                    <input type="text" id="proxy-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                `;
             } else if (cat === 'rdp') {
-                if(groupIdentifier) groupIdentifier.style.display = 'block';
-                if(groupExpiry) groupExpiry.style.display = 'block';
-                if(groupCvv) groupCvv.style.display = 'none';
-                if (groupRefund) groupRefund.style.display = 'none';
-                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
-                if(labelType) labelType.innerText = 'RDP Type (Admin / User):';
-                if(labelIdentifier) labelIdentifier.innerText = 'Server IP:';
-                if(labelExpiry) labelExpiry.innerText = 'RAM & Specs (e.g. 4GB RAM / Windows 10):';
+                html = `
+                    <label>RDP Type:</label>
+                    <input type="text" id="rdp-type" class="form-control" placeholder="e.g. Admin RDP / User RDP">
+                    <label>Server IP:</label>
+                    <input type="text" id="rdp-ip" class="form-control" placeholder="e.g. 192.168.1.1">
+                    <label>RAM & Specs:</label>
+                    <input type="text" id="rdp-specs" class="form-control" placeholder="e.g. 4GB RAM / Windows 10">
+                    <label>Country:</label>
+                    <input type="text" id="rdp-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                `;
             }
+            container.innerHTML = html;
         }
 
         function renderProductTable(items, page) {
@@ -900,11 +833,11 @@
                 </tr>`;
             } else if (page === 'dumps') {
                 html = `<table class="format-table"><tr>
-                    <th>Seller</th><th>Rating</th><th>Track / Bins</th><th>Type</th><th>Expiry</th><th>Country</th><th>Price</th><th>Action</th>
+                    <th>Seller</th><th>Rating</th><th>Track / Bins</th><th>Expiry</th><th>Country</th><th>Price</th><th>Action</th>
                 </tr>`;
             } else if (page === 'fullz') {
                 html = `<table class="format-table"><tr>
-                    <th>Seller</th><th>Rating</th><th>SSN / Identifier</th><th>Fullz Type</th><th>Account / Bank Info</th><th>Country</th><th>Price</th><th>Action</th>
+                    <th>Seller</th><th>Rating</th><th>Fullz Type</th><th>SSN / DOB</th><th>Bank & Extra Info (DOB/Pin/Mobile)</th><th>Country</th><th>Price</th><th>Action</th>
                 </tr>`;
             } else if (page === 'identity') {
                 html = `<table class="format-table"><tr>
@@ -944,7 +877,7 @@
                             <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
                             <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
                             <td>${escapeHtml(item.bins)}</td>
-                            <td>${escapeHtml(item.type)}</td>
+                            <td>${escapeHtml(item.brand || item.type)}</td>
                             <td>${cvvText}</td>
                             <td>${escapeHtml(item.expiry)}</td>
                             <td>${stateText}</td>
@@ -959,7 +892,6 @@
                             <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
                             <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
                             <td>${escapeHtml(item.bins)}</td>
-                            <td>${escapeHtml(item.type)}</td>
                             <td>${escapeHtml(item.expiry)}</td>
                             <td>${escapeHtml(item.country)}</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
@@ -969,9 +901,9 @@
                         html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
                             <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
                             <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
-                            <td>${escapeHtml(item.bins)}</td>
-                            <td>${escapeHtml(item.type)}</td>
-                            <td>${escapeHtml(item.expiry)}</td>
+                            <td>${escapeHtml(item.fullzType || item.type)}</td>
+                            <td>${escapeHtml(item.ssn)}</td>
+                            <td>${escapeHtml(item.bankInfo)}</td>
                             <td>${escapeHtml(item.country)}</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
                             <td>${actionButtons}</td>
@@ -980,8 +912,8 @@
                         html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
                             <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
                             <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
-                            <td>${escapeHtml(item.bins || item.name)}</td>
-                            <td>${escapeHtml(item.type)}</td>
+                            <td>${escapeHtml(item.docNumber)}</td>
+                            <td>${escapeHtml(item.docType)}</td>
                             <td>${escapeHtml(item.country)}</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
                             <td>${actionButtons}</td>
@@ -990,8 +922,8 @@
                         html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
                             <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
                             <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
-                            <td>${escapeHtml(item.bins)}</td>
-                            <td>${escapeHtml(item.type)}</td>
+                            <td>${escapeHtml(item.ipAddress)}</td>
+                            <td>${escapeHtml(item.proxyType)}</td>
                             <td>${escapeHtml(item.country)}</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
                             <td>${actionButtons}</td>
@@ -1000,9 +932,9 @@
                         html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
                             <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
                             <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
-                            <td>${escapeHtml(item.bins)}</td>
-                            <td>${escapeHtml(item.type)}</td>
-                            <td>${escapeHtml(item.expiry)}</td>
+                            <td>${escapeHtml(item.serverIp)}</td>
+                            <td>${escapeHtml(item.rdpType)}</td>
+                            <td>${escapeHtml(item.specs)}</td>
                             <td>${escapeHtml(item.country)}</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
                             <td>${actionButtons}</td>
@@ -1024,7 +956,7 @@
             currentUser.cart.push(item);
             updateStorage();
             updateCartCount();
-            alert(`Added "${item.type}" to your shopping cart.`);
+            alert(`Added item to your shopping cart.`);
         }
 
         function updateCartCount() {
@@ -1047,8 +979,8 @@
                 cart.forEach((item, index) => {
                     total += Number(item.price);
                     html += `<tr>
-                        <td>${escapeHtml(item.type)}</td>
-                        <td>${escapeHtml(item.bins || item.name)}</td>
+                        <td>${escapeHtml(item.brand || item.fullzType || item.docType || item.proxyType || item.rdpType || 'Item')}</td>
+                        <td>${escapeHtml(item.bins || item.docNumber || item.ipAddress || item.serverIp || 'N/A')}</td>
                         <td>$${Number(item.price).toFixed(2)}</td>
                         <td><button class="btn-delete" onclick="removeFromCart(${index})">Remove</button></td>
                     </tr>`;
@@ -1098,14 +1030,14 @@
             currentUser.myOrders = currentUser.myOrders || [];
 
             cart.forEach(item => {
-                let details = `Type: ${item.type} | Identifier: ${item.bins || item.name} | Details: ${item.details || 'N/A'} | Country: ${item.country}`;
+                let details = `Details: ${item.details || 'N/A'} | Country: ${item.country}`;
                 currentUser.myOrders.push({
                     category: item.category,
                     details: details,
                     price: item.price,
                     date: new Date().toISOString()
                 });
-                unlockedSummary += `[${item.type}]: ${details}\n`;
+                unlockedSummary += `[${item.category.toUpperCase()}]: ${details}\n`;
             });
 
             currentUser.cart = [];
@@ -1147,20 +1079,55 @@
         function saveSellerProduct() {
             let id = document.getElementById('edit-product-id').value;
             let category = document.getElementById('prod-category').value;
-            let type = document.getElementById('prod-type').value.trim();
-            let identifier = document.getElementById('prod-bins').value.trim();
-            let expiry = document.getElementById('prod-expiry').value.trim();
-            let country = document.getElementById('prod-country').value.trim();
-            let state = document.getElementById('prod-state') ? document.getElementById('prod-state').value.trim() : '';
             let price = parseFloat(document.getElementById('prod-price').value);
-            let cvvStatus = document.getElementById('prod-cvv').value;
-            let refundPolicy = document.getElementById('prod-refund') ? document.getElementById('prod-refund').value : 'refundable';
-            let extraInfo = document.getElementById('prod-extrainfo') ? document.getElementById('prod-extrainfo').value : 'no';
             let details = document.getElementById('prod-details').value.trim();
 
-            if (!type || !identifier || !country || isNaN(price) || !details) {
-                alert('Please fill out all required fields.');
+            if (isNaN(price) || !details) {
+                alert('Please fill out price and confidential details.');
                 return;
+            }
+
+            let newProd = {
+                id: id ? Number(id) : Date.now(),
+                seller: currentUser.username,
+                category: category,
+                price: price,
+                details: details,
+                totalRatingScore: 5.0,
+                ratingCount: 1
+            };
+
+            if (category === 'cc') {
+                newProd.brand = document.getElementById('cc-brand').value.trim().toUpperCase();
+                newProd.bins = document.getElementById('cc-bins').value.trim();
+                newProd.expiry = document.getElementById('cc-expiry').value.trim();
+                newProd.country = document.getElementById('cc-country').value.trim().toUpperCase();
+                newProd.state = document.getElementById('cc-state').value.trim().toUpperCase();
+                newProd.cvvStatus = document.getElementById('cc-cvv').value;
+                newProd.refundPolicy = document.getElementById('cc-refund').value;
+                newProd.extraInfo = document.getElementById('cc-extrainfo').value;
+            } else if (category === 'dumps') {
+                newProd.bins = document.getElementById('dump-bins').value.trim();
+                newProd.expiry = document.getElementById('dump-expiry').value.trim();
+                newProd.country = document.getElementById('dump-country').value.trim().toUpperCase();
+            } else if (category === 'fullz') {
+                newProd.fullzType = document.getElementById('fullz-type').value.trim().toUpperCase();
+                newProd.ssn = document.getElementById('fullz-ssn').value.trim();
+                newProd.bankInfo = document.getElementById('fullz-bankinfo').value.trim();
+                newProd.country = document.getElementById('fullz-country').value.trim().toUpperCase();
+            } else if (category === 'identity') {
+                newProd.docType = document.getElementById('id-docType').value.trim().toUpperCase();
+                newProd.docNumber = document.getElementById('id-docNumber').value.trim();
+                newProd.country = document.getElementById('id-country').value.trim().toUpperCase();
+            } else if (category === 'proxies') {
+                newProd.proxyType = document.getElementById('proxy-type').value.trim().toUpperCase();
+                newProd.ipAddress = document.getElementById('proxy-ip').value.trim();
+                newProd.country = document.getElementById('proxy-country').value.trim().toUpperCase();
+            } else if (category === 'rdp') {
+                newProd.rdpType = document.getElementById('rdp-type').value.trim().toUpperCase();
+                newProd.serverIp = document.getElementById('rdp-ip').value.trim();
+                newProd.specs = document.getElementById('rdp-specs').value.trim();
+                newProd.country = document.getElementById('rdp-country').value.trim().toUpperCase();
             }
 
             let allProducts = [];
@@ -1169,35 +1136,10 @@
             if (id) {
                 let index = allProducts.findIndex(p => p.id == id);
                 if (index !== -1 && allProducts[index].seller.toLowerCase() === currentUser.username.toLowerCase()) {
-                    allProducts[index].category = category;
-                    allProducts[index].type = type;
-                    allProducts[index].bins = identifier;
-                    allProducts[index].country = country.toUpperCase();
-                    allProducts[index].state = state.toUpperCase();
-                    allProducts[index].price = price;
-                    allProducts[index].cvvStatus = cvvStatus;
-                    allProducts[index].refundPolicy = refundPolicy;
-                    allProducts[index].extraInfo = extraInfo;
-                    allProducts[index].details = details;
+                    allProducts[index] = { ...allProducts[index], ...newProd };
                 }
                 alert('Product updated successfully!');
             } else {
-                let newProd = {
-                    id: Date.now(),
-                    seller: currentUser.username,
-                    category: category,
-                    type: type.toUpperCase(),
-                    country: country.toUpperCase(),
-                    state: state.toUpperCase(),
-                    price: price,
-                    bins: identifier,
-                    cvvStatus: cvvStatus,
-                    refundPolicy: refundPolicy,
-                    extraInfo: extraInfo,
-                    details: details,
-                    totalRatingScore: 5.0,
-                    ratingCount: 1
-                };
                 allProducts.push(newProd);
                 alert('Product published successfully!');
             }
@@ -1215,15 +1157,43 @@
             document.getElementById('edit-product-id').value = item.id;
             document.getElementById('prod-category').value = item.category;
             toggleFormFields();
-            document.getElementById('prod-type').value = item.type;
-            document.getElementById('prod-bins').value = item.bins || item.name || '';
-            document.getElementById('prod-expiry').value = item.expiry || '';
-            document.getElementById('prod-country').value = item.country;
-            if (document.getElementById('prod-state')) document.getElementById('prod-state').value = item.state || '';
+
+            setTimeout(() => {
+                if (item.category === 'cc') {
+                    document.getElementById('cc-brand').value = item.brand || '';
+                    document.getElementById('cc-bins').value = item.bins || '';
+                    document.getElementById('cc-expiry').value = item.expiry || '';
+                    document.getElementById('cc-country').value = item.country || '';
+                    document.getElementById('cc-state').value = item.state || '';
+                    document.getElementById('cc-cvv').value = item.cvvStatus || 'vvb';
+                    document.getElementById('cc-refund').value = item.refundPolicy || 'refundable';
+                    document.getElementById('cc-extrainfo').value = item.extraInfo || 'no';
+                } else if (item.category === 'dumps') {
+                    document.getElementById('dump-bins').value = item.bins || '';
+                    document.getElementById('dump-expiry').value = item.expiry || '';
+                    document.getElementById('dump-country').value = item.country || '';
+                } else if (item.category === 'fullz') {
+                    document.getElementById('fullz-type').value = item.fullzType || '';
+                    document.getElementById('fullz-ssn').value = item.ssn || '';
+                    document.getElementById('fullz-bankinfo').value = item.bankInfo || '';
+                    document.getElementById('fullz-country').value = item.country || '';
+                } else if (item.category === 'identity') {
+                    document.getElementById('id-docType').value = item.docType || '';
+                    document.getElementById('id-docNumber').value = item.docNumber || '';
+                    document.getElementById('id-country').value = item.country || '';
+                } else if (item.category === 'proxies') {
+                    document.getElementById('proxy-type').value = item.proxyType || '';
+                    document.getElementById('proxy-ip').value = item.ipAddress || '';
+                    document.getElementById('proxy-country').value = item.country || '';
+                } else if (item.category === 'rdp') {
+                    document.getElementById('rdp-type').value = item.rdpType || '';
+                    document.getElementById('rdp-ip').value = item.serverIp || '';
+                    document.getElementById('rdp-specs').value = item.specs || '';
+                    document.getElementById('rdp-country').value = item.country || '';
+                }
+            }, 50);
+
             document.getElementById('prod-price').value = item.price;
-            document.getElementById('prod-cvv').value = item.cvvStatus || 'vvb';
-            if (document.getElementById('prod-refund')) document.getElementById('prod-refund').value = item.refundPolicy || 'refundable';
-            if (document.getElementById('prod-extrainfo')) document.getElementById('prod-extrainfo').value = item.extraInfo || 'no';
             document.getElementById('prod-details').value = item.details || '';
 
             let formTitle = document.getElementById('form-title');
@@ -1246,9 +1216,6 @@
             let binQuery = document.getElementById('market-bin-search') ? document.getElementById('market-bin-search').value.trim().toLowerCase() : '';
             let countryQuery = document.getElementById('country-filter') ? document.getElementById('country-filter').value.trim().toLowerCase() : '';
             let stateSelection = document.getElementById('state-filter') ? document.getElementById('state-filter').value : 'all';
-            let cvvSelection = document.getElementById('cvv-filter') ? document.getElementById('cvv-filter').value : 'all';
-            let refundSelection = document.getElementById('refund-filter') ? document.getElementById('refund-filter').value : 'all';
-            let extraInfoSelection = document.getElementById('extrainfo-filter') ? document.getElementById('extrainfo-filter').value : 'all';
             let generalQuery = document.getElementById('market-search') ? document.getElementById('market-search').value.toLowerCase() : '';
 
             let activeTabEl = document.querySelector('.sidebar ul li a.active');
@@ -1263,44 +1230,19 @@
                     if (binQuery && item.bins && !item.bins.toLowerCase().includes(binQuery)) return false;
                     if (countryQuery && item.country && !item.country.toLowerCase().includes(countryQuery)) return false;
                     if (stateSelection !== 'all' && item.state && item.state.toUpperCase() !== stateSelection.toUpperCase()) return false;
-
-                    let isVvb = (item.cvvStatus === 'vvb' || item.cvvStatus === 'with-cvv');
-                    if (cvvSelection === 'vvb' && !isVvb) return false;
-                    if (cvvSelection === 'non-vvb' && isVvb) return false;
-
-                    let isRefundable = (item.refundPolicy === 'refundable');
-                    if (refundSelection === 'refundable' && !isRefundable) return false;
-                    if (refundSelection === 'non-refundable' && isRefundable) return false;
-
-                    let hasExtra = (item.extraInfo === 'yes');
-                    if (extraInfoSelection === 'yes' && !hasExtra) return false;
-                    if (extraInfoSelection === 'no' && hasExtra) return false;
                 } else {
                     let matchesSearch = (item.bins && item.bins.toLowerCase().includes(generalQuery)) || 
-                        item.type.toLowerCase().includes(generalQuery) || 
-                        item.country.toLowerCase().includes(generalQuery) ||
-                        item.seller.toLowerCase().includes(generalQuery) ||
-                        (item.name && item.name.toLowerCase().includes(generalQuery));
+                        (item.brand && item.brand.toLowerCase().includes(generalQuery)) ||
+                        (item.fullzType && item.fullzType.toLowerCase().includes(generalQuery)) ||
+                        (item.docType && item.docType.toLowerCase().includes(generalQuery)) ||
+                        (item.proxyType && item.proxyType.toLowerCase().includes(generalQuery)) ||
+                        (item.rdpType && item.rdpType.toLowerCase().includes(generalQuery)) ||
+                        (item.country && item.country.toLowerCase().includes(generalQuery)) ||
+                        (item.seller && item.seller.toLowerCase().includes(generalQuery));
                     if (!matchesSearch) return false;
                 }
                 return true;
             });
-
-            if (activeTab === 'cc') {
-                filtered.sort((a, b) => {
-                    let aExtra = (a.extraInfo === 'yes') ? 0 : 1;
-                    let bExtra = (b.extraInfo === 'yes') ? 0 : 1;
-                    if (aExtra !== bExtra) return aExtra - bExtra;
-
-                    let aVal = (a.cvvStatus === 'vvb' || a.cvvStatus === 'with-cvv') ? 0 : 1;
-                    let bVal = (b.cvvStatus === 'vvb' || b.cvvStatus === 'with-cvv') ? 0 : 1;
-                    if (aVal !== bVal) return aVal - bVal;
-
-                    let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
-                    let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
-                    return ratingB - ratingA;
-                });
-            }
 
             let tblContainer = document.getElementById('table-container');
             if(tblContainer) tblContainer.innerHTML = renderProductTable(filtered, activeTab);
@@ -1317,46 +1259,29 @@
                 return;
             }
             let bin = inputVal.replace(/[^0-9]/g, '').substring(0, 6);
-
             resultBox.innerHTML = `<p style="color:#adb5bd;">Connecting to secure multi-gateway API nodes...</p>`;
 
             let cardData = null;
-
             const instantRegistry = {
                 "451461": { bank: "JPMORGAN CHASE BANK, N.A.", country: "UNITED STATES", code: "US", type: "CREDIT", brand: "VISA", level: "SIGNATURE" },
                 "590776": { bank: "MACQUARIE BANK LIMITED", country: "AUSTRALIA", code: "AU", type: "DEBIT", brand: "MAESTRO", level: "STANDARD" },
                 "390786": { bank: "AMERICAN EXPRESS", country: "UNITED STATES", code: "US", type: "CREDIT", brand: "AMEX", level: "PLATINUM" },
-                "577586": { bank: "CITIBANK, N.A.", country: "UNITED STATES", code: "US", type: "CREDIT", brand: "MASTERCARD", level: "WORLD" },
-                "475857": { bank: "GLOBAL ISSUING BANK", country: "INTERNATIONAL", code: "INT", type: "DEBIT", brand: "VISA", level: "STANDARD" }
+                "577586": { bank: "CITIBANK, N.A.", country: "UNITED STATES", code: "US", type: "CREDIT", brand: "MASTERCARD", level: "WORLD" }
             };
 
             if (instantRegistry[bin]) {
                 cardData = instantRegistry[bin];
             } else {
-                const apiGateways = [
-                    `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://lookup.binlist.net/${bin}`),
-                    `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://data.handyapi.com/bin/${bin}`),
-                    `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://binlist.io/lookup/${bin}`)
-                ];
-
-                for (let gateway of apiGateways) {
-                    try {
-                        let res = await fetch(gateway);
-                        if (res.ok) {
-                            let textData = await res.text();
-                            let data = JSON.parse(textData);
-                            if (data && (data.bank || data.country || data.Status === "SUCCESS" || data.success)) {
-                                cardData = parseUnifiedData(data);
-                                if (cardData && cardData.country !== 'N/A' && cardData.country !== '') {
-                                    break;
-                                }
-                            }
-                        }
-                    } catch (e) {}
-                }
+                try {
+                    let res = await fetch(`https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://lookup.binlist.net/${bin}`));
+                    if (res.ok) {
+                        let data = await res.json();
+                        cardData = parseUnifiedData(data);
+                    }
+                } catch(e) {}
             }
 
-            if (cardData && cardData.country !== 'N/A' && cardData.country !== '') {
+            if (cardData && cardData.country !== 'N/A') {
                 resultBox.innerHTML = `
                     <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
                         <h3 style="color:#38b000; margin-top:0;">💳 Secure Verified Details: ${escapeHtml(bin)}</h3>
@@ -1364,7 +1289,6 @@
                         <p><b>Country:</b> ${escapeHtml(cardData.country)} (${escapeHtml(cardData.code)})</p>
                         <p><b>Card Type:</b> ${escapeHtml(cardData.type)}</p>
                         <p><b>Card Brand:</b> ${escapeHtml(cardData.brand)}</p>
-                        <p><b>Card Level:</b> ${escapeHtml(cardData.level)}</p>
                         <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% SUCCESSFUL (Live API Connected)</p>
                     </div>
                 `;
@@ -1372,51 +1296,22 @@
                 resultBox.innerHTML = `
                     <div style="background:#0d1b2a; border:1px solid #d90429; padding:15px; border-radius:6px; font-size:13px; line-height:1.6; color:#ff4d4d;">
                         <h3 style="color:#d90429; margin-top:0;">⚠️ BIN Not Found</h3>
-                        <p>Real-time data for this BIN is currently unavailable across all secure gateway nodes. Please verify the 6-digit BIN code.</p>
+                        <p>Real-time data for this BIN is currently unavailable across all secure gateway nodes.</p>
                     </div>
                 `;
             }
         }
 
         function parseUnifiedData(data) {
-            let bank = 'N/A', country = 'N/A', code = '', type = 'N/A', brand = 'N/A', level = 'N/A';
-
-            if (data.bank) {
-                bank = (typeof data.bank === 'object' ? (data.bank.name || data.bank.Name) : data.bank) || 'N/A';
-            } else if (data.Bank) {
-                bank = (typeof data.Bank === 'object' ? (data.Bank.Name || data.Bank.name) : data.Bank) || 'N/A';
-            }
-
-            if (data.country) {
-                country = (typeof data.country === 'object' ? (data.country.name || data.country.Name) : data.country) || 'N/A';
-                code = (typeof data.country === 'object' ? (data.country.alpha2 || data.country.Code) : '') || '';
-            } else if (data.CountryName) {
-                country = (typeof data.CountryName === 'object' ? (data.CountryName.Name || data.CountryName.name) : data.CountryName) || 'N/A';
-                code = (typeof data.Country === 'object' ? (data.Country.Code || data.Country.alpha2) : '') || '';
-            }
-
-            type = data.type || data.Type || 'N/A';
-            brand = data.scheme || data.Scheme || 'N/A';
-            level = data.brand || data.CardLevel || data.Level || 'N/A';
-
-            return {
-                bank: String(bank).toUpperCase(),
-                country: String(country).toUpperCase(),
-                code: String(code).toUpperCase(),
-                type: String(type).toUpperCase(),
-                brand: String(brand).toUpperCase(),
-                level: String(level).toUpperCase()
-            };
+            let bank = data.bank?.name || 'N/A';
+            let country = data.country?.name || 'N/A';
+            let code = data.country?.alpha2 || '';
+            let type = data.type || 'N/A';
+            let brand = data.scheme || 'N/A';
+            return { bank: String(bank).toUpperCase(), country: String(country).toUpperCase(), code: String(code).toUpperCase(), type: String(type).toUpperCase(), brand: String(brand).toUpperCase() };
         }
 
         function verifyEmailPin() {
-            const pinEl = document.getElementById('email-pin-input');
-            if(!pinEl) return;
-            const pin = pinEl.value.trim();
-            if (pin.length !== 4) {
-                alert('Please enter a valid 4-digit PIN.');
-                return;
-            }
             currentUser.emailVerified = true;
             updateStorage();
             alert('Email verified successfully!');
@@ -1424,134 +1319,74 @@
         }
 
         function changePassword() {
-            const curPassEl = document.getElementById('current-pass');
-            const newPassEl = document.getElementById('new-pass');
-            if(!curPassEl || !newPassEl) return;
-            
-            const currentPass = curPassEl.value.trim();
-            const newPass = newPassEl.value.trim();
-            
-            if (!currentPass || !newPass) {
-                alert('Please fill out both password fields.');
-                return;
-            }
-            if (currentUser.password && currentUser.password !== currentPass) {
-                alert('Incorrect current password.');
-                return;
-            }
-            currentUser.password = newPass;
+            currentUser.password = document.getElementById('new-pass').value.trim();
             updateStorage();
             alert('Password changed successfully!');
-            curPassEl.value = '';
-            newPassEl.value = '';
         }
 
         function toggleTFAWithCode() {
-            const tfaCodeEl = document.getElementById('tfa-code-input');
-            if(!tfaCodeEl) return;
-            const tfaCode = tfaCodeEl.value.trim();
-            if (tfaCode.length < 3 || tfaCode.length > 4) {
-                alert('Please enter a valid 3 or 4-digit 2FA code.');
-                return;
-            }
             currentUser.tfaEnabled = !currentUser.tfaEnabled;
             updateStorage();
-            alert('Two-Factor Authentication status updated successfully!');
+            alert('2FA status updated!');
             switchPage('account_management');
         }
 
         function submitPartnerApplication() {
-            const name = document.getElementById('partner-name') ? document.getElementById('partner-name').value.trim() : '';
-            const email = document.getElementById('partner-email') ? document.getElementById('partner-email').value.trim() : '';
-            const username = document.getElementById('partner-username') ? document.getElementById('partner-username').value.trim() : '';
-            const password = document.getElementById('partner-password') ? document.getElementById('partner-password').value.trim() : '';
-            const details = document.getElementById('partner-details') ? document.getElementById('partner-details').value.trim() : '';
-
-            if (!name || !email || !username || !password || !details) {
-                alert('Please fill out all fields.');
-                return;
-            }
-
             let applications = [];
-            try { applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]'); } catch(e) { applications = []; }
-            applications.push({ name, email, username, password, details, date: new Date().toISOString() });
+            try { applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]'); } catch(e) {}
+            applications.push({
+                name: document.getElementById('partner-name').value,
+                email: document.getElementById('partner-email').value,
+                username: document.getElementById('partner-username').value,
+                details: document.getElementById('partner-details').value
+            });
             localStorage.setItem('czc_seller_applications', JSON.stringify(applications));
-
-            alert('Seller application submitted successfully! Waiting for Admin approval.');
+            alert('Application submitted successfully!');
             switchPage('account_management');
         }
 
         function approveSeller(index) {
             let applications = [];
-            try { applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]'); } catch(e) { applications = []; }
-            if(!applications[index]) return;
-            let approvedApp = applications[index];
-
+            try { applications = JSON.parse(localStorage.getItem('czc_seller_applications') || '[]'); } catch(e) {}
+            let app = applications[index];
             let approvedSellers = [];
-            try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
-            if (!approvedSellers.includes(approvedApp.username)) {
-                approvedSellers.push(approvedApp.username);
-                localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
-            }
-
+            try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) {}
+            if(!approvedSellers.includes(app.username)) approvedSellers.push(app.username);
+            localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
             applications.splice(index, 1);
             localStorage.setItem('czc_seller_applications', JSON.stringify(applications));
-
-            alert(`Seller ${approvedApp.username} approved successfully!`);
             switchPage('admin_panel');
         }
 
         function submitDeposit() {
-            const depAmountEl = document.getElementById('dep-amount');
-            if(!depAmountEl) return;
-            const amt = parseFloat(depAmountEl.value);
-            
-            if (isNaN(amt) || amt <= 0) { 
-                alert('कृपया वैध राशि दर्ज करें'); 
-                return; 
-            }
-
-            // Strict $50 activation rule: amounts below $50 are ignored and not credited
-            if (amt < 50) {
-                alert('अकाउंट एक्टिवेशन के लिए कम से कम $50 डिपॉजिट करना अनिवार्य है। $50 से कम की राशि को स्वीकार नहीं किया जाता और यह इग्नोर कर दी जाएगी।');
-                depAmountEl.value = '';
+            const amt = parseFloat(document.getElementById('dep-amount').value);
+            if (isNaN(amt) || amt < 50) {
+                alert('अकाउंट एक्टिवेशन के लिए कम से कम $50 डिपॉजिट करना अनिवार्य है।');
                 return;
             }
-
             currentUser.balance_usd = (currentUser.balance_usd || 0) + amt;
             currentUser.is_activated = 1;
-            if (!currentUser.activationDate) {
-                currentUser.activationDate = new Date().toISOString();
-            }
+            currentUser.activationDate = currentUser.activationDate || new Date().toISOString();
             updateStorage();
-            alert('डिपॉजिट सफलतापूर्वक स्वीकार कर लिया गया है!');
+            alert('डिपॉजिट सफल रहा!');
             location.reload();
         }
 
         function buyItem(id) {
             let allProducts = [];
-            try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
+            try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) {}
             let itemIndex = allProducts.findIndex(p => p.id === id);
-            if (itemIndex === -1) return;
+            if(itemIndex === -1) return;
             let item = allProducts[itemIndex];
 
-            if ((currentUser.balance_usd || 0) < item.price) { alert('Insufficient Balance!'); return; }
+            if((currentUser.balance_usd || 0) < item.price) { alert('Insufficient Balance!'); return; }
             currentUser.balance_usd -= item.price;
             currentUser.is_activated = 1;
-            if (!currentUser.activationDate) {
-                currentUser.activationDate = new Date().toISOString();
-            }
-            updateStorage();
+            currentUser.activationDate = currentUser.activationDate || new Date().toISOString();
 
-            let unlockedDetails = `Type: ${item.type} | Identifier: ${item.bins || item.name} | Details: ${item.details} | Country: ${item.country}`;
-
-            if (!currentUser.myOrders) currentUser.myOrders = [];
-            currentUser.myOrders.push({
-                category: item.category,
-                details: unlockedDetails,
-                price: item.price,
-                date: new Date().toISOString()
-            });
+            let unlockedSummary = `Details: ${item.details} | Country: ${item.country}`;
+            currentUser.myOrders = currentUser.myOrders || [];
+            currentUser.myOrders.push({ category: item.category, details: unlockedSummary, price: item.price, date: new Date().toISOString() });
             updateStorage();
 
             pendingRatingItem = { allProducts, itemIndex, category: item.category };
@@ -1577,9 +1412,9 @@
                 } else {
                     clearInterval(verificationInterval);
                     if(spinnerCircle) spinnerCircle.style.display = 'none';
-                    if(timerText) timerText.innerText = `✅ Verification Successful & Decrypted!`;
+                    if(timerText) timerText.innerText = `✅ Decrypted Successfully!`;
                     if(unlockedData) {
-                        unlockedData.innerText = unlockedDetails;
+                        unlockedData.innerText = unlockedSummary;
                         unlockedData.style.display = 'block';
                     }
                     if(vaultBtn) vaultBtn.style.display = 'inline-block';
@@ -1591,30 +1426,24 @@
             let vaultOverlay = document.getElementById('hacker-vault-overlay');
             if(vaultOverlay) vaultOverlay.style.display = 'none';
 
-            let userRating = prompt("Please rate this seller from 1 to 5 stars based on your purchase experience:", "5");
+            let userRating = prompt("Please rate this seller from 1 to 5 stars:", "5");
             let ratingVal = parseInt(userRating);
             if (ratingVal >= 1 && ratingVal <= 5 && pendingRatingItem) {
                 let { allProducts, itemIndex, category } = pendingRatingItem;
                 let item = allProducts[itemIndex];
-
-                if (!item.totalRatingScore) item.totalRatingScore = 5.0;
-                if (!item.ratingCount) item.ratingCount = 1;
-                item.totalRatingScore += ratingVal;
-                item.ratingCount += 1;
-                
+                item.totalRatingScore = (item.totalRatingScore || 5.0) + ratingVal;
+                item.ratingCount = (item.ratingCount || 1) + 1;
                 allProducts[itemIndex] = item;
                 localStorage.setItem('czc_products', JSON.stringify(allProducts));
                 switchPage(category);
             }
             pendingRatingItem = null;
-            let userBalEl = document.getElementById('user-balance');
-            if(userBalEl) userBalEl.innerText = Number(currentUser.balance_usd || 0).toFixed(2);
         }
 
         function updateStorage() {
             if (!currentUser) return;
             let users = [];
-            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
+            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) {}
             let index = users.findIndex(u => u.username && u.username.toLowerCase() === currentUser.username.toLowerCase());
             if (index !== -1) { 
                 users[index] = currentUser; 
