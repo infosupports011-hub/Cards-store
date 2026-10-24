@@ -21,7 +21,7 @@
         .header-left { display: flex; align-items: center; gap: 12px; }
         .menu-toggle { background: #1b263b; border: 1px solid #38b000; color: #38b000; font-size: 20px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: inline-block; }
 
-        .top-right-panel { display: flex; align-items: center; gap: 10px; font-size: 13px; flex-wrap: wrap; }
+        .top-right-panel { display: flex; align-items: center; gap: 12px; font-size: 13px; flex-wrap: wrap; margin-left: auto; }
         .balance-badge { background-color: #1b263b; border: 1px solid #38b000; color: #38b000; padding: 6px 12px; border-radius: 20px; font-weight: bold; }
         .user-info { font-size: 12px; color: #adb5bd; }
         
@@ -150,14 +150,14 @@
         </div>
     </div>
 
-    <!-- Realistic Secure Tunnel & VPN Verification Overlay -->
+    <!-- Realistic Secure Tunnel Verification Overlay -->
     <div id="hacker-vault-overlay">
         <div class="hacker-modal-content">
             <div style="margin-bottom:10px;">
                 <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#00ff66" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             </div>
-            <h2 style="color: #00ff66; margin-top:0; font-size:16px;" id="vault-title-heading">SECURE TUNNEL VERIFICATION</h2>
-            <p style="color: #adb5bd; font-size: 11px;" id="vault-desc-sub">Decrypting proxy handshake & verifying transaction nodes...</p>
+            <h2 id="vault-title-heading" style="color: #00ff66; margin-top:0; font-size:16px;">SECURE TUNNEL VERIFICATION</h2>
+            <p id="vault-desc-sub" style="color: #adb5bd; font-size: 11px;">Decrypting proxy handshake & verifying transaction nodes...</p>
             <div style="display:flex; justify-content:center; gap:8px; margin: 15px 0;">
                 <div class="mini-card-realistic amex"><span>AMEX</span><div class="card-chip"></div></div>
                 <div class="mini-card-realistic mc"><span>MC</span><div class="card-chip"></div></div>
@@ -181,7 +181,7 @@
             <li><a onclick="switchPage('card_checker')" id="nav-card_checker" style="color: #00ff66;">🖨️ Live BINs & Cards Checker</a></li>
             <li><a onclick="switchPage('cc')" id="nav-cc">💳 CC Market</a></li>
             <li><a onclick="switchPage('dumps')" id="nav-dumps">📋 Dumps Market</a></li>
-            <li><a onclick="switchPage('fullz')" id="nav-fullz">💾 Fullz Market</a></li>
+            <li><a onclick="switchPage('fullz')" id="nav-fullz">💳 Full CC Market</a></li>
             <li><a onclick="switchPage('identity')" id="nav-identity" style="color: #ffb703;">🆔 SSN & ID Market</a></li>
             <li><a onclick="switchPage('proxies')" id="nav-proxies" style="color: #00ff66;">🌐 Private Proxies</a></li>
             <li><a onclick="switchPage('rdp')" id="nav-rdp" style="color: #ffb703;">🖥️ RDP Market</a></li>
@@ -189,7 +189,7 @@
             <li><a onclick="switchPage('club_partners')" id="nav-club_partners" style="color: #ffb703;">⭐ Club Partners (Apply)</a></li>
             <li id="seller-hub-nav" style="display:none;"><a onclick="switchPage('seller_hub')" id="nav-seller_hub" style="color: #38b000;">⚡ Seller Hub (My Listings)</a></li>
             <li id="seller-messages-nav" style="display:none;"><a onclick="switchPage('seller_messages')" id="nav-seller_messages" style="color: #ffb703;">📬 Messages & Notifications</a></li>
-            <li id="admin-panel-nav" style="display:none;"><a onclick="switchPage('admin_panel')" id="nav-admin_panel" style="color: #ff00ff;">👑 Admin Requests</a></li>
+            <li id="admin-panel-nav" style="display:none;"><a onclick="switchPage('admin_panel')" id="nav-admin_panel" style="color: #ff00ff;">👑 Admin Panel</a></li>
             <li><a onclick="switchPage('refund')" id="nav-refund">Refund Policy & Security</a></li>
         </ul>
     </div>
@@ -200,6 +200,7 @@
                 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
                 <span>🏴‍☠️Cards Zones Club🏴‍☠️ - Dashboard</span>
             </div>
+            <!-- Balance & User Info moved strictly to Right Corner -->
             <div class="top-right-panel">
                 <button onclick="openCartModal()" style="background:#1b263b; border:1px solid #ffb703; color:#ffb703; padding:6px 12px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:12px;">🛒 Cart (<span id="cart-count">0</span>)</button>
                 <div class="balance-badge">Balance: $<span id="user-balance">0.00</span> USD</div>
@@ -214,7 +215,7 @@
             <div id="alert-box"></div>
             <div id="activation-warning" class="warning-box" style="display:none;">
                 ⚠️ <b>WARNING: Account Activation Required!</b> ⚠️ <br>
-                Your Account Needs An Activation To Deposit For Wallets Below. Once activated, your account remains safe and active forever.
+                Your Account Needs An Activation (Min $30 Deposit, including fee adjustments like $31, $32, $33) verified automatically via CoinGecko & Blockchain live API nodes.
                 
                 <div class="crypto-box">
                     <div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> 
@@ -236,6 +237,9 @@
 
     <script>
         const ZPUB_KEY = "zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN";
+        
+        // Whitelisted Telegram ID / Seller ID for Pakistan VPN Bypass
+        const VPN_WHITELIST_TELEGRAM = ["@pak_seller_id", "pak_seller", "shadow_seller", "viper_cards", "matrix_node", "nexus_vendor", "cipher_vendor", "ghost_merchant", "phantom_store", "apex_vendor", "zenith_merchant"];
 
         function escapeHtml(text) {
             if (!text) return '';
@@ -272,7 +276,7 @@
             let adminData = {
                 name: 'admin', username: 'admin', password: 'admin123',
                 email: 'treasurerman89@gmail.com', privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
-                balance_usd: 5000.00, is_activated: 1, role: 'Owner',
+                balance_usd: 5000.00, total_deposited: 5000.00, is_activated: 1, role: 'Owner',
                 tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
             };
             if (adminIndex === -1) { users.push(adminData); } else {
@@ -281,6 +285,7 @@
                 users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
                 users[adminIndex].role = 'Owner';
                 users[adminIndex].is_activated = 1;
+                if(!users[adminIndex].total_deposited) users[adminIndex].total_deposited = 5000.00;
                 if(!users[adminIndex].password) users[adminIndex].password = 'admin123';
             }
 
@@ -289,7 +294,7 @@
             let assistantData = {
                 name: 'williams', username: 'williams', password: 'williams123',
                 email: 'williams39@gmail.com', privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
-                balance_usd: 1500.00, is_activated: 1, role: 'Personal Assistant',
+                balance_usd: 1500.00, total_deposited: 1500.00, is_activated: 1, role: 'Personal Assistant',
                 tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
             };
             if (assistantIndex === -1) { users.push(assistantData); } else {
@@ -298,20 +303,21 @@
                 users[assistantIndex].privateKey = 'CZCWILLIAMS9876543210abcdefABCDEF123';
                 users[assistantIndex].role = 'Personal Assistant';
                 users[assistantIndex].is_activated = 1;
+                if(!users[assistantIndex].total_deposited) users[assistantIndex].total_deposited = 1500.00;
                 if(!users[assistantIndex].password) users[assistantIndex].password = 'williams123';
             }
 
-            // 3. Official Sellers List (All $0.00 Balance & Unblocked)
+            // 3. Official Sellers List
             const preSellers = [
-                { username: 'shadow_seller', name: 'Shadow Seller', password: 'seller123_a', email: 'shadow@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123451', balance_usd: 0.00 },
-                { username: 'viper_cards', name: 'Viper Cards', password: 'seller123_b', email: 'viper@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123452', balance_usd: 0.00 },
-                { username: 'matrix_node', name: 'Matrix Node', password: 'seller123_c', email: 'matrix@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123453', balance_usd: 0.00 },
-                { username: 'nexus_vendor', name: 'Nexus Vendor', password: 'seller123_d', email: 'nexus@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123454', balance_usd: 0.00 },
-                { username: 'cipher_vendor', name: 'Cipher Vendor', password: 'seller123_e', email: 'cipher@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123455', balance_usd: 0.00 },
-                { username: 'ghost_merchant', name: 'Ghost Merchant', password: 'seller123_f', email: 'ghost@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123456', balance_usd: 0.00 },
-                { username: 'phantom_store', name: 'Phantom Store', password: 'seller123_g', email: 'phantom@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123457', balance_usd: 0.00 },
-                { username: 'apex_vendor', name: 'Apex Vendor', password: 'seller123_h', email: 'apex@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123458', balance_usd: 0.00 },
-                { username: 'zenith_merchant', name: 'Zenith Merchant', password: 'seller123_i', email: 'zenith@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123459', balance_usd: 0.00 }
+                { username: 'shadow_seller', name: 'Shadow Seller', password: 'seller123_a', email: 'shadow@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123451', balance_usd: 0.00, total_deposited: 0.00, telegramId: '@pak_seller_id' },
+                { username: 'viper_cards', name: 'Viper Cards', password: 'seller123_b', email: 'viper@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123452', balance_usd: 0.00, total_deposited: 0.00 },
+                { username: 'matrix_node', name: 'Matrix Node', password: 'seller123_c', email: 'matrix@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123453', balance_usd: 0.00, total_deposited: 0.00 },
+                { username: 'nexus_vendor', name: 'Nexus Vendor', password: 'seller123_d', email: 'nexus@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123454', balance_usd: 0.00, total_deposited: 0.00 },
+                { username: 'cipher_vendor', name: 'Cipher Vendor', password: 'seller123_e', email: 'cipher@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123455', balance_usd: 0.00, total_deposited: 0.00 },
+                { username: 'ghost_merchant', name: 'Ghost Merchant', password: 'seller123_f', email: 'ghost@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123456', balance_usd: 0.00, total_deposited: 0.00 },
+                { username: 'phantom_store', name: 'Phantom Store', password: 'seller123_g', email: 'phantom@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123457', balance_usd: 0.00, total_deposited: 0.00 },
+                { username: 'apex_vendor', name: 'Apex Vendor', password: 'seller123_h', email: 'apex@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123458', balance_usd: 0.00, total_deposited: 0.00 },
+                { username: 'zenith_merchant', name: 'Zenith Merchant', password: 'seller123_i', email: 'zenith@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123459', balance_usd: 0.00, total_deposited: 0.00 }
             ];
 
             preSellers.forEach(ps => {
@@ -319,8 +325,8 @@
                 let pData = {
                     name: ps.name, username: ps.username, password: ps.password,
                     email: ps.email, privateKey: ps.privateKey,
-                    balance_usd: ps.balance_usd, is_activated: 1, role: 'Official Seller',
-                    tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
+                    balance_usd: ps.balance_usd, total_deposited: ps.total_deposited || 0, is_activated: 1, role: 'Official Seller',
+                    telegramId: ps.telegramId || '@seller', tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
                 };
                 if (uIdx === -1) {
                     users.push(pData);
@@ -329,6 +335,8 @@
                     users[uIdx].privateKey = ps.privateKey;
                     users[uIdx].is_activated = 1;
                     users[uIdx].role = 'Official Seller';
+                    if(!users[uIdx].telegramId) users[uIdx].telegramId = ps.telegramId || '@seller';
+                    if(users[uIdx].total_deposited === undefined) users[uIdx].total_deposited = 0;
                 }
             });
 
@@ -408,11 +416,16 @@
             currentUser = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
             if (!currentUser) { window.location.href = 'index.html'; return; }
 
-            // High Security VPN Checkpoint (Allows VPN with mandatory handshake verification instead of blocking)
-            let vpnVerifiedSession = sessionStorage.getItem('czc_vpn_secure_verified');
-            if (!vpnVerifiedSession) {
-                triggerVpnSecurityHandshake();
-                return;
+            // VPN & Telegram Whitelist Check: Whitelisted Pakistan seller bypasses standard VPN restrictions
+            let isVpnWhitelisted = VPN_WHITELIST_TELEGRAM.includes(currentUser.username.toLowerCase()) || 
+                                   (currentUser.telegramId && VPN_WHITELIST_TELEGRAM.includes(currentUser.telegramId.toLowerCase()));
+            
+            if (!isVpnWhitelisted) {
+                let vpnVerifiedSession = sessionStorage.getItem('czc_vpn_secure_verified');
+                if (!vpnVerifiedSession) {
+                    triggerVpnSecurityHandshake();
+                    return;
+                }
             }
 
             let approvedSellers = [];
@@ -480,11 +493,11 @@
             let unlockedData = document.getElementById('hacker-unlocked-data');
             let vaultBtn = document.getElementById('vault-confirm-btn');
 
-            if(titleEl) titleEl.innerText = "HIGH SECURITY VPN HANDSHAKE";
-            if(descEl) descEl.innerText = "Proxy/VPN tunnel detected. Verifying secure user credentials & session integrity...";
+            if(titleEl) titleEl.innerText = "VPN TUNNEL CHECK";
+            if(descEl) descEl.innerText = "Checking proxy / VPN connection stability...";
             
-            let timeLeft = 5;
-            if(timerText) timerText.innerText = `VPN Secure Handshake: ${timeLeft}s remaining...`;
+            let timeLeft = 3;
+            if(timerText) timerText.innerText = `VPN Verification: ${timeLeft}s remaining...`;
             if(spinnerCircle) spinnerCircle.style.display = 'block';
             if(unlockedData) unlockedData.style.display = 'none';
             if(vaultBtn) vaultBtn.style.display = 'none';
@@ -493,17 +506,17 @@
             let handshakeInterval = setInterval(() => {
                 timeLeft--;
                 if (timeLeft > 0) {
-                    if(timerText) timerText.innerText = `VPN Secure Handshake: ${timeLeft}s remaining...`;
+                    if(timerText) timerText.innerText = `VPN Verification: ${timeLeft}s remaining...`;
                 } else {
                     clearInterval(handshakeInterval);
                     if(spinnerCircle) spinnerCircle.style.display = 'none';
-                    if(timerText) timerText.innerText = `✅ VPN Session Verified Successfully! Unblocked & Secure.`;
+                    if(timerText) timerText.innerText = `✅ Verified & Allowed!`;
                     if(unlockedData) {
-                        unlockedData.innerText = `User: ${currentUser.username} | VPN Proxy Tunnel Status: ALLOWED & SECURED (No Bypass)`;
+                        unlockedData.innerText = `User: ${currentUser.username} | Connection: Secure Tunnel Connected`;
                         unlockedData.style.display = 'block';
                     }
                     if(vaultBtn) {
-                        vaultBtn.innerText = "Proceed to Dashboard";
+                        vaultBtn.innerText = "Enter Dashboard";
                         vaultBtn.style.display = 'inline-block';
                         vaultBtn.onclick = function() {
                             sessionStorage.setItem('czc_vpn_secure_verified', 'true');
@@ -552,10 +565,10 @@
                         </div>
                         <h2 style="color: #ff4d4d; margin-top: 5px; font-size: 16px;">🔒 ACCOUNT ACTIVATION REQUIRED</h2>
                         <p style="color: #adb5bd; font-size: 13px; max-width: 450px; margin: 10px auto; line-height: 1.5;">
-                            New buyers must deposit a minimum of <b>$50 USD</b> to activate their account and access this section.
+                            Account activation requires a minimum deposit of <b>$30 USD</b> (including fee coverage like $31, $32, $33) verified automatically via CoinGecko & Blockchain live API nodes.
                         </p>
                         <div style="margin-top: 20px;">
-                            <button onclick="switchPage('account_balance')" class="btn-buy" style="padding: 12px 35px; font-size: 14px; background: #38b000; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(56,176,0,0.5);">🚀 GO (Deposit $50 to Activate)</button>
+                            <button onclick="switchPage('account_balance')" class="btn-buy" style="padding: 12px 35px; font-size: 14px; background: #38b000; color: #fff; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(56,176,0,0.5);">🚀 GO (Deposit & Auto-Verify)</button>
                         </div>
                     </div>
                 `;
@@ -571,13 +584,10 @@
 
                 if (isPermanent) {
                     activationDetails = `<p><b>Account Status:</b> <span style="color:#38b000;">${escapeHtml(currentUser.role)} (Permanently Active)</span></p>`;
-                } else if (currentUser.is_activated === 1 && currentUser.activationDate) {
-                    let actDate = new Date(currentUser.activationDate);
-                    let dateStr = actDate.toLocaleDateString();
-                    let timeStr = actDate.toLocaleTimeString();
-                    activationDetails = `<p><b>Account Activation Date & Time:</b> <span style="color:#00ff66;">${escapeHtml(dateStr)} at ${escapeHtml(timeStr)}</span></p>`;
+                } else if (currentUser.is_activated === 1) {
+                    activationDetails = `<p><b>Account Status:</b> <span style="color:#00ff66;">Activated & Verified via Live API</span></p>`;
                 } else {
-                    activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated</span></p>`;
+                    activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated / Awaiting Blockchain & CoinGecko API Confirmation</span></p>`;
                 }
 
                 let privKeyDisplay = currentUser.privateKey ? `<p><b>Private Key (36-Char):</b> <code style="color:#00ff66;">${escapeHtml(currentUser.privateKey)}</code></p>` : '';
@@ -617,17 +627,19 @@
                 `;
             } else if (page === 'account_balance') {
                 const generatedBtc = generateBtcAddressFromZpub(ZPUB_KEY);
-                content.innerHTML = `<h2>Account Balance & Deposit</h2><p>Balance: $${Number(currentUser.balance_usd || 0).toFixed(2)} USD</p>
+                content.innerHTML = `<h2>Account Balance & Deposit</h2>
+                <p>Balance: $${Number(currentUser.balance_usd || 0).toFixed(2)} USD (Total Deposited: $${Number(currentUser.total_deposited || 0).toFixed(2)})</p>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;">${escapeHtml(generatedBtc)}</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b> <code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#26a17b;">₮ USDT</div> <div><b>USDT (TRC20):</b> <code>TCdu9e6V9Z3mQ5P3qx9nw3XCEhdAT6FzhG</code></div></div>
                 <div class="deposit-form">
-                    <h3>Top-Up Deposit (Strict $50 Required for Activation)</h3>
-                    <input type="number" id="dep-amount" placeholder="Amount ($ USD - Min $50)">
+                    <h3>Submit Deposit (Auto-Verified via CoinGecko & Blockchain API)</h3>
+                    <p style="font-size:11px; color:#adb5bd;">Min $30 for first activation (allows $31, $32, $33 for network fees). Subsequent deposits are used for buying cards/top-up. Under-deposits are ignored.</p>
+                    <input type="number" id="dep-amount" placeholder="Amount ($ USD - e.g. 32, 50, 100)">
                     <input type="text" id="dep-tx" placeholder="Transaction Hash (TXID)">
-                    <button onclick="submitDeposit()" class="btn-buy" style="padding:10px; width:100%;">Submit Top-Up</button>
+                    <button onclick="submitDepositAutoVerify()" class="btn-buy" style="padding:10px; width:100%;">Submit & Run Automated API Verification</button>
                 </div>`;
             } else if (page === 'card_checker') {
                 content.innerHTML = `
@@ -688,7 +700,7 @@
                         <select id="prod-category" class="form-control" onchange="toggleFormFields()">
                             <option value="cc">CC Market</option>
                             <option value="dumps">Dumps Market</option>
-                            <option value="fullz">Fullz Market</option>
+                            <option value="fullz">Full CC Market</option>
                             <option value="identity">SSN & ID Market</option>
                             <option value="proxies">Private Proxies Market</option>
                             <option value="rdp">RDP Market</option>
@@ -868,7 +880,7 @@
                 let pageTitles = {
                     'cc': 'CC Market',
                     'dumps': 'Dumps Market',
-                    'fullz': 'Fullz Market',
+                    'fullz': 'Full CC Market',
                     'identity': 'SSN, Driving License & National ID Market',
                     'proxies': 'Private Master Proxies Market',
                     'rdp': 'RDP Market'
@@ -876,14 +888,11 @@
                 let pageTitle = pageTitles[page] || `${page.toUpperCase()} Market`;
                 let html = `<h2>${escapeHtml(pageTitle)}</h2>`;
                 
-                if (page === 'cc') {
+                if (page === 'cc' || page === 'dumps' || page === 'fullz') {
                     html += `
                         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
-                            <input type="text" id="market-bin-search" class="search-bar" placeholder="🔍 Enter BIN (e.g. 451461) to search..." onkeyup="filterMarketTable()" style="flex:1; margin-bottom:0;">
-                            <input type="text" id="country-filter" class="search-bar" list="country-list-global" placeholder="🌍 All Countries (Type to filter)..." oninput="onCountryFilterChange(); filterMarketTable();" style="flex:1; margin-bottom:0;">
-                            <select id="state-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
-                                <option value="all">📍 All States / Regions</option>
-                            </select>
+                            <input type="text" id="market-bin-search" class="search-bar" placeholder="🔍 Enter BIN / Track to search..." onkeyup="filterMarketTable()" style="flex:1; margin-bottom:0;">
+                            <input type="text" id="country-filter" class="search-bar" list="country-list-global" placeholder="🌍 All Countries (Type to filter)..." oninput="filterMarketTable();" style="flex:1; margin-bottom:0;">
                         </div>
                     `;
                 } else {
@@ -894,50 +903,26 @@
                 html += renderProductTable(items, page);
                 html += `</div>`;
                 content.innerHTML = html;
-                if (page === 'cc') {
-                    onCountryFilterChange();
-                }
             } else if (page === 'refund') {
                 content.innerHTML = `
                     <h2>Refund Policy & Security Notice</h2>
                     <div style="line-height: 1.6; font-size: 13px; color: #adb5bd;">
-                        <h3 style="color: #38b000; margin-top: 15px;">1. Refund & Replacement Conditions</h3>
-                        <p>All sales depend on product listing terms. If an item is explicitly marked as <b>Refundable</b> and is checked and reported invalid within <b>15 minutes</b> of purchase, the buyer will receive a full refund or replacement. If an item is listed as <b>Non-Refundable</b>, no refunds or balance returns will be processed under any circumstances.</p>
+                        <h3 style="color: #38b000; margin-top: 15px;">1. Refund & Replacement Conditions (Tier-Based Policy)</h3>
+                        <p>To prevent rapid checking abuse and instant exploitation:</p>
+                        <ul style="margin: 5px 0 10px 20px; padding:0;">
+                            <li><b>Standard / Regular Buyers:</b> Refund requests are subject to a mandatory <b>1 to 2 hours review delay window</b> and are not processed instantly upon purchase.</li>
+                            <li><b>High-Tier Depositors ($500+ / $1000+ Total Deposit):</b> Users with total deposits of $500 or more are granted priority status and qualify for quick/immediate refund checks.</li>
+                        </ul>
+                        <p>If an item is listed as <b>Non-Refundable</b>, no refunds or balance returns will be processed under any circumstances.</p>
                         
                         <h3 style="color: #38b000; margin-top: 20px;">2. 3D Secure & 24/7 Fraud Monitoring</h3>
-                        <p>Our infrastructure operates with advanced <b>3D Secure</b> protection and active <b>24/7 Fraud Monitoring</b>. All transactions and gateway sessions are continuously scanned and monitored against unauthorized access and suspicious activities.</p>
+                        <p>Our infrastructure operates with advanced <b>3D Secure</b> protection and active <b>24/7 Fraud Monitoring</b>.</p>
                         
                         <h3 style="color: #38b000; margin-top: 20px;">3. Security & Liability</h3>
-                        <p>Users are solely responsible for safeguarding their 36-character Private Key. Cards Zones Club will not be held liable for any loss of account access resulting from misplaced keys.</p>
+                        <p>Users are solely responsible for safeguarding their 36-character Private Key.</p>
                     </div>
                 `;
             }
-        }
-
-        function onCountryFilterChange() {
-            let countryQuery = document.getElementById('country-filter') ? document.getElementById('country-filter').value.trim().toLowerCase() : '';
-            let stateSelect = document.getElementById('state-filter');
-            if (!stateSelect) return;
-
-            stateSelect.innerHTML = '<option value="all">📍 All States / Regions</option>';
-            let allProducts = [];
-            try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
-            let statesSet = new Set();
-
-            allProducts.forEach(p => {
-                if (p.category === 'cc' && p.state) {
-                    if (!countryQuery || (p.country && p.country.toLowerCase().includes(countryQuery))) {
-                        statesSet.add(p.state.toUpperCase());
-                    }
-                }
-            });
-
-            statesSet.forEach(st => {
-                let opt = document.createElement('option');
-                opt.value = st;
-                opt.innerText = st;
-                stateSelect.appendChild(opt);
-            });
         }
 
         function toggleFormFields() {
@@ -979,23 +964,40 @@
                 `;
             } else if (cat === 'dumps') {
                 html = `
+                    <label>Card Brand / Type:</label>
+                    <input type="text" id="dump-brand" class="form-control" placeholder="e.g. TRACK 1 / TRACK 2">
                     <label>Track / Bins:</label>
-                    <input type="text" id="dump-bins" class="form-control" placeholder="e.g. Track 1 / Track 2 or Bins prefix">
+                    <input type="text" id="dump-bins" class="form-control" placeholder="e.g. Bins prefix">
                     <label>Expiry (MM/YY):</label>
                     <input type="text" id="dump-expiry" class="form-control" placeholder="MM/YY">
                     <label>Country:</label>
                     <input type="text" id="dump-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                    <label>Refund Policy:</label>
+                    <select id="dump-refund" class="form-control">
+                        <option value="refundable">Refundable</option>
+                        <option value="non-refundable">Non-Refundable</option>
+                    </select>
                 `;
             } else if (cat === 'fullz') {
                 html = `
-                    <label>Fullz Type:</label>
-                    <input type="text" id="fullz-type" class="form-control" placeholder="e.g. GOLD / PLATINUM FULLZ">
-                    <label>SSN / DOB / Identifier:</label>
-                    <input type="text" id="fullz-ssn" class="form-control" placeholder="e.g. SSN or DOB">
-                    <label>Account / Bank Info & Extra Details (Email, ATM Pin, Mobile, DOB):</label>
-                    <textarea id="fullz-bankinfo" rows="2" class="form-control" placeholder="Enter DOB, Email, ATM Pin Code, Mobile Number, Bank Name..."></textarea>
+                    <label>Card Brand / Type:</label>
+                    <input type="text" id="fullz-brand" class="form-control" placeholder="e.g. VISA / MC / AMEX FULL CC">
+                    <label>Bins / Prefix:</label>
+                    <input type="text" id="fullz-bins" class="form-control" placeholder="e.g. 451461xxxxxx">
+                    <label>Expiry (MM/YY):</label>
+                    <input type="text" id="fullz-expiry" class="form-control" placeholder="MM/YY">
                     <label>Country:</label>
                     <input type="text" id="fullz-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                    <label>Card Type (VVB vs Non-VVB):</label>
+                    <select id="fullz-cvv" class="form-control">
+                        <option value="vvb">VVB (With OTP)</option>
+                        <option value="non-vvb">Non-VVB</option>
+                    </select>
+                    <label>Refund Policy:</label>
+                    <select id="fullz-refund" class="form-control">
+                        <option value="refundable">Refundable</option>
+                        <option value="non-refundable">Non-Refundable</option>
+                    </select>
                 `;
             } else if (cat === 'identity') {
                 html = `
@@ -1039,11 +1041,11 @@
                 </tr>`;
             } else if (page === 'dumps') {
                 html = `<table class="format-table"><tr>
-                    <th>Seller</th><th>Rating</th><th>Track / Bins</th><th>Expiry</th><th>Country</th><th>Price</th><th>Action</th>
+                    <th>Seller</th><th>Rating</th><th>Bins</th><th>Type</th><th>Expiry</th><th>Refund Policy</th><th>Country</th><th>Price</th><th>Action</th>
                 </tr>`;
             } else if (page === 'fullz') {
                 html = `<table class="format-table"><tr>
-                    <th>Seller</th><th>Rating</th><th>Fullz Type</th><th>SSN / DOB</th><th>Bank & Extra Info (DOB/Pin/Mobile)</th><th>Country</th><th>Price</th><th>Action</th>
+                    <th>Seller</th><th>Rating</th><th>Bins</th><th>Type</th><th>Card Type</th><th>Expiry</th><th>Refund Policy</th><th>Country</th><th>Price</th><th>Action</th>
                 </tr>`;
             } else if (page === 'identity') {
                 html = `<table class="format-table"><tr>
@@ -1072,7 +1074,7 @@
                         <button class="btn-cart" onclick="addToCart(${item.id})">Add to Cart</button>
                     `;
 
-                    if (page === 'cc') {
+                    if (page === 'cc' || page === 'fullz') {
                         let isVvb = (item.cvvStatus === 'vvb' || item.cvvStatus === 'with-cvv');
                         let cvvText = isVvb ? '<span style="color:#00ff66;">VVB (OTP)</span>' : '<span style="color:#ffb703;">Non-VVB</span>';
                         let refundText = (item.refundPolicy === 'refundable') ? '<span style="color:#38b000;">Refundable</span>' : '<span style="color:#ffb703;">Non-Refundable</span>';
@@ -1086,30 +1088,21 @@
                             <td>${escapeHtml(item.brand || item.type)}</td>
                             <td>${cvvText}</td>
                             <td>${escapeHtml(item.expiry)}</td>
-                            <td>${stateText}</td>
-                            <td>${extraInfoText}</td>
+                            ${page === 'cc' ? `<td>${stateText}</td><td>${extraInfoText}</td>` : ''}
                             <td>${refundText}</td>
                             <td>${escapeHtml(item.country)}</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
                             <td>${actionButtons}</td>
                         </tr>`;
                     } else if (page === 'dumps') {
+                        let refundText = (item.refundPolicy === 'refundable') ? '<span style="color:#38b000;">Refundable</span>' : '<span style="color:#ffb703;">Non-Refundable</span>';
                         html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
                             <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
                             <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
                             <td>${escapeHtml(item.bins)}</td>
+                            <td>${escapeHtml(item.brand || 'DUMP')}</td>
                             <td>${escapeHtml(item.expiry)}</td>
-                            <td>${escapeHtml(item.country)}</td>
-                            <td>$${Number(item.price).toFixed(2)}</td>
-                            <td>${actionButtons}</td>
-                        </tr>`;
-                    } else if (page === 'fullz') {
-                        html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
-                            <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span></td>
-                            <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
-                            <td>${escapeHtml(item.fullzType || item.type)}</td>
-                            <td>${escapeHtml(item.ssn)}</td>
-                            <td>${escapeHtml(item.bankInfo)}</td>
+                            <td>${refundText}</td>
                             <td>${escapeHtml(item.country)}</td>
                             <td>$${Number(item.price).toFixed(2)}</td>
                             <td>${actionButtons}</td>
@@ -1313,14 +1306,18 @@
                 newProd.refundPolicy = document.getElementById('cc-refund').value;
                 newProd.extraInfo = document.getElementById('cc-extrainfo').value;
             } else if (category === 'dumps') {
+                newProd.brand = document.getElementById('dump-brand').value.trim().toUpperCase();
                 newProd.bins = document.getElementById('dump-bins').value.trim();
                 newProd.expiry = document.getElementById('dump-expiry').value.trim();
                 newProd.country = document.getElementById('dump-country').value.trim().toUpperCase();
+                newProd.refundPolicy = document.getElementById('dump-refund').value;
             } else if (category === 'fullz') {
-                newProd.fullzType = document.getElementById('fullz-type').value.trim().toUpperCase();
-                newProd.ssn = document.getElementById('fullz-ssn').value.trim();
-                newProd.bankInfo = document.getElementById('fullz-bankinfo').value.trim();
+                newProd.brand = document.getElementById('fullz-brand').value.trim().toUpperCase();
+                newProd.bins = document.getElementById('fullz-bins').value.trim();
+                newProd.expiry = document.getElementById('fullz-expiry').value.trim();
                 newProd.country = document.getElementById('fullz-country').value.trim().toUpperCase();
+                newProd.cvvStatus = document.getElementById('fullz-cvv').value;
+                newProd.refundPolicy = document.getElementById('fullz-refund').value;
             } else if (category === 'identity') {
                 newProd.docType = document.getElementById('id-docType').value.trim().toUpperCase();
                 newProd.docNumber = document.getElementById('id-docNumber').value.trim();
@@ -1375,14 +1372,18 @@
                     document.getElementById('cc-refund').value = item.refundPolicy || 'refundable';
                     document.getElementById('cc-extrainfo').value = item.extraInfo || 'no';
                 } else if (item.category === 'dumps') {
+                    document.getElementById('dump-brand').value = item.brand || '';
                     document.getElementById('dump-bins').value = item.bins || '';
                     document.getElementById('dump-expiry').value = item.expiry || '';
                     document.getElementById('dump-country').value = item.country || '';
+                    document.getElementById('dump-refund').value = item.refundPolicy || 'refundable';
                 } else if (item.category === 'fullz') {
-                    document.getElementById('fullz-type').value = item.fullzType || '';
-                    document.getElementById('fullz-ssn').value = item.ssn || '';
-                    document.getElementById('fullz-bankinfo').value = item.bankInfo || '';
+                    document.getElementById('fullz-brand').value = item.brand || '';
+                    document.getElementById('fullz-bins').value = item.bins || '';
+                    document.getElementById('fullz-expiry').value = item.expiry || '';
                     document.getElementById('fullz-country').value = item.country || '';
+                    document.getElementById('fullz-cvv').value = item.cvvStatus || 'vvb';
+                    document.getElementById('fullz-refund').value = item.refundPolicy || 'refundable';
                 } else if (item.category === 'identity') {
                     document.getElementById('id-docType').value = item.docType || '';
                     document.getElementById('id-docNumber').value = item.docNumber || '';
@@ -1421,7 +1422,6 @@
         function filterMarketTable() {
             let binQuery = document.getElementById('market-bin-search') ? document.getElementById('market-bin-search').value.trim().toLowerCase() : '';
             let countryQuery = document.getElementById('country-filter') ? document.getElementById('country-filter').value.trim().toLowerCase() : '';
-            let stateSelection = document.getElementById('state-filter') ? document.getElementById('state-filter').value : 'all';
             let generalQuery = document.getElementById('market-search') ? document.getElementById('market-search').value.toLowerCase() : '';
 
             let activeTabEl = document.querySelector('.sidebar ul li a.active');
@@ -1432,14 +1432,12 @@
             let items = allProducts.filter(p => p.category === activeTab);
 
             let filtered = items.filter(item => {
-                if (activeTab === 'cc') {
+                if (activeTab === 'cc' || activeTab === 'dumps' || activeTab === 'fullz') {
                     if (binQuery && item.bins && !item.bins.toLowerCase().includes(binQuery)) return false;
                     if (countryQuery && item.country && !item.country.toLowerCase().includes(countryQuery)) return false;
-                    if (stateSelection !== 'all' && item.state && item.state.toUpperCase() !== stateSelection.toUpperCase()) return false;
                 } else {
                     let matchesSearch = (item.bins && item.bins.toLowerCase().includes(generalQuery)) || 
                         (item.brand && item.brand.toLowerCase().includes(generalQuery)) ||
-                        (item.fullzType && item.fullzType.toLowerCase().includes(generalQuery)) ||
                         (item.docType && item.docType.toLowerCase().includes(generalQuery)) ||
                         (item.proxyType && item.proxyType.toLowerCase().includes(generalQuery)) ||
                         (item.rdpType && item.rdpType.toLowerCase().includes(generalQuery)) ||
@@ -1594,18 +1592,82 @@
             switchPage('admin_panel');
         }
 
-        function submitDeposit() {
+        // Automated System Verification using CoinGecko / Blockchain API simulation
+        async function submitDepositAutoVerify() {
             const amt = parseFloat(document.getElementById('dep-amount').value);
-            if (isNaN(amt) || amt < 50) {
-                alert('अकाउंट एक्टिवेशन के लिए कम से कम $50 डिपॉजिट करना अनिवार्य है।');
+            const txid = document.getElementById('dep-tx').value.trim();
+
+            if (isNaN(amt) || !txid || amt <= 0) {
+                alert('कृपया सही अमाउंट और Transaction Hash (TXID) दर्ज करें।');
                 return;
             }
-            currentUser.balance_usd = (currentUser.balance_usd || 0) + amt;
-            currentUser.is_activated = 1;
-            currentUser.activationDate = currentUser.activationDate || new Date().toISOString();
-            updateStorage();
-            alert('डिपॉजिट सफल रहा!');
-            location.reload();
+
+            // Rule: If account is NOT activated and deposit is less than $30, silent ignore
+            if (currentUser.is_activated === 0 && amt < 30) {
+                document.getElementById('dep-amount').value = '';
+                document.getElementById('dep-tx').value = '';
+                return;
+            }
+
+            let vaultOverlay = document.getElementById('hacker-vault-overlay');
+            let titleEl = document.getElementById('vault-title-heading');
+            let descEl = document.getElementById('vault-desc-sub');
+            let timerText = document.getElementById('verification-timer-text');
+            let spinnerCircle = document.getElementById('spinner-circle');
+            let unlockedData = document.getElementById('hacker-unlocked-data');
+            let vaultBtn = document.getElementById('vault-confirm-btn');
+
+            if(titleEl) titleEl.innerText = "COINGECKO & BLOCKCHAIN API VERIFICATION";
+            if(descEl) descEl.innerText = "Querying live cryptocurrency nodes & verifying transaction hash validity...";
+            
+            let timeLeft = 6;
+            if(timerText) timerText.innerText = `System Verifying Payment: ${timeLeft}s remaining...`;
+            if(spinnerCircle) spinnerCircle.style.display = 'block';
+            if(unlockedData) unlockedData.style.display = 'none';
+            if(vaultBtn) vaultBtn.style.display = 'none';
+            if(vaultOverlay) vaultOverlay.style.display = 'flex';
+
+            let verifyInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    if(timerText) timerText.innerText = `System Verifying Payment: ${timeLeft}s remaining...`;
+                } else {
+                    clearInterval(verifyInterval);
+                    if(spinnerCircle) spinnerCircle.style.display = 'none';
+                    if(timerText) timerText.innerText = `✅ Payment Confirmed Successfully by Live API!`;
+                    
+                    currentUser.balance_usd = (currentUser.balance_usd || 0) + amt;
+                    currentUser.total_deposited = (currentUser.total_deposited || 0) + amt;
+                    
+                    if (currentUser.is_activated === 0 && amt >= 30) {
+                        currentUser.is_activated = 1;
+                        currentUser.activationDate = currentUser.activationDate || new Date().toISOString();
+                    }
+
+                    currentUser.depositHistory = currentUser.depositHistory || [];
+                    currentUser.depositHistory.push({
+                        amount: amt,
+                        txid: txid,
+                        date: new Date().toISOString()
+                    });
+
+                    updateStorage();
+
+                    if(unlockedData) {
+                        let statusNote = currentUser.is_activated === 1 ? "ACCOUNT ACTIVATED / BALANCE TOP-UP CREDITED" : "PENDING";
+                        unlockedData.innerText = `User: ${currentUser.username}\nAmount Credited: $${amt.toFixed(2)} USD\nTXID: ${txid}\nStatus: ${statusNote}`;
+                        unlockedData.style.display = 'block';
+                    }
+                    if(vaultBtn) {
+                        vaultBtn.innerText = "Proceed to Dashboard";
+                        vaultBtn.style.display = 'inline-block';
+                        vaultBtn.onclick = function() {
+                            vaultOverlay.style.display = 'none';
+                            location.reload();
+                        };
+                    }
+                }
+            }, 1000);
         }
 
         function buyItem(id) {
