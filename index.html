@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏴‍☠️Cards Zones Club🏴‍☠️ - Login</title>
+    <title>🏴‍☠️Cards Zones Club🏴‍☠️ - Secure Login</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -23,7 +23,7 @@
 
     <div class="login-box">
         <h2>🏴‍☠️ Cards Zones Club 🏴‍☠️</h2>
-        <div id="error-msg" class="error-box">Invalid username, password, or private key. Captcha renewed.</div>
+        <div id="error-msg" class="error-box">Invalid credentials or security mismatch. Captcha renewed.</div>
 
         <label>Username:</label>
         <input type="text" id="login-username" placeholder="Enter username">
@@ -31,8 +31,8 @@
         <label>Password:</label>
         <input type="password" id="login-password" placeholder="Enter password">
 
-        <label>36-Digit Private Key:</label>
-        <input type="password" id="login-privkey" placeholder="Enter 36-digit private key">
+        <label>37-Digit Private Key:</label>
+        <input type="password" id="login-privkey" placeholder="Enter private key">
 
         <label>Captcha Verification:</label>
         <div class="captcha-container" onclick="generateCaptcha()" title="Click to refresh captcha">
@@ -40,7 +40,7 @@
         </div>
         <input type="text" id="captcha-input" placeholder="Enter exact captcha code">
 
-        <button onclick="handleLogin()" class="btn-submit">Verify & Continue</button>
+        <button onclick="handleLogin()" class="btn-submit">Secure Verify & Continue</button>
 
         <div class="signup-link">
             Don't have an account? <a href="signup.html">Sign Up</a>
@@ -49,6 +49,37 @@
 
     <script>
         let currentCaptchaText = "";
+
+        function initializeDefaultUsers() {
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
+
+            let alexIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'alexander hamilton');
+            let alexData = {
+                name: 'Alexander Hamilton',
+                username: 'Alexander Hamilton',
+                password: 'Alex Devil',
+                email: 'hellokitty11@gmail.com',
+                privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
+                balance_usd: 100.00,
+                total_deposited: 30.00,
+                is_activated: 1,
+                role: 'Official Seller',
+                tfaEnabled: false,
+                emailVerified: true,
+                activationDate: new Date().toISOString()
+            };
+
+            if (alexIndex === -1) {
+                users.push(alexData);
+            } else {
+                users[alexIndex].password = 'Alex Devil';
+                users[alexIndex].privateKey = 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s';
+                users[alexIndex].email = 'hellokitty11@gmail.com';
+                users[alexIndex].is_activated = 1;
+            }
+            localStorage.setItem('czc_users', JSON.stringify(users));
+        }
 
         function generateCaptcha() {
             const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
@@ -68,8 +99,8 @@
             let captchaInput = document.getElementById('captcha-input').value.trim();
             let errorBox = document.getElementById('error-msg');
 
-            if (!username || !password) {
-                errorBox.innerText = "Please enter both username and password.";
+            if (!username || !password || !privKey) {
+                errorBox.innerText = "All fields (Username, Password, Private Key) are required.";
                 errorBox.style.display = 'block';
                 generateCaptcha();
                 return;
@@ -87,7 +118,7 @@
 
             let user = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
 
-            if (!user || (password && user.password && user.password !== password)) {
+            if (!user || user.password !== password || user.privateKey !== privKey) {
                 errorBox.innerText = "Invalid username, password, or private key. Captcha renewed.";
                 errorBox.style.display = 'block';
                 generateCaptcha();
@@ -99,6 +130,7 @@
         }
 
         window.onload = function() {
+            initializeDefaultUsers();
             generateCaptcha();
         };
     </script>
