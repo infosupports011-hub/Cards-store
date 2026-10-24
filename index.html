@@ -12,8 +12,7 @@
         .error-box { background-color: rgba(217,4,41,0.2); border: 1px solid #d90429; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; display: none; text-align: center; }
         label { font-size: 13px; color: #adb5bd; display: block; margin-top: 10px; }
         input { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-size: 13px; }
-        .captcha-container { display: flex; align-items: center; gap: 10px; background: #0d1b2a; border: 1px solid #415a77; padding: 8px; border-radius: 4px; margin-bottom: 15px; justify-content: center; font-weight: bold; color: #ffb703; font-size: 16px; }
-        .btn-refresh { background: transparent; color: #ffb703; border: 1px solid #415a77; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .captcha-container { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #ffb703; border-radius: 4px; font-size: 16px; font-weight: bold; text-align: center; letter-spacing: 3px; cursor: pointer; user-select: none; }
         .btn-submit { background-color: #38b000; color: #fff; padding: 12px; border: none; border-radius: 6px; width: 100%; font-size: 14px; font-weight: bold; cursor: pointer; }
         .btn-submit:hover { background-color: #2e9000; }
         .signup-link { text-align: center; margin-top: 15px; font-size: 12px; color: #adb5bd; }
@@ -36,11 +35,10 @@
         <input type="password" id="login-privkey" placeholder="Enter 36-digit private key">
 
         <label>Captcha Verification:</label>
-        <div class="captcha-container">
-            <span id="captcha-question">5 + 4</span>
-            <button type="button" class="btn-refresh" onclick="generateCaptcha()">🔄</button>
+        <div class="captcha-container" onclick="generateCaptcha()" title="Click to refresh captcha">
+            <span id="captcha-question">Loading...</span>
         </div>
-        <input type="text" id="captcha-input" placeholder="Enter captcha code">
+        <input type="text" id="captcha-input" placeholder="Enter exact captcha code">
 
         <button onclick="handleLogin()" class="btn-submit">Verify & Continue</button>
 
@@ -50,13 +48,16 @@
     </div>
 
     <script>
-        let num1 = 5, num2 = 4, correctAnswer = 9;
+        let currentCaptchaText = "";
 
         function generateCaptcha() {
-            num1 = Math.floor(Math.random() * 10) + 1;
-            num2 = Math.floor(Math.random() * 10) + 1;
-            correctAnswer = num1 + num2;
-            document.getElementById('captcha-question').innerText = `${num1} + ${num2}`;
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+            let captcha = "";
+            for (let i = 0; i < 5; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            currentCaptchaText = captcha;
+            document.getElementById('captcha-question').innerText = captcha;
             document.getElementById('captcha-input').value = '';
         }
 
@@ -74,7 +75,7 @@
                 return;
             }
 
-            if (parseInt(captchaInput) !== correctAnswer) {
+            if (captchaInput !== currentCaptchaText) {
                 errorBox.innerText = "Invalid Captcha verification code. Captcha renewed.";
                 errorBox.style.display = 'block';
                 generateCaptcha();
