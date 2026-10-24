@@ -43,7 +43,6 @@
         .rating-badge { color: #00ff66; font-weight: bold; }
         .search-bar { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
 
-        /* Realistic Card & Hacker Vault CSS Animation */
         .realistic-cards-row {
             display: flex;
             justify-content: center;
@@ -103,11 +102,9 @@
             100% { transform: translateY(55px); opacity: 1; }
         }
 
-        /* Cart Modal */
         .cart-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 5, 10, 0.9); z-index: 9980; display: none; justify-content: center; align-items: center; padding: 20px; }
         .cart-content { background: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; font-family: monospace; }
 
-        /* Hacker Verification Modal Overlay */
         #hacker-vault-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(2, 5, 10, 0.96); z-index: 9999;
@@ -135,7 +132,6 @@
 </head>
 <body>
 
-    <!-- Shopping Cart Modal -->
     <div id="cart-modal" class="cart-modal">
         <div class="cart-content">
             <h3 style="color:#ffb703; margin-top:0;">🛒 Shopping Trolley & Cart</h3>
@@ -150,7 +146,6 @@
         </div>
     </div>
 
-    <!-- Realistic Secure Tunnel Verification Overlay -->
     <div id="hacker-vault-overlay">
         <div class="hacker-modal-content">
             <div style="margin-bottom:10px;">
@@ -200,7 +195,6 @@
                 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
                 <span>🏴‍☠️Cards Zones Club🏴‍☠️ - Dashboard</span>
             </div>
-            <!-- Balance & User Info moved strictly to Right Corner -->
             <div class="top-right-panel">
                 <button onclick="openCartModal()" style="background:#1b263b; border:1px solid #ffb703; color:#ffb703; padding:6px 12px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:12px;">🛒 Cart (<span id="cart-count">0</span>)</button>
                 <div class="balance-badge">Balance: $<span id="user-balance">0.00</span> USD</div>
@@ -230,15 +224,12 @@
         </div>
     </div>
 
-    <!-- Global Country Datalist for 200+ Countries -->
     <datalist id="country-list-global">
         <option value="United States"><option value="United Kingdom"><option value="Canada"><option value="Australia"><option value="Germany"><option value="France"><option value="India"><option value="Brazil"><option value="Japan"><option value="China"><option value="Afghanistan"><option value="Albania"><option value="Algeria"><option value="Andorra"><option value="Angola"><option value="Argentina"><option value="Armenia"><option value="Austria"><option value="Azerbaijan"><option value="Bahamas"><option value="Bahrain"><option value="Bangladesh"><option value="Barbados"><option value="Belarus"><option value="Belgium"><option value="Belize"><option value="Benin"><option value="Bhutan"><option value="Bolivia"><option value="Bosnia and Herzegovina"><option value="Botswana"><option value="Brunei"><option value="Bulgaria"><option value="Burkina Faso"><option value="Burundi"><option value="Cambodia"><option value="Cameroon"><option value="Cape Verde"><option value="Central African Republic"><option value="Chad"><option value="Chile"><option value="Colombia"><option value="Comoros"><option value="Congo"><option value="Costa Rica"><option value="Croatia"><option value="Cuba"><option value="Cyprus"><option value="Czech Republic"><option value="Denmark"><option value="Djibouti"><option value="Dominica"><option value="Dominican Republic"><option value="Ecuador"><option value="Egypt"><option value="El Salvador"><option value="Equatorial Guinea"><option value="Eritrea"><option value="Estonia"><option value="Eswatini"><option value="Ethiopia"><option value="Fiji"><option value="Finland"><option value="Gabon"><option value="Gambia"><option value="Georgia"><option value="Ghana"><option value="Greece"><option value="Grenada"><option value="Guatemala"><option value="Guinea"><option value="Guyana"><option value="Haiti"><option value="Honduras"><option value="Hungary"><option value="Iceland"><option value="Indonesia"><option value="Iran"><option value="Iraq"><option value="Ireland"><option value="Israel"><option value="Italy"><option value="Jamaica"><option value="Jordan"><option value="Kazakhstan"><option value="Kenya"><option value="Kuwait"><option value="Kyrgyzstan"><option value="Laos"><option value="Latvia"><option value="Lebanon"><option value="Lesotho"><option value="Liberia"><option value="Libya"><option value="Liechtenstein"><option value="Lithuania"><option value="Luxembourg"><option value="Madagascar"><option value="Malawi"><option value="Malaysia"><option value="Maldives"><option value="Mali"><option value="Malta"><option value="Mauritania"><option value="Mauritius"><option value="Mexico"><option value="Monaco"><option value="Mongolia"><option value="Montenegro"><option value="Morocco"><option value="Mozambique"><option value="Myanmar"><option value="Namibia"><option value="Nepal"><option value="Netherlands"><option value="New Zealand"><option value="Nicaragua"><option value="Niger"><option value="Nigeria"><option value="North Korea"><option value="North Macedonia"><option value="Norway"><option value="Oman"><option value="Pakistan"><option value="Palestine"><option value="Panama"><option value="Papua New Guinea"><option value="Paraguay"><option value="Peru"><option value="Philippines"><option value="Poland"><option value="Portugal"><option value="Qatar"><option value="Romania"><option value="Russia"><option value="Rwanda"><option value="Saudi Arabia"><option value="Senegal"><option value="Serbia"><option value="Seychelles"><option value="Sierra Leone"><option value="Singapore"><option value="Slovakia"><option value="Slovenia"><option value="Somalia"><option value="South Africa"><option value="South Korea"><option value="Spain"><option value="Sri Lanka"><option value="Sudan"><option value="Suriname"><option value="Sweden"><option value="Switzerland"><option value="Syria"><option value="Taiwan"><option value="Tajikistan"><option value="Tanzania"><option value="Thailand"><option value="Togo"><option value="Tonga"><option value="Tunisia"><option value="Turkey"><option value="Turkmenistan"><option value="Uganda"><option value="Ukraine"><option value="United Arab Emirates"><option value="Uruguay"><option value="Uzbekistan"><option value="Vanuatu"><option value="Vatican City"><option value="Venezuela"><option value="Vietnam"><option value="Yemen"><option value="Zambia"><option value="Zimbabwe">
     </datalist>
 
     <script>
         const ZPUB_KEY = "zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN";
-        
-        // Whitelisted Telegram ID / Seller ID for Pakistan VPN Bypass
         const VPN_WHITELIST_TELEGRAM = ["@pak_seller_id", "pak_seller", "shadow_seller", "viper_cards", "matrix_node", "nexus_vendor", "cipher_vendor", "ghost_merchant", "phantom_store", "apex_vendor", "zenith_merchant"];
 
         function escapeHtml(text) {
@@ -246,7 +237,6 @@
             return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        // Security Audit & Access Logging
         function logSecurityEvent(eventType, details) {
             let logs = [];
             try { logs = JSON.parse(localStorage.getItem('czc_security_audit_logs') || '[]'); } catch(e) {}
@@ -261,7 +251,6 @@
             localStorage.setItem('czc_security_audit_logs', JSON.stringify(logs));
         }
 
-        // Cryptographic Secure Tunnel Token Generation (Anti-Bypass & Glitch Protection)
         function generateSecureTunnelToken(username) {
             let nonce = Math.random().toString(36).substring(2) + Date.now().toString(36);
             let signature = btoa(username + ":" + nonce + ":" + navigator.userAgent).replace(/=/g, '');
@@ -304,7 +293,6 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
             
-            // 1. Admin Account
             let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'admin');
             let adminData = {
                 name: 'admin', username: 'admin', password: 'admin123',
@@ -322,7 +310,6 @@
                 if(!users[adminIndex].password) users[adminIndex].password = 'admin123';
             }
 
-            // 2. Williams Account
             let assistantIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'williams');
             let assistantData = {
                 name: 'williams', username: 'williams', password: 'williams123',
@@ -340,7 +327,6 @@
                 if(!users[assistantIndex].password) users[assistantIndex].password = 'williams123';
             }
 
-            // 3. Official Sellers List
             const preSellers = [
                 { username: 'shadow_seller', name: 'Shadow Seller', password: 'seller123_a', email: 'shadow@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123451', balance_usd: 0.00, total_deposited: 0.00, telegramId: '@pak_seller_id' },
                 { username: 'viper_cards', name: 'Viper Cards', password: 'seller123_b', email: 'viper@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123452', balance_usd: 0.00, total_deposited: 0.00 },
@@ -449,7 +435,6 @@
             currentUser = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
             if (!currentUser) { window.location.href = 'index.html'; return; }
 
-            // Enhanced Security & VPN Anti-Bypass Validation Check
             let isVpnWhitelisted = VPN_WHITELIST_TELEGRAM.includes(currentUser.username.toLowerCase()) || 
                                    (currentUser.telegramId && VPN_WHITELIST_TELEGRAM.includes(currentUser.telegramId.toLowerCase()));
             
@@ -756,7 +741,6 @@
                             <option value="rdp">RDP Market</option>
                         </select>
 
-                        <!-- Dynamic Specific Fields Container -->
                         <div id="dynamic-fields-container"></div>
 
                         <div id="group-price">
@@ -1642,7 +1626,6 @@
             switchPage('admin_panel');
         }
 
-        // Automated System Verification using CoinGecko / Blockchain API simulation
         async function submitDepositAutoVerify() {
             const amt = parseFloat(document.getElementById('dep-amount').value);
             const txid = document.getElementById('dep-tx').value.trim();
