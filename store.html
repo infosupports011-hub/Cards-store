@@ -164,8 +164,192 @@
         </div>
     </div>
 
+    <!-- Global Country Datalist for 200+ Countries -->
+    <datalist id="country-list-global">
+        <option value="United States">
+        <option value="United Kingdom">
+        <option value="Canada">
+        <option value="Australia">
+        <option value="Germany">
+        <option value="France">
+        <option value="India">
+        <option value="Brazil">
+        <option value="Japan">
+        <option value="China">
+        <option value="Afghanistan">
+        <option value="Albania">
+        <option value="Algeria">
+        <option value="Andorra">
+        <option value="Angola">
+        <option value="Argentina">
+        <option value="Armenia">
+        <option value="Austria">
+        <option value="Azerbaijan">
+        <option value="Bahamas">
+        <option value="Bahrain">
+        <option value="Bangladesh">
+        <option value="Barbados">
+        <option value="Belarus">
+        <option value="Belgium">
+        <option value="Belize">
+        <option value="Benin">
+        <option value="Bhutan">
+        <option value="Bolivia">
+        <option value="Bosnia and Herzegovina">
+        <option value="Botswana">
+        <option value="Brunei">
+        <option value="Bulgaria">
+        <option value="Burkina Faso">
+        <option value="Burundi">
+        <option value="Cambodia">
+        <option value="Cameroon">
+        <option value="Cape Verde">
+        <option value="Central African Republic">
+        <option value="Chad">
+        <option value="Chile">
+        <option value="Colombia">
+        <option value="Comoros">
+        <option value="Congo">
+        <option value="Costa Rica">
+        <option value="Croatia">
+        <option value="Cuba">
+        <option value="Cyprus">
+        <option value="Czech Republic">
+        <option value="Denmark">
+        <option value="Djibouti">
+        <option value="Dominica">
+        <option value="Dominican Republic">
+        <option value="Ecuador">
+        <option value="Egypt">
+        <option value="El Salvador">
+        <option value="Equatorial Guinea">
+        <option value="Eritrea">
+        <option value="Estonia">
+        <option value="Eswatini">
+        <option value="Ethiopia">
+        <option value="Fiji">
+        <option value="Finland">
+        <option value="Gabon">
+        <option value="Gambia">
+        <option value="Georgia">
+        <option value="Ghana">
+        <option value="Greece">
+        <option value="Grenada">
+        <option value="Guatemala">
+        <option value="Guinea">
+        <option value="Guyana">
+        <option value="Haiti">
+        <option value="Honduras">
+        <option value="Hungary">
+        <option value="Iceland">
+        <option value="Indonesia">
+        <option value="Iran">
+        <option value="Iraq">
+        <option value="Ireland">
+        <option value="Israel">
+        <option value="Italy">
+        <option value="Jamaica">
+        <option value="Jordan">
+        <option value="Kazakhstan">
+        <option value="Kenya">
+        <option value="Kuwait">
+        <option value="Kyrgyzstan">
+        <option value="Laos">
+        <option value="Latvia">
+        <option value="Lebanon">
+        <option value="Lesotho">
+        <option value="Liberia">
+        <option value="Libya">
+        <option value="Liechtenstein">
+        <option value="Lithuania">
+        <option value="Luxembourg">
+        <option value="Madagascar">
+        <option value="Malawi">
+        <option value="Malaysia">
+        <option value="Maldives">
+        <option value="Mali">
+        <option value="Malta">
+        <option value="Mauritania">
+        <option value="Mauritius">
+        <option value="Mexico">
+        <option value="Monaco">
+        <option value="Mongolia">
+        <option value="Montenegro">
+        <option value="Morocco">
+        <option value="Mozambique">
+        <option value="Myanmar">
+        <option value="Namibia">
+        <option value="Nepal">
+        <option value="Netherlands">
+        <option value="New Zealand">
+        <option value="Nicaragua">
+        <option value="Niger">
+        <option value="Nigeria">
+        <option value="North Korea">
+        <option value="North Macedonia">
+        <option value="Norway">
+        <option value="Oman">
+        <option value="Pakistan">
+        <option value="Palestine">
+        <option value="Panama">
+        <option value="Papua New Guinea">
+        <option value="Paraguay">
+        <option value="Peru">
+        <option value="Philippines">
+        <option value="Poland">
+        <option value="Portugal">
+        <option value="Qatar">
+        <option value="Romania">
+        <option value="Russia">
+        <option value="Rwanda">
+        <option value="Saudi Arabia">
+        <option value="Senegal">
+        <option value="Serbia">
+        <option value="Seychelles">
+        <option value="Sierra Leone">
+        <option value="Singapore">
+        <option value="Slovakia">
+        <option value="Slovenia">
+        <option value="Somalia">
+        <option value="South Africa">
+        <option value="South Korea">
+        <option value="Spain">
+        <option value="Sri Lanka">
+        <option value="Sudan">
+        <option value="Suriname">
+        <option value="Sweden">
+        <option value="Switzerland">
+        <option value="Syria">
+        <option value="Taiwan">
+        <option value="Tajikistan">
+        <option value="Tanzania">
+        <option value="Thailand">
+        <option value="Togo">
+        <option value="Tonga">
+        <option value="Tunisia">
+        <option value="Turkey">
+        <option value="Turkmenistan">
+        <option value="Uganda">
+        <option value="Ukraine">
+        <option value="United Arab Emirates">
+        <option value="Uruguay">
+        <option value="Uzbekistan">
+        <option value="Vanuatu">
+        <option value="Vatican City">
+        <option value="Venezuela">
+        <option value="Vietnam">
+        <option value="Yemen">
+        <option value="Zambia">
+        <option value="Zimbabwe">
+    </datalist>
+
     <script>
         const ZPUB_KEY = "zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN";
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
 
         function generateBtcAddressFromZpub(zpub) {
             let hash = 0;
@@ -279,8 +463,8 @@
                 currentUser.role = 'Member';
             }
 
-            document.getElementById('username-display').innerText = currentUser.username;
-            document.getElementById('user-role-display').innerText = currentUser.role;
+            document.getElementById('username-display').innerText = escapeHtml(currentUser.username);
+            document.getElementById('user-role-display').innerText = escapeHtml(currentUser.role);
             document.getElementById('user-balance').innerText = Number(currentUser.balance_usd).toFixed(2);
             updateCartCount();
 
@@ -312,23 +496,23 @@
                 let isPermanent = approvedSellers.includes(currentUser.username) || currentUser.username.toLowerCase() === 'admin' || currentUser.username.toLowerCase() === 'williams' || currentUser.role === 'Owner' || currentUser.role === 'Personal Assistant';
 
                 if (isPermanent) {
-                    activationDetails = `<p><b>Account Status:</b> <span style="color:#38b000;">${currentUser.role} (Permanently Active)</span></p>`;
+                    activationDetails = `<p><b>Account Status:</b> <span style="color:#38b000;">${escapeHtml(currentUser.role)} (Permanently Active)</span></p>`;
                 } else if (currentUser.is_activated === 1 && currentUser.activationDate) {
                     let actDate = new Date(currentUser.activationDate);
                     let dateStr = actDate.toLocaleDateString();
                     let timeStr = actDate.toLocaleTimeString();
-                    activationDetails = `<p><b>Account Activation Date & Time:</b> <span style="color:#00ff66;">${dateStr} at ${timeStr}</span></p>`;
+                    activationDetails = `<p><b>Account Activation Date & Time:</b> <span style="color:#00ff66;">${escapeHtml(dateStr)} at ${escapeHtml(timeStr)}</span></p>`;
                 } else {
                     activationDetails = `<p><b>Account Status:</b> <span style="color:#ffb703;">Unactivated</span></p>`;
                 }
 
-                let privKeyDisplay = currentUser.privateKey ? `<p><b>Private Key (36-Char):</b> <code style="color:#00ff66;">${currentUser.privateKey}</code></p>` : '';
+                let privKeyDisplay = currentUser.privateKey ? `<p><b>Private Key (36-Char):</b> <code style="color:#00ff66;">${escapeHtml(currentUser.privateKey)}</code></p>` : '';
 
                 content.innerHTML = `
                     <h2>Account Management & Settings</h2>
-                    <p><b>Name:</b> ${currentUser.name || currentUser.username}</p>
-                    <p><b>Username:</b> ${currentUser.username}</p>
-                    <p><b>Email:</b> ${currentUser.email} (${emailStatus})</p>
+                    <p><b>Name:</b> ${escapeHtml(currentUser.name || currentUser.username)}</p>
+                    <p><b>Username:</b> ${escapeHtml(currentUser.username)}</p>
+                    <p><b>Email:</b> ${escapeHtml(currentUser.email)} (${emailStatus})</p>
                     ${privKeyDisplay}
                     ${activationDetails}
                     
@@ -360,7 +544,7 @@
             } else if (page === 'account_balance') {
                 const generatedBtc = generateBtcAddressFromZpub(ZPUB_KEY);
                 content.innerHTML = `<h2>Account Balance & Deposit</h2><p>Balance: $${currentUser.balance_usd.toFixed(2)} USD</p>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;">${generatedBtc}</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;">${escapeHtml(generatedBtc)}</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b> <code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
                 <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
@@ -390,7 +574,7 @@
                 } else {
                     html += `<table class="format-table"><tr><th>Date</th><th>Category</th><th>Asset Details</th><th>Price</th></tr>`;
                     orders.forEach(o => {
-                        html += `<tr><td>${new Date(o.date).toLocaleString()}</td><td>${o.category.toUpperCase()}</td><td><code>${o.details}</code></td><td>$${o.price.toFixed(2)}</td></tr>`;
+                        html += `<tr><td>${escapeHtml(new Date(o.date).toLocaleString())}</td><td>${escapeHtml(o.category.toUpperCase())}</td><td><code>${escapeHtml(o.details)}</code></td><td>$${Number(o.price).toFixed(2)}</td></tr>`;
                     });
                     html += `</table>`;
                 }
@@ -406,8 +590,9 @@
                     <div class="deposit-form">
                         <h3 id="form-title" style="color:#38b000; margin-top:0;">Add New Product</h3>
                         <input type="hidden" id="edit-product-id" value="">
+                        
                         <label>Category:</label>
-                        <select id="prod-category" class="form-control">
+                        <select id="prod-category" class="form-control" onchange="toggleFormFields()">
                             <option value="cc">CC Market</option>
                             <option value="dumps">Dumps Market</option>
                             <option value="fullz">Fullz Market</option>
@@ -415,23 +600,66 @@
                             <option value="proxies">Private Proxies Market</option>
                             <option value="rdp">RDP Market</option>
                         </select>
-                        <label>Product Type / Title:</label>
-                        <input type="text" id="prod-type" placeholder="e.g. VISA / SOCKS5 / ADMIN RDP">
-                        <label>Bins / Identifier / IP:</label>
-                        <input type="text" id="prod-bins" placeholder="e.g. 451461xxxxxx or 192.168.1.1">
-                        <label>Expiry / Spec Info:</label>
-                        <input type="text" id="prod-expiry" placeholder="MM/YY or 4GB RAM / Windows 10">
-                        <label>Country:</label>
-                        <input type="text" id="prod-country" placeholder="UNITED STATES">
-                        <label>Price ($ USD):</label>
-                        <input type="number" id="prod-price" placeholder="15.00">
-                        <label>CVV Status (For CC):</label>
-                        <select id="prod-cvv" class="form-control">
-                            <option value="with-cvv">With CVV (VVB)</option>
-                            <option value="non-cvv">Non-CVV</option>
-                        </select>
-                        <label>Full Confidential Data (Shown after purchase):</label>
-                        <textarea id="prod-details" rows="3" placeholder="Card full details, Proxy IP:Port:User:Pass or RDP IP:User:Pass..."></textarea>
+
+                        <div id="group-type">
+                            <label id="label-type">Product Type / Title:</label>
+                            <input type="text" id="prod-type" class="form-control" placeholder="e.g. VISA / SOCKS5 / ADMIN RDP">
+                        </div>
+
+                        <div id="group-identifier">
+                            <label id="label-identifier">Bins / Identifier / IP:</label>
+                            <input type="text" id="prod-bins" class="form-control" placeholder="e.g. 451461xxxxxx or 192.168.1.1">
+                        </div>
+
+                        <div id="group-expiry">
+                            <label id="label-expiry">Expiry / Spec Info:</label>
+                            <input type="text" id="prod-expiry" class="form-control" placeholder="MM/YY or 4GB RAM / Windows 10">
+                        </div>
+
+                        <div id="group-country">
+                            <label>Country (Select or type from 200+ countries):</label>
+                            <input type="text" id="prod-country" class="form-control" list="country-list-global" placeholder="e.g. United States">
+                        </div>
+
+                        <div id="group-state">
+                            <label>State / Region:</label>
+                            <input type="text" id="prod-state" class="form-control" placeholder="e.g. California / NY">
+                        </div>
+
+                        <div id="group-price">
+                            <label>Price ($ USD):</label>
+                            <input type="number" id="prod-price" class="form-control" placeholder="15.00">
+                        </div>
+
+                        <div id="group-cvv">
+                            <label>Card Type (VVB vs Non-VVB):</label>
+                            <select id="prod-cvv" class="form-control">
+                                <option value="vvb">VVB (OTP / Verified by Visa)</option>
+                                <option value="non-vvb">Non-VVB (Non-OTP)</option>
+                            </select>
+                        </div>
+
+                        <div id="group-refund">
+                            <label>Refund Policy (For CC):</label>
+                            <select id="prod-refund" class="form-control">
+                                <option value="refundable">Refundable (Eligible for refund)</option>
+                                <option value="non-refundable">Non-Refundable (Final sale)</option>
+                            </select>
+                        </div>
+
+                        <div id="group-extrainfo">
+                            <label>Extra Info Available:</label>
+                            <select id="prod-extrainfo" class="form-control">
+                                <option value="yes">Yes (Extra Info Available)</option>
+                                <option value="no">No (No Extra Info)</option>
+                            </select>
+                        </div>
+
+                        <div id="group-details">
+                            <label id="label-details">Full Confidential Data (Shown after purchase):</label>
+                            <textarea id="prod-details" rows="3" class="form-control" placeholder="Card full details, Proxy IP:Port:User:Pass or RDP IP:User:Pass..."></textarea>
+                        </div>
+
                         <button onclick="saveSellerProduct()" class="btn-buy" style="padding:10px; width:100%; margin-top:10px;" id="save-prod-btn">Publish Product</button>
                     </div>
 
@@ -442,10 +670,10 @@
                             ${myItems.length === 0 ? '<tr><td colspan="6" style="padding:15px; color:#adb5bd;">You have not published any products yet.</td></tr>' : 
                               myItems.map(item => `
                                 <tr>
-                                    <td>${item.category.toUpperCase()}</td>
-                                    <td>${item.type}</td>
-                                    <td>${item.bins || item.name}</td>
-                                    <td>${item.country}</td>
+                                    <td>${escapeHtml(item.category.toUpperCase())}</td>
+                                    <td>${escapeHtml(item.type)}</td>
+                                    <td>${escapeHtml(item.bins || item.name)}</td>
+                                    <td>${escapeHtml(item.country)}</td>
                                     <td>$${Number(item.price).toFixed(2)}</td>
                                     <td>
                                         <button class="btn-edit" onclick="editProduct(${item.id})">Edit</button>
@@ -456,6 +684,7 @@
                         </table>
                     </div>
                 `;
+                setTimeout(toggleFormFields, 50);
             } else if (page === 'seller_profile') {
                 let sellerName = param;
                 let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
@@ -471,24 +700,24 @@
                 let avgRating = count > 0 ? (totalScore / count).toFixed(1) : '5.0';
 
                 content.innerHTML = `
-                    <h2>⭐ Seller Profile: <span style="color:#ffb703;">${sellerName}</span></h2>
+                    <h2>⭐ Seller Profile: <span style="color:#ffb703;">${escapeHtml(sellerName)}</span></h2>
                     <div style="background:#0d1b2a; border:1px solid #415a77; padding:15px; border-radius:6px; margin-bottom:20px; font-size:13px;">
-                        <p><b>Seller Username:</b> ${sellerName}</p>
-                        <p><b>Aggregate Rating:</b> <span style="color:#00ff66;">⭐ ${avgRating} / 5.0</span></p>
+                        <p><b>Seller Username:</b> ${escapeHtml(sellerName)}</p>
+                        <p><b>Aggregate Rating:</b> <span style="color:#00ff66;">⭐ ${escapeHtml(avgRating)} / 5.0</span></p>
                         <p><b>Active Products Listed:</b> ${sellerItems.length}</p>
                         <p style="color:#adb5bd; font-size:11px; margin-top:5px;">Note: Each seller maintains an isolated profile and inventory on Cards Zones Club.</p>
                     </div>
 
-                    <h3 style="color:#38b000;">Listings Offered By ${sellerName}</h3>
+                    <h3 style="color:#38b000;">Listings Offered By ${escapeHtml(sellerName)}</h3>
                     <table class="format-table">
                         <tr><th>Category</th><th>Type</th><th>Identifier</th><th>Country</th><th>Price</th><th>Action</th></tr>
                         ${sellerItems.length === 0 ? '<tr><td colspan="6" style="padding:15px; color:#adb5bd;">No active listings found for this seller.</td></tr>' :
                           sellerItems.map(item => `
                             <tr>
-                                <td>${item.category.toUpperCase()}</td>
-                                <td>${item.type}</td>
-                                ${item.category === 'identity' ? `<td>${item.name}</td>` : `<td>${item.bins}</td>`}
-                                <td>${item.country}</td>
+                                <td>${escapeHtml(item.category.toUpperCase())}</td>
+                                <td>${escapeHtml(item.type)}</td>
+                                ${item.category === 'identity' ? `<td>${escapeHtml(item.name)}</td>` : `<td>${escapeHtml(item.bins)}</td>`}
+                                <td>${escapeHtml(item.country)}</td>
                                 <td>$${Number(item.price).toFixed(2)}</td>
                                 <td>
                                     <button class="btn-buy" onclick="buyItem(${item.id})">Buy</button>
@@ -531,7 +760,7 @@
                 } else {
                     html += `<table class="format-table"><tr><th>Username</th><th>Name</th><th>Email</th><th>Details</th><th>Action</th></tr>`;
                     applications.forEach((app, index) => {
-                        html += `<tr><td><b>${app.username}</b></td><td>${app.name}</td><td>${app.email}</td><td>${app.details}</td><td><button class="btn-buy" onclick="approveSeller(${index})">Accept / Approve</button></td></tr>`;
+                        html += `<tr><td><b>${escapeHtml(app.username)}</b></td><td>${escapeHtml(app.name)}</td><td>${escapeHtml(app.email)}</td><td>${escapeHtml(app.details)}</td><td><button class="btn-buy" onclick="approveSeller(${index})">Accept / Approve</button></td></tr>`;
                     });
                     html += `</table>`;
                 }
@@ -540,11 +769,25 @@
                 let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
                 let items = allProducts.filter(p => p.category === page);
                 
-                items.sort((a, b) => {
-                    let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
-                    let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
-                    return ratingB - ratingA;
-                });
+                if (page === 'cc') {
+                    items.sort((a, b) => {
+                        let aExtra = (a.extraInfo === 'yes') ? 0 : 1;
+                        let bExtra = (b.extraInfo === 'yes') ? 0 : 1;
+                        if (aExtra !== bExtra) return aExtra - bExtra;
+                        let aVal = (a.cvvStatus === 'vvb' || a.cvvStatus === 'with-cvv') ? 0 : 1;
+                        let bVal = (b.cvvStatus === 'vvb' || b.cvvStatus === 'with-cvv') ? 0 : 1;
+                        if (aVal !== bVal) return aVal - bVal;
+                        let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
+                        let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
+                        return ratingB - ratingA;
+                    });
+                } else {
+                    items.sort((a, b) => {
+                        let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
+                        let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
+                        return ratingB - ratingA;
+                    });
+                }
 
                 let pageTitles = {
                     'cc': 'CC Market',
@@ -556,22 +799,47 @@
                 };
                 let pageTitle = pageTitles[page] || `${page.toUpperCase()} Market`;
                 let html = `
-                    <h2>${pageTitle}</h2>
-                    <input type="text" id="market-search" class="search-bar" placeholder="🔍 Search by Country, Type or Seller..." onkeyup="filterMarketTable()">
+                    <h2>${escapeHtml(pageTitle)}</h2>
                 `;
-                if (page !== 'identity' && page !== 'proxies' && page !== 'rdp') {
+                
+                if (page === 'cc') {
                     html += `
-                        <select id="cvv-filter" class="search-bar" onchange="filterMarketTable()">
-                            <option value="all">Filter: All Cards (VVB / Non-VVB)</option>
-                            <option value="with-cvv">With CVV (VVB Only First)</option>
-                            <option value="non-cvv">Non-CVV Only First</option>
-                        </select>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                            <input type="text" id="market-bin-search" class="search-bar" placeholder="🔍 Enter BIN (e.g. 451461) to search..." onkeyup="filterMarketTable()" style="flex:1; margin-bottom:0;">
+                            <input type="text" id="country-filter" class="search-bar" list="country-list-global" placeholder="🌍 All Countries (Type to filter)..." oninput="onCountryFilterChange(); filterMarketTable();" style="flex:1; margin-bottom:0;">
+                            <select id="state-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
+                                <option value="all">📍 All States / Regions</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+                            <select id="cvv-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
+                                <option value="all">Filter: All Cards (VVB / Non-VVB)</option>
+                                <option value="vvb">VVB Only (With OTP)</option>
+                                <option value="non-vvb">Non-VVB Only (Without OTP)</option>
+                            </select>
+                            <select id="refund-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
+                                <option value="all">Filter: All Refund Policies</option>
+                                <option value="refundable">Refundable Only</option>
+                                <option value="non-refundable">Non-Refundable Only</option>
+                            </select>
+                            <select id="extrainfo-filter" class="search-bar" onchange="filterMarketTable()" style="flex:1; margin-bottom:0;">
+                                <option value="all">Filter: All Extra Info</option>
+                                <option value="yes">Extra Info: Yes (Top)</option>
+                                <option value="no">Extra Info: No</option>
+                            </select>
+                        </div>
                     `;
+                } else {
+                    html += `<input type="text" id="market-search" class="search-bar" placeholder="🔍 Search..." onkeyup="filterMarketTable()">`;
                 }
+
                 html += `<div id="table-container">`;
                 html += renderProductTable(items, page);
                 html += `</div>`;
                 content.innerHTML = html;
+                if (page === 'cc') {
+                    onCountryFilterChange();
+                }
             } else if (page === 'refund') {
                 content.innerHTML = `
                     <h2>Refund Policy & Privacy Notice</h2>
@@ -589,28 +857,131 @@
             }
         }
 
+        function onCountryFilterChange() {
+            let countryQuery = document.getElementById('country-filter') ? document.getElementById('country-filter').value.trim().toLowerCase() : '';
+            let stateSelect = document.getElementById('state-filter');
+            if (!stateSelect) return;
+
+            stateSelect.innerHTML = '<option value="all">📍 All States / Regions</option>';
+            let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
+            let statesSet = new Set();
+
+            allProducts.forEach(p => {
+                if (p.category === 'cc' && p.state) {
+                    if (!countryQuery || (p.country && p.country.toLowerCase().includes(countryQuery))) {
+                        statesSet.add(p.state.toUpperCase());
+                    }
+                }
+            });
+
+            statesSet.forEach(st => {
+                let opt = document.createElement('option');
+                opt.value = st;
+                opt.innerText = st;
+                stateSelect.appendChild(opt);
+            });
+        }
+
+        function toggleFormFields() {
+            let cat = document.getElementById('prod-category').value;
+            let groupType = document.getElementById('group-type');
+            let groupIdentifier = document.getElementById('group-identifier');
+            let groupExpiry = document.getElementById('group-expiry');
+            let groupCountry = document.getElementById('group-country');
+            let groupState = document.getElementById('group-state');
+            let groupPrice = document.getElementById('group-price');
+            let groupCvv = document.getElementById('group-cvv');
+            let groupRefund = document.getElementById('group-refund');
+            let groupExtraInfo = document.getElementById('group-extrainfo');
+            let groupDetails = document.getElementById('group-details');
+
+            let labelType = document.getElementById('label-type');
+            let labelIdentifier = document.getElementById('label-identifier');
+            let labelExpiry = document.getElementById('label-expiry');
+
+            if (!groupType) return;
+
+            groupType.style.display = 'block';
+            groupCountry.style.display = 'block';
+            if (groupState) groupState.style.display = (cat === 'cc') ? 'block' : 'none';
+            groupPrice.style.display = 'block';
+            groupDetails.style.display = 'block';
+
+            if (cat === 'cc' || cat === 'dumps') {
+                groupIdentifier.style.display = 'block';
+                groupExpiry.style.display = 'block';
+                groupCvv.style.display = (cat === 'cc') ? 'block' : 'none';
+                if (groupRefund) groupRefund.style.display = (cat === 'cc') ? 'block' : 'none';
+                if (groupExtraInfo) groupExtraInfo.style.display = (cat === 'cc') ? 'block' : 'none';
+                labelType.innerText = 'Card Brand / Type (e.g. VISA / MASTERCARD):';
+                labelIdentifier.innerText = 'Bins / Prefix (e.g. 451461xxxxxx):';
+                labelExpiry.innerText = 'Expiry (MM/YY):';
+            } else if (cat === 'fullz') {
+                groupIdentifier.style.display = 'block';
+                groupExpiry.style.display = 'block';
+                groupCvv.style.display = 'none';
+                if (groupRefund) groupRefund.style.display = 'none';
+                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
+                labelType.innerText = 'Fullz Type (e.g. GOLD / PLATINUM):';
+                labelIdentifier.innerText = 'SSN / DOB / Identifier:';
+                labelExpiry.innerText = 'Account / Bank Info:';
+            } else if (cat === 'identity') {
+                groupIdentifier.style.display = 'block';
+                groupExpiry.style.display = 'none';
+                groupCvv.style.display = 'none';
+                if (groupRefund) groupRefund.style.display = 'none';
+                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
+                labelType.innerText = 'Document Type (Passport / DL / SSN):';
+                labelIdentifier.innerText = 'Document Number / Name:';
+            } else if (cat === 'proxies') {
+                groupIdentifier.style.display = 'block';
+                groupExpiry.style.display = 'none';
+                groupCvv.style.display = 'none';
+                if (groupRefund) groupRefund.style.display = 'none';
+                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
+                labelType.innerText = 'Proxy Type (SOCKS5 / HTTPS):';
+                labelIdentifier.innerText = 'IP Address / Node:';
+            } else if (cat === 'rdp') {
+                groupIdentifier.style.display = 'block';
+                groupExpiry.style.display = 'block';
+                groupCvv.style.display = 'none';
+                if (groupRefund) groupRefund.style.display = 'none';
+                if (groupExtraInfo) groupExtraInfo.style.display = 'none';
+                labelType.innerText = 'RDP Type (Admin / User):';
+                labelIdentifier.innerText = 'Server IP:';
+                labelExpiry.innerText = 'RAM & Specs (e.g. 4GB RAM / Windows 10):';
+            }
+        }
+
         function renderProductTable(items, page) {
             let isIdPage = (page === 'identity');
             let isCustomPage = (page === 'proxies' || page === 'rdp');
+            let isCc = (page === 'cc');
+
             let html = `<table class="format-table"><tr>
-                <th>Seller</th><th>Rating</th><th>${isIdPage ? 'Doc Type' : (isCustomPage ? 'Identifier / IP' : 'Bins')}</th><th>${isIdPage ? 'Holder / Country' : 'Type'}</th>${isIdPage || isCustomPage ? '' : '<th>CVV Status</th><th>Expiry</th>'}<th>Country</th><th>Price</th><th>Action</th>
+                <th>Seller</th><th>Rating</th><th>${isIdPage ? 'Doc Type' : (isCustomPage ? 'Identifier / IP' : 'Bins')}</th><th>${isIdPage ? 'Holder / Country' : 'Type'}</th>${isIdPage || isCustomPage ? '' : '<th>Card Type</th><th>Expiry</th>'} ${isCc ? '<th>State</th><th>Extra Info</th><th>Refund Policy</th>' : ''} <th>Country</th><th>Price</th><th>Action</th>
             </tr>`;
             
             if(items.length === 0) {
-                html += `<tr><td colspan="9" style="padding:20px; color:#adb5bd;">No products available matching your filter.</td></tr>`;
+                html += `<tr><td colspan="12" style="padding:20px; color:#adb5bd;">No products available matching your filter (BIN Not Found).</td></tr>`;
             } else {
                 items.forEach(item => {
                     let avgRating = item.ratingCount > 0 ? (item.totalRatingScore / item.ratingCount).toFixed(1) : '5.0';
                     let isBlacklisted = Number(avgRating) < 2.0;
-                    let cvvText = item.cvvStatus === 'with-cvv' ? '<span style="color:#00ff66;">With CVV (VVB)</span>' : '<span style="color:#ffb703;">Non-CVV</span>';
+                    let isVvb = (item.cvvStatus === 'vvb' || item.cvvStatus === 'with-cvv');
+                    let cvvText = isVvb ? '<span style="color:#00ff66;">VVB (OTP)</span>' : '<span style="color:#ffb703;">Non-VVB</span>';
+                    let refundText = (item.refundPolicy === 'refundable') ? '<span style="color:#38b000;">Refundable</span>' : '<span style="color:#ffb703;">Non-Refundable</span>';
+                    let extraInfoText = (item.extraInfo === 'yes') ? '<span style="color:#00ff66;">Yes</span>' : '<span style="color:#adb5bd;">No</span>';
+                    let stateText = item.state ? escapeHtml(item.state) : 'N/A';
                     
                     html += `<tr style="${isBlacklisted ? 'background-color: rgba(217,4,41,0.15); opacity: 0.6;' : ''}">
-                        <td><span class="seller-badge" onclick="switchPage('seller_profile', '${item.seller}')">${item.seller}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
-                        <td><span class="rating-badge">⭐ ${avgRating} (${item.ratingCount || 0})</span></td>
-                        <td>${item.type}</td>
-                        <td>${isIdPage ? item.name : (item.bins || item.name)}</td>
-                        ${isIdPage || isCustomPage ? '' : `<td>${cvvText}</td><td>${item.expiry}</td>`}
-                        <td>${item.country}</td>
+                        <td><span class="seller-badge" onclick="switchPage('seller_profile', '${escapeHtml(item.seller)}')">${escapeHtml(item.seller)}</span> ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:10px;">[BLACKLISTED]</span>' : ''}</td>
+                        <td><span class="rating-badge">⭐ ${escapeHtml(avgRating)} (${item.ratingCount || 0})</span></td>
+                        <td>${escapeHtml(item.type)}</td>
+                        <td>${escapeHtml(isIdPage ? item.name : (item.bins || item.name))}</td>
+                        ${isIdPage || isCustomPage ? '' : `<td>${cvvText}</td><td>${escapeHtml(item.expiry)}</td>`}
+                        ${isCc ? `<td>${stateText}</td><td>${extraInfoText}</td><td>${refundText}</td>` : ''}
+                        <td>${escapeHtml(item.country)}</td>
                         <td>$${Number(item.price).toFixed(2)}</td>
                         <td>
                             ${isBlacklisted ? '<span style="color:#ff4d4d; font-size:11px;">Banned</span>' : `
@@ -656,8 +1027,8 @@
                 cart.forEach((item, index) => {
                     total += Number(item.price);
                     html += `<tr>
-                        <td>${item.type}</td>
-                        <td>${item.bins || item.name}</td>
+                        <td>${escapeHtml(item.type)}</td>
+                        <td>${escapeHtml(item.bins || item.name)}</td>
                         <td>$${Number(item.price).toFixed(2)}</td>
                         <td><button class="btn-delete" onclick="removeFromCart(${index})">Remove</button></td>
                     </tr>`;
@@ -753,8 +1124,11 @@
             let identifier = document.getElementById('prod-bins').value.trim();
             let expiry = document.getElementById('prod-expiry').value.trim();
             let country = document.getElementById('prod-country').value.trim();
+            let state = document.getElementById('prod-state') ? document.getElementById('prod-state').value.trim() : '';
             let price = parseFloat(document.getElementById('prod-price').value);
             let cvvStatus = document.getElementById('prod-cvv').value;
+            let refundPolicy = document.getElementById('prod-refund') ? document.getElementById('prod-refund').value : 'refundable';
+            let extraInfo = document.getElementById('prod-extrainfo') ? document.getElementById('prod-extrainfo').value : 'no';
             let details = document.getElementById('prod-details').value.trim();
 
             if (!type || !identifier || !country || !price || !details) {
@@ -771,7 +1145,11 @@
                     allProducts[index].type = type;
                     allProducts[index].bins = identifier;
                     allProducts[index].country = country.toUpperCase();
+                    allProducts[index].state = state.toUpperCase();
                     allProducts[index].price = price;
+                    allProducts[index].cvvStatus = cvvStatus;
+                    allProducts[index].refundPolicy = refundPolicy;
+                    allProducts[index].extraInfo = extraInfo;
                     allProducts[index].details = details;
                 }
                 alert('Product updated successfully!');
@@ -782,8 +1160,12 @@
                     category: category,
                     type: type.toUpperCase(),
                     country: country.toUpperCase(),
+                    state: state.toUpperCase(),
                     price: price,
                     bins: identifier,
+                    cvvStatus: cvvStatus,
+                    refundPolicy: refundPolicy,
+                    extraInfo: extraInfo,
                     details: details,
                     totalRatingScore: 5.0,
                     ratingCount: 1
@@ -803,12 +1185,16 @@
 
             document.getElementById('edit-product-id').value = item.id;
             document.getElementById('prod-category').value = item.category;
+            toggleFormFields();
             document.getElementById('prod-type').value = item.type;
             document.getElementById('prod-bins').value = item.bins || item.name || '';
             document.getElementById('prod-expiry').value = item.expiry || '';
             document.getElementById('prod-country').value = item.country;
+            if (document.getElementById('prod-state')) document.getElementById('prod-state').value = item.state || '';
             document.getElementById('prod-price').value = item.price;
-            document.getElementById('prod-cvv').value = item.cvvStatus || 'with-cvv';
+            document.getElementById('prod-cvv').value = item.cvvStatus || 'vvb';
+            if (document.getElementById('prod-refund')) document.getElementById('prod-refund').value = item.refundPolicy || 'refundable';
+            if (document.getElementById('prod-extrainfo')) document.getElementById('prod-extrainfo').value = item.extraInfo || 'no';
             document.getElementById('prod-details').value = item.details || '';
 
             document.getElementById('form-title').innerText = 'Edit Product';
@@ -825,25 +1211,60 @@
         }
 
         function filterMarketTable() {
-            let query = document.getElementById('market-search').value.toLowerCase();
-            let cvvFilterEl = document.getElementById('cvv-filter');
-            let cvvSelection = cvvFilterEl ? cvvFilterEl.value : 'all';
+            let binQuery = document.getElementById('market-bin-search') ? document.getElementById('market-bin-search').value.trim().toLowerCase() : '';
+            let countryQuery = document.getElementById('country-filter') ? document.getElementById('country-filter').value.trim().toLowerCase() : '';
+            let stateSelection = document.getElementById('state-filter') ? document.getElementById('state-filter').value : 'all';
+            let cvvSelection = document.getElementById('cvv-filter') ? document.getElementById('cvv-filter').value : 'all';
+            let refundSelection = document.getElementById('refund-filter') ? document.getElementById('refund-filter').value : 'all';
+            let extraInfoSelection = document.getElementById('extrainfo-filter') ? document.getElementById('extrainfo-filter').value : 'all';
+            let generalQuery = document.getElementById('market-search') ? document.getElementById('market-search').value.toLowerCase() : '';
+
             let activeTab = document.querySelector('.sidebar ul li a.active').id.replace('nav-', '');
             let allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]');
             let items = allProducts.filter(p => p.category === activeTab);
 
-            let filtered = items.filter(item => 
-                (item.bins && item.bins.toLowerCase().includes(query)) || 
-                item.type.toLowerCase().includes(query) || 
-                item.country.toLowerCase().includes(query) ||
-                item.seller.toLowerCase().includes(query) ||
-                (item.name && item.name.toLowerCase().includes(query))
-            );
+            let filtered = items.filter(item => {
+                if (activeTab === 'cc') {
+                    if (binQuery && item.bins && !item.bins.toLowerCase().includes(binQuery)) return false;
+                    if (countryQuery && item.country && !item.country.toLowerCase().includes(countryQuery)) return false;
+                    if (stateSelection !== 'all' && item.state && item.state.toUpperCase() !== stateSelection.toUpperCase()) return false;
 
-            if (cvvSelection === 'with-cvv') {
-                filtered.sort((a, b) => (b.cvvStatus === 'with-cvv') - (a.cvvStatus === 'with-cvv'));
-            } else if (cvvSelection === 'non-cvv') {
-                filtered.sort((a, b) => (b.cvvStatus === 'non-cvv') - (a.cvvStatus === 'non-cvv'));
+                    let isVvb = (item.cvvStatus === 'vvb' || item.cvvStatus === 'with-cvv');
+                    if (cvvSelection === 'vvb' && !isVvb) return false;
+                    if (cvvSelection === 'non-vvb' && isVvb) return false;
+
+                    let isRefundable = (item.refundPolicy === 'refundable');
+                    if (refundSelection === 'refundable' && !isRefundable) return false;
+                    if (refundSelection === 'non-refundable' && isRefundable) return false;
+
+                    let hasExtra = (item.extraInfo === 'yes');
+                    if (extraInfoSelection === 'yes' && !hasExtra) return false;
+                    if (extraInfoSelection === 'no' && hasExtra) return false;
+                } else {
+                    let matchesSearch = (item.bins && item.bins.toLowerCase().includes(generalQuery)) || 
+                        item.type.toLowerCase().includes(generalQuery) || 
+                        item.country.toLowerCase().includes(generalQuery) ||
+                        item.seller.toLowerCase().includes(generalQuery) ||
+                        (item.name && item.name.toLowerCase().includes(generalQuery));
+                    if (!matchesSearch) return false;
+                }
+                return true;
+            });
+
+            if (activeTab === 'cc') {
+                filtered.sort((a, b) => {
+                    let aExtra = (a.extraInfo === 'yes') ? 0 : 1;
+                    let bExtra = (b.extraInfo === 'yes') ? 0 : 1;
+                    if (aExtra !== bExtra) return aExtra - bExtra;
+
+                    let aVal = (a.cvvStatus === 'vvb' || a.cvvStatus === 'with-cvv') ? 0 : 1;
+                    let bVal = (b.cvvStatus === 'vvb' || b.cvvStatus === 'with-cvv') ? 0 : 1;
+                    if (aVal !== bVal) return aVal - bVal;
+
+                    let ratingA = (a.ratingCount && a.ratingCount > 0) ? (a.totalRatingScore / a.ratingCount) : 5.0;
+                    let ratingB = (b.ratingCount && b.ratingCount > 0) ? (b.totalRatingScore / b.ratingCount) : 5.0;
+                    return ratingB - ratingA;
+                });
             }
 
             document.getElementById('table-container').innerHTML = renderProductTable(filtered, activeTab);
@@ -899,12 +1320,12 @@
             if (cardData && cardData.country !== 'N/A' && cardData.country !== '') {
                 resultBox.innerHTML = `
                     <div style="background:#0d1b2a; border:1px solid #38b000; padding:15px; border-radius:6px; font-size:13px; line-height:1.6;">
-                        <h3 style="color:#38b000; margin-top:0;">💳 Secure Verified Details: ${bin}</h3>
-                        <p><b>Bank Name:</b> ${cardData.bank}</p>
-                        <p><b>Country:</b> ${cardData.country} (${cardData.code})</p>
-                        <p><b>Card Type:</b> ${cardData.type}</p>
-                        <p><b>Card Brand:</b> ${cardData.brand}</p>
-                        <p><b>Card Level:</b> ${cardData.level}</p>
+                        <h3 style="color:#38b000; margin-top:0;">💳 Secure Verified Details: ${escapeHtml(bin)}</h3>
+                        <p><b>Bank Name:</b> ${escapeHtml(cardData.bank)}</p>
+                        <p><b>Country:</b> ${escapeHtml(cardData.country)} (${escapeHtml(cardData.code)})</p>
+                        <p><b>Card Type:</b> ${escapeHtml(cardData.type)}</p>
+                        <p><b>Card Brand:</b> ${escapeHtml(cardData.brand)}</p>
+                        <p><b>Card Level:</b> ${escapeHtml(cardData.level)}</p>
                         <p style="color:#00ff66; margin-top:8px;"><b>Status:</b> ✅ 100% SUCCESSFUL (Live API Connected)</p>
                     </div>
                 `;
