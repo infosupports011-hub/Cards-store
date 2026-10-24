@@ -188,6 +188,7 @@
             <li><a onclick="switchPage('my_orders')" id="nav-my_orders" style="color: #00ff66;">📦 My Orders</a></li>
             <li><a onclick="switchPage('club_partners')" id="nav-club_partners" style="color: #ffb703;">⭐ Club Partners (Apply)</a></li>
             <li id="seller-hub-nav" style="display:none;"><a onclick="switchPage('seller_hub')" id="nav-seller_hub" style="color: #38b000;">⚡ Seller Hub (My Listings)</a></li>
+            <li id="seller-messages-nav" style="display:none;"><a onclick="switchPage('seller_messages')" id="nav-seller_messages" style="color: #ffb703;">📬 Messages & Notifications</a></li>
             <li id="admin-panel-nav" style="display:none;"><a onclick="switchPage('admin_panel')" id="nav-admin_panel" style="color: #ff00ff;">👑 Admin Requests</a></li>
             <li><a onclick="switchPage('refund')" id="nav-refund">Refund Policy & Security</a></li>
         </ul>
@@ -266,6 +267,7 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
             
+            // 1. Admin Account
             let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'admin');
             let adminData = {
                 name: 'admin', username: 'admin', password: 'admin123',
@@ -282,6 +284,7 @@
                 if(!users[adminIndex].password) users[adminIndex].password = 'admin123';
             }
 
+            // 2. Williams Account
             let assistantIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'williams');
             let assistantData = {
                 name: 'williams', username: 'williams', password: 'williams123',
@@ -298,14 +301,96 @@
                 if(!users[assistantIndex].password) users[assistantIndex].password = 'williams123';
             }
 
+            // 3. Official Sellers List ($0.00 balance)
+            const preSellers = [
+                { username: 'shadow_seller', name: 'Shadow Seller', password: 'seller123_a', email: 'shadow@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123451', balance_usd: 0.00 },
+                { username: 'viper_cards', name: 'Viper Cards', password: 'seller123_b', email: 'viper@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123452', balance_usd: 0.00 },
+                { username: 'matrix_node', name: 'Matrix Node', password: 'seller123_c', email: 'matrix@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123453', balance_usd: 0.00 },
+                { username: 'nexus_vendor', name: 'Nexus Vendor', password: 'seller123_d', email: 'nexus@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123454', balance_usd: 0.00 },
+                { username: 'cipher_vendor', name: 'Cipher Vendor', password: 'seller123_e', email: 'cipher@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123455', balance_usd: 0.00 },
+                { username: 'ghost_merchant', name: 'Ghost Merchant', password: 'seller123_f', email: 'ghost@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123456', balance_usd: 0.00 },
+                { username: 'phantom_store', name: 'Phantom Store', password: 'seller123_g', email: 'phantom@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123457', balance_usd: 0.00 },
+                { username: 'apex_vendor', name: 'Apex Vendor', password: 'seller123_h', email: 'apex@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123458', balance_usd: 0.00 },
+                { username: 'zenith_merchant', name: 'Zenith Merchant', password: 'seller123_i', email: 'zenith@czc.club', privateKey: 'CZCGEAR9876543210abcdefABCDEF123459', balance_usd: 0.00 }
+            ];
+
+            preSellers.forEach(ps => {
+                let uIdx = users.findIndex(u => u.username && u.username.toLowerCase() === ps.username.toLowerCase());
+                let pData = {
+                    name: ps.name, username: ps.username, password: ps.password,
+                    email: ps.email, privateKey: ps.privateKey,
+                    balance_usd: ps.balance_usd, is_activated: 1, role: 'Official Seller',
+                    tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
+                };
+                if (uIdx === -1) {
+                    users.push(pData);
+                } else {
+                    users[uIdx].password = ps.password;
+                    users[uIdx].privateKey = ps.privateKey;
+                    users[uIdx].is_activated = 1;
+                    users[uIdx].role = 'Official Seller';
+                }
+            });
+
             localStorage.setItem('czc_users', JSON.stringify(users));
 
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch (e) { approvedSellers = []; }
-            if (!approvedSellers.includes('williams')) {
-                approvedSellers.push('williams');
-                localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
+            
+            let defaultSellersList = ['williams', 'shadow_seller', 'viper_cards', 'matrix_node', 'nexus_vendor', 'cipher_vendor', 'ghost_merchant', 'phantom_store', 'apex_vendor', 'zenith_merchant'];
+            defaultSellersList.forEach(ds => {
+                if (!approvedSellers.includes(ds)) {
+                    approvedSellers.push(ds);
+                }
+            });
+            localStorage.setItem('czc_approved_sellers', JSON.stringify(approvedSellers));
+        }
+
+        function checkSellerMilestones(user) {
+            if (!user.activationDate) return;
+            let actDate = new Date(user.activationDate);
+            let now = new Date();
+            let diffTime = Math.abs(now - actDate);
+            let diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365.25));
+            
+            user.notifications = user.notifications || [];
+            
+            if (diffYears >= 1) {
+                let annMsg = `🎉 Happy Anniversary! Congratulations on completing ${diffYears} year(s) of partnership with Cards Zones Club.`;
+                if (!user.notifications.some(n => n.type === 'ANNIVERSARY' && n.text.includes(`${diffYears} year(s)`))) {
+                    user.notifications.push({
+                        type: 'ANNIVERSARY',
+                        text: annMsg,
+                        date: new Date().toISOString()
+                    });
+                }
             }
+
+            let allProducts = [];
+            try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) {}
+            let myItems = allProducts.filter(p => p.seller && p.seller.toLowerCase() === user.username.toLowerCase());
+            let totalScore = 0, count = 0;
+            myItems.forEach(i => {
+                if (i.ratingCount && i.ratingCount > 0) {
+                    totalScore += (i.totalRatingScore || (i.ratingCount * 5.0));
+                    count += i.ratingCount;
+                }
+            });
+            let avgRating = count > 0 ? (totalScore / count) : 5.0;
+            let performancePercent = Math.round((avgRating / 5.0) * 100);
+
+            let reviewMsg = `📊 Monthly Performance Review: Your rating performance is at ${performancePercent}% (${performancePercent >= 80 ? 'Highly Attractive & Excellent' : performancePercent >= 50 ? 'Moderate Performance' : 'Standard Performance'}).`;
+            
+            let currentMonthYear = now.getFullYear() + '-' + now.getMonth();
+            if (!user.notifications.some(n => n.type === 'REVIEW' && n.monthYear === currentMonthYear)) {
+                user.notifications.push({
+                    type: 'REVIEW',
+                    text: reviewMsg,
+                    monthYear: currentMonthYear,
+                    date: new Date().toISOString()
+                });
+            }
+            updateStorage();
         }
 
         function toggleSidebar() {
@@ -335,18 +420,26 @@
                 currentUser.is_activated = 1;
                 let adminNav = document.getElementById('admin-panel-nav');
                 let sellerNav = document.getElementById('seller-hub-nav');
+                let sellerMsgNav = document.getElementById('seller-messages-nav');
                 if(adminNav) adminNav.style.display = 'block';
                 if(sellerNav) sellerNav.style.display = 'block';
+                if(sellerMsgNav) sellerMsgNav.style.display = 'block';
             } else if (isAssistant) {
                 currentUser.role = 'Personal Assistant';
                 currentUser.is_activated = 1;
                 let sellerNav = document.getElementById('seller-hub-nav');
+                let sellerMsgNav = document.getElementById('seller-messages-nav');
                 if(sellerNav) sellerNav.style.display = 'block';
+                if(sellerMsgNav) sellerMsgNav.style.display = 'block';
             } else if (isSeller) {
                 currentUser.role = 'Official Seller';
                 currentUser.is_activated = 1;
                 let sellerNav = document.getElementById('seller-hub-nav');
+                let sellerMsgNav = document.getElementById('seller-messages-nav');
                 if(sellerNav) sellerNav.style.display = 'block';
+                if(sellerMsgNav) sellerMsgNav.style.display = 'block';
+
+                checkSellerMilestones(currentUser);
             } else {
                 currentUser.role = 'Member';
             }
@@ -390,7 +483,8 @@
                                currentUser.username.toLowerCase() === 'admin' || 
                                currentUser.username.toLowerCase() === 'williams' || 
                                currentUser.role === 'Owner' || 
-                               currentUser.role === 'Personal Assistant';
+                               currentUser.role === 'Personal Assistant' ||
+                               currentUser.role === 'Official Seller';
 
             if (marketPages.includes(page) && !isPrivileged && currentUser.is_activated === 0) {
                 content.innerHTML = `
@@ -504,6 +598,24 @@
                     html += `<table class="format-table"><tr><th>Date</th><th>Category</th><th>Asset Details</th><th>Price</th></tr>`;
                     orders.forEach(o => {
                         html += `<tr><td>${escapeHtml(new Date(o.date).toLocaleString())}</td><td>${escapeHtml(o.category.toUpperCase())}</td><td><code>${escapeHtml(o.details)}</code></td><td>$${Number(o.price).toFixed(2)}</td></tr>`;
+                    });
+                    html += `</table>`;
+                }
+                content.innerHTML = html;
+            } else if (page === 'seller_messages') {
+                let notifications = currentUser.notifications || [];
+                let html = `<h2>📬 Messages & Notifications (Anniversary, Monthly Review & Fraud Monitor)</h2>
+                <p style="color:#adb5bd; font-size:13px;">Review anniversary greetings, monthly performance percentages, buyer ratings, and fraud monitoring notices below.</p>`;
+                if (notifications.length === 0) {
+                    html += `<p style="color:#adb5bd; margin-top:20px;">No messages or notifications received yet.</p>`;
+                } else {
+                    html += `<table class="format-table"><tr><th>Date</th><th>Notification Type</th><th>Message Details / Buyer ID</th></tr>`;
+                    notifications.forEach(n => {
+                        let colorType = '#00ff66';
+                        if(n.type === 'WARNING') colorType = '#d90429';
+                        if(n.type === 'ANNIVERSARY') colorType = '#ffb703';
+                        if(n.type === 'REVIEW') colorType = '#38b000';
+                        html += `<tr><td>${escapeHtml(new Date(n.date).toLocaleString())}</td><td><b style="color:${colorType};">${escapeHtml(n.type)}</b></td><td>${escapeHtml(n.text)}</td></tr>`;
                     });
                     html += `</table>`;
                 }
@@ -777,7 +889,6 @@
             });
         }
 
-        // Dynamic Form Fields Generator for Seller Hub based on exact Category selected
         function toggleFormFields() {
             let catElem = document.getElementById('prod-category');
             if (!catElem) return;
@@ -1463,7 +1574,7 @@
             currentUser.myOrders.push({ category: item.category, details: unlockedSummary, price: item.price, date: new Date().toISOString() });
             updateStorage();
 
-            pendingRatingItem = { allProducts, itemIndex, category: item.category };
+            pendingRatingItem = { allProducts, itemIndex, category: item.category, seller: item.seller };
 
             let timeLeft = 10;
             let timerText = document.getElementById('verification-timer-text');
@@ -1503,12 +1614,35 @@
             let userRating = prompt("Please rate this seller from 1 to 5 stars:", "5");
             let ratingVal = parseInt(userRating);
             if (ratingVal >= 1 && ratingVal <= 5 && pendingRatingItem) {
-                let { allProducts, itemIndex, category } = pendingRatingItem;
+                let { allProducts, itemIndex, category, seller } = pendingRatingItem;
                 let item = allProducts[itemIndex];
                 item.totalRatingScore = (item.totalRatingScore || 5.0) + ratingVal;
                 item.ratingCount = (item.ratingCount || 1) + 1;
                 allProducts[itemIndex] = item;
                 localStorage.setItem('czc_products', JSON.stringify(allProducts));
+
+                let users = [];
+                try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) {}
+                let sellerUser = users.find(u => u.username && u.username.toLowerCase() === seller.toLowerCase());
+                if (sellerUser) {
+                    sellerUser.notifications = sellerUser.notifications || [];
+                    sellerUser.notifications.push({
+                        type: 'RATING',
+                        text: `Buyer [${currentUser.username}] rated your product ${ratingVal} stars.`,
+                        date: new Date().toISOString()
+                    });
+
+                    if (ratingVal === 1) {
+                        sellerUser.notifications.push({
+                            type: 'WARNING',
+                            text: `Fraud Monitoring Alert: Product ID ${item.id} reported invalid by [${currentUser.username}]. Please verify immediately.`,
+                            date: new Date().toISOString()
+                        });
+                    }
+
+                    localStorage.setItem('czc_users', JSON.stringify(users));
+                }
+
                 switchPage(category);
             }
             pendingRatingItem = null;
