@@ -18,7 +18,6 @@
             position: relative;
             overflow-x: hidden;
         }
-        /* सर्किट और मैट्रिक्स वाला बैकग्राउंड इफ़ेक्ट */
         body::before {
             content: "";
             position: absolute;
@@ -147,41 +146,48 @@
         <h2 id="form-title">🏴‍☠️ Cards Zones Club 🏴‍☠️</h2>
         <div id="error-alert" class="error-msg"></div>
 
+        <!-- Login Form -->
         <div id="login-form">
             <div class="form-group">
-                <label>Username / Email:</label>
-                <input type="text" id="login-user" placeholder="Enter username or email" autocomplete="off">
+                <label>Username:</label>
+                <input type="text" id="login-user" placeholder="Enter username" autocomplete="off">
             </div>
             <div class="form-group">
-                <label>Password / Private Key:</label>
-                <input type="password" id="login-pass" placeholder="Enter password or 36-digit key" autocomplete="off">
+                <label>Password:</label>
+                <input type="password" id="login-pass" placeholder="Enter password" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>36-Digit Private Key:</label>
+                <input type="password" id="login-key" placeholder="Enter 36-digit private key" autocomplete="off">
             </div>
             <button onclick="handleLogin()">Verify & Continue</button>
             <div class="switch-text" onclick="toggleAuthMode()">Don't have an account? <span>Sign Up</span></div>
         </div>
 
+        <!-- Signup Form -->
         <div id="signup-form" style="display:none;">
             <div class="form-group">
                 <label>Name:</label>
-                <input type="text" id="signup-name" placeholder="Alexander Hamilton" autocomplete="off">
+                <input type="text" id="signup-name" placeholder="Enter your name" autocomplete="off">
             </div>
             <div class="form-group">
                 <label>Username:</label>
-                <input type="text" id="signup-user" placeholder="Choose username" autocomplete="off">
+                <input type="text" id="signup-user" placeholder="Enter username" autocomplete="off">
             </div>
             <div class="form-group">
                 <label>Gmail:</label>
-                <input type="email" id="signup-email" placeholder="hellokitty11@gmail.com" autocomplete="off">
+                <input type="email" id="signup-email" placeholder="Enter your email" autocomplete="off">
             </div>
             <div class="form-group">
                 <label>Password:</label>
-                <input type="password" id="signup-pass" placeholder="Create password" autocomplete="off">
+                <input type="password" id="signup-pass" placeholder="Enter password" autocomplete="off">
             </div>
             <button onclick="handleSignup()">Create Secure Account</button>
             <div class="switch-text" onclick="toggleAuthMode()">Already have an account? <span>Log In</span></div>
         </div>
     </div>
 
+    <!-- Private Key Modal -->
     <div class="modal" id="key-modal">
         <div class="modal-content">
             <h3 style="color: #4ade80; margin-top:0;">⚠️ Save Your Private Key!</h3>
@@ -387,8 +393,9 @@
         function handleLogin() {
             let userInp = document.getElementById('login-user').value.trim();
             let passInp = document.getElementById('login-pass').value.trim();
+            let keyInp = document.getElementById('login-key').value.trim();
 
-            if (!userInp || !passInp) {
+            if (!userInp || !passInp || !keyInp) {
                 showAlert('Please fill in all fields.');
                 return;
             }
@@ -397,15 +404,16 @@
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
 
             let found = users.find(u => 
-                (u.username.toLowerCase() === userInp.toLowerCase() || u.email.toLowerCase() === userInp.toLowerCase()) && 
-                (u.password === passInp || u.privateKey === passInp)
+                u.username.toLowerCase() === userInp.toLowerCase() && 
+                u.password === passInp && 
+                u.privateKey === keyInp
             );
 
             if (found) {
                 localStorage.setItem('czc_current_user', found.username);
                 window.location.href = 'store.html';
             } else {
-                showAlert('Invalid username/email or password/private key.');
+                showAlert('Invalid username, password, or private key.');
             }
         }
     </script>
