@@ -56,60 +56,6 @@
         }
     </style>
     <script>
-        // Advanced Hardened Anti-VPN & Anti-Proxy Permanent Guard
-        (async function enforceStrictSecurity() {
-            try {
-                let response = await fetch('https://ipapi.co/json/');
-                if (response.ok) {
-                    let data = await response.json();
-                    if (data.org && (
-                        data.org.toLowerCase().includes('vpn') || 
-                        data.org.toLowerCase().includes('proxy') || 
-                        data.org.toLowerCase().includes('tor') || 
-                        data.org.toLowerCase().includes('hosting') || 
-                        data.org.toLowerCase().includes('digitalocean') || 
-                        data.org.toLowerCase().includes('ovh') || 
-                        data.org.toLowerCase().includes('hetzner') ||
-                        data.org.toLowerCase().includes('aws') ||
-                        data.org.toLowerCase().includes('cloudflare')
-                    )) {
-                        triggerPermanentBlock();
-                        return;
-                    }
-                }
-            } catch (e) {
-                // Secondary Fail-Safe Check
-                try {
-                    let res2 = await fetch('https://proxycheck.io/v2/json/?vpn=1');
-                    let json2 = await res2.json();
-                    let clientIp = Object.keys(json2)[0];
-                    if (clientIp && json2[clientIp] && json2[clientIp].proxy === "yes") {
-                        triggerPermanentBlock();
-                        return;
-                    }
-                } catch(err) {
-                    // If network verification APIs fail completely, trigger secure block to prevent bypass
-                    triggerPermanentBlock();
-                }
-            }
-        })();
-
-        function triggerPermanentBlock() {
-            document.documentElement.innerHTML = `
-                <html>
-                <head><title>404 Not Found</title></head>
-                <body style="background:#0d1b2a; color:#fff; font-family:monospace; display:flex; justify-content:center; align-items:center; height:100vh; margin:0;">
-                    <div style="text-align:center;">
-                        <h1 style="color:#d90429; font-size:48px; margin:0;">404</h1>
-                        <h2>Page Not Found</h2>
-                        <p style="color:#adb5bd; font-size:14px;">The requested resource could not be found on this server or access is permanently restricted.</p>
-                    </div>
-                </body>
-                </html>
-            `;
-            throw new Error("Access Denied: VPN/Proxy Detected or Unauthorized Network.");
-        }
-
         function escapeHtml(text) {
             if (!text) return '';
             return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
