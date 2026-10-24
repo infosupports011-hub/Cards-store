@@ -70,7 +70,41 @@
         input:focus {
             border-color: #4ade80;
         }
-        button {
+        .captcha-box-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .captcha-display {
+            background: #0b132b;
+            border: 1px dashed #4ade80;
+            color: #facc15;
+            padding: 8px 15px;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            border-radius: 4px;
+            user-select: none;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .refresh-captcha {
+            background: #1d4ed8;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 0 !important;
+        }
+        .refresh-captcha:hover {
+            background: #2563eb;
+        }
+        button.action-btn {
             width: 100%;
             background-color: #2563eb;
             color: #fff;
@@ -83,7 +117,7 @@
             margin-top: 10px;
             transition: background 0.2s;
         }
-        button:hover {
+        button.action-btn:hover {
             background-color: #1d4ed8;
         }
         .switch-text {
@@ -160,7 +194,15 @@
                 <label>36-Digit Private Key:</label>
                 <input type="password" id="login-key" placeholder="Enter 36-digit private key" autocomplete="off">
             </div>
-            <button onclick="handleLogin()">Verify & Continue</button>
+            <div class="form-group">
+                <label>Captcha Verification:</label>
+                <div class="captcha-box-container">
+                    <div class="captcha-display" id="login-captcha-code">5938</div>
+                    <button type="button" class="refresh-captcha" onclick="refreshCaptcha('login')">🔄</button>
+                </div>
+                <input type="text" id="login-captcha-input" placeholder="Enter captcha code" autocomplete="off">
+            </div>
+            <button class="action-btn" onclick="handleLogin()">Verify & Continue</button>
             <div class="switch-text" onclick="toggleAuthMode()">Don't have an account? <span>Sign Up</span></div>
         </div>
 
@@ -182,7 +224,15 @@
                 <label>Password:</label>
                 <input type="password" id="signup-pass" placeholder="Enter password" autocomplete="off">
             </div>
-            <button onclick="handleSignup()">Create Secure Account</button>
+            <div class="form-group">
+                <label>Captcha Verification:</label>
+                <div class="captcha-box-container">
+                    <div class="captcha-display" id="signup-captcha-code">7124</div>
+                    <button type="button" class="refresh-captcha" onclick="refreshCaptcha('signup')">🔄</button>
+                </div>
+                <input type="text" id="signup-captcha-input" placeholder="Enter captcha code" autocomplete="off">
+            </div>
+            <button class="action-btn" onclick="handleSignup()">Create Secure Account</button>
             <div class="switch-text" onclick="toggleAuthMode()">Already have an account? <span>Log In</span></div>
         </div>
     </div>
@@ -193,11 +243,38 @@
             <h3 style="color: #4ade80; margin-top:0;">⚠️ Save Your Private Key!</h3>
             <p style="font-size: 13px; color: #9ca3af;">यह आपकी 36-डिजिट की प्राइवेट की है। इसे सुरक्षित जगह सेव कर लें, इसी से आपका अकाउंट पहचाना जाएगा। अगर यह खो गई तो अकाउंट रिकवर नहीं होगा!</p>
             <div class="private-key-box" id="display-private-key"></div>
-            <button onclick="proceedToStore()">I have saved it, Continue</button>
+            <button class="action-btn" onclick="proceedToStore()">I have saved it, Continue</button>
         </div>
     </div>
 
     <script>
+        let currentLoginCaptcha = "";
+        let currentSignupCaptcha = "";
+
+        function generateRandomCaptcha() {
+            const options = [
+                () => { let a = Math.floor(Math.random() * 10) + 1; let b = Math.floor(Math.random() * 10) + 1; return { text: `${a} + ${b}`, ans: String(a + b) }; },
+                () => { let a = Math.floor(Math.random() * 10) + 5; let b = Math.floor(Math.random() * 5) + 1; return { text: `${a} - ${b}`, ans: String(a - b) }; },
+                () => { const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'; let res = ''; for(let i=0; i<4; i++) res += chars.charAt(Math.floor(Math.random()*chars.length)); return { text: res, ans: res }; }
+            ];
+            let chosen = options[Math.floor(Math.random() * options.length)]();
+            return chosen;
+        }
+
+        function refreshCaptcha(type) {
+            if (type === 'login') {
+                let cap = generateRandomCaptcha();
+                currentLoginCaptcha = cap.ans;
+                document.getElementById('login-captcha-code').innerText = cap.text;
+                document.getElementById('login-captcha-input').value = '';
+            } else {
+                let cap = generateRandomCaptcha();
+                currentSignupCaptcha = cap.ans;
+                document.getElementById('signup-captcha-code').innerText = cap.text;
+                document.getElementById('signup-captcha-input').value = '';
+            }
+        }
+
         function initializeDefaultAccounts() {
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
@@ -312,6 +389,8 @@
 
         window.onload = function() {
             initializeDefaultAccounts();
+            refreshCaptcha('login');
+            refreshCaptcha('signup');
         };
 
         function generate36DigitKey() {
@@ -334,10 +413,12 @@
                 loginForm.style.display = 'block';
                 signupForm.style.display = 'none';
                 title.innerText = '🏴‍☠️ Cards Zones Club 🏴‍☠️';
+                refreshCaptcha('login');
             } else {
                 loginForm.style.display = 'none';
                 signupForm.style.display = 'block';
                 title.innerText = 'CREATE NEW ACCOUNT';
+                refreshCaptcha('signup');
             }
         }
 
@@ -352,9 +433,17 @@
             let userInp = document.getElementById('signup-user').value.trim();
             let emailInp = document.getElementById('signup-email').value.trim();
             let passInp = document.getElementById('signup-pass').value.trim();
+            let captchaInp = document.getElementById('signup-captcha-input').value.trim();
 
-            if (!nameInp || !userInp || !emailInp || !passInp) {
-                showAlert('Please fill in all fields.');
+            if (!nameInp || !userInp || !emailInp || !passInp || !captchaInp) {
+                showAlert('Please fill in all fields including captcha.');
+                refreshCaptcha('signup');
+                return;
+            }
+
+            if (captchaInp !== currentSignupCaptcha) {
+                showAlert('Invalid Captcha Code. A new captcha has been generated.');
+                refreshCaptcha('signup');
                 return;
             }
 
@@ -363,6 +452,7 @@
 
             if (users.some(u => u.username.toLowerCase() === userInp.toLowerCase())) {
                 showAlert('Username already taken.');
+                refreshCaptcha('signup');
                 return;
             }
 
@@ -394,9 +484,17 @@
             let userInp = document.getElementById('login-user').value.trim();
             let passInp = document.getElementById('login-pass').value.trim();
             let keyInp = document.getElementById('login-key').value.trim();
+            let captchaInp = document.getElementById('login-captcha-input').value.trim();
 
-            if (!userInp || !passInp || !keyInp) {
-                showAlert('Please fill in all fields.');
+            if (!userInp || !passInp || !keyInp || !captchaInp) {
+                showAlert('Please fill in all fields including captcha.');
+                refreshCaptcha('login');
+                return;
+            }
+
+            if (captchaInp !== currentLoginCaptcha) {
+                showAlert('Invalid Captcha Code. A new captcha has been generated.');
+                refreshCaptcha('login');
                 return;
             }
 
@@ -413,7 +511,8 @@
                 localStorage.setItem('czc_current_user', found.username);
                 window.location.href = 'store.html';
             } else {
-                showAlert('Invalid username, password, or private key.');
+                showAlert('Invalid username, password, or private key. Captcha renewed.');
+                refreshCaptcha('login');
             }
         }
     </script>
