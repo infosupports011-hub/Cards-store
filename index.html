@@ -3,518 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏴‍☠️ Cards Zones Club 🏴‍☠️ - Secure Gateway</title>
+    <title>🏴‍☠️Cards Zones Club🏴‍☠️ - Login</title>
     <style>
         * { box-sizing: border-box; }
-        body {
-            background-color: #050b14;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(5,11,20,0.85), rgba(5,11,20,0.95)), 
-                        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,255,100,0.03) 40px, rgba(0,255,100,0.03) 41px),
-                        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,150,255,0.03) 40px, rgba(0,150,255,0.03) 41px);
-            z-index: 1;
-        }
-        .auth-container {
-            position: relative;
-            z-index: 2;
-            background-color: rgba(17, 24, 39, 0.95);
-            border: 1px solid #1e3a8a;
-            border-radius: 8px;
-            padding: 25px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-        }
-        h2 {
-            color: #4ade80;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-family: monospace;
-            letter-spacing: 1px;
-        }
-        .form-group {
-            margin-bottom: 12px;
-        }
-        label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 12px;
-            color: #9ca3af;
-            font-family: monospace;
-        }
-        input {
-            width: 100%;
-            padding: 9px 12px;
-            background: #0b132b;
-            border: 1px solid #1d4ed8;
-            color: #fff;
-            border-radius: 4px;
-            font-size: 13px;
-            outline: none;
-        }
-        input:focus {
-            border-color: #4ade80;
-        }
-        .captcha-box-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .captcha-display {
-            background: #0b132b;
-            border: 1px dashed #4ade80;
-            color: #facc15;
-            padding: 8px 15px;
-            font-family: monospace;
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 4px;
-            border-radius: 4px;
-            user-select: none;
-            text-align: center;
-            flex-grow: 1;
-        }
-        .refresh-captcha {
-            background: #1d4ed8;
-            color: white;
-            border: none;
-            padding: 10px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            margin-top: 0 !important;
-        }
-        .refresh-captcha:hover {
-            background: #2563eb;
-        }
-        button.action-btn {
-            width: 100%;
-            background-color: #2563eb;
-            color: #fff;
-            padding: 11px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-        button.action-btn:hover {
-            background-color: #1d4ed8;
-        }
-        .switch-text {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 12px;
-            color: #9ca3af;
-            cursor: pointer;
-        }
-        .switch-text span {
-            color: #4ade80;
-            font-weight: bold;
-        }
-        .error-msg {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid #ef4444;
-            color: #f87171;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-bottom: 12px;
-            display: none;
-            text-align: center;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 10;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .modal-content {
-            background: #111827;
-            border: 1px solid #4ade80;
-            padding: 25px;
-            border-radius: 8px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-        }
-        .private-key-box {
-            background: #0b132b;
-            border: 1px dashed #4ade80;
-            color: #4ade80;
-            padding: 12px;
-            font-family: monospace;
-            font-size: 13px;
-            word-break: break-all;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
+        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 30px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { color: #38b000; text-align: center; margin-top: 0; font-size: 20px; }
+        .error-box { background-color: rgba(217,4,41,0.2); border: 1px solid #d90429; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; display: none; text-align: center; }
+        label { font-size: 13px; color: #adb5bd; display: block; margin-top: 10px; }
+        input { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-size: 13px; }
+        .captcha-container { display: flex; align-items: center; gap: 10px; background: #0d1b2a; border: 1px solid #415a77; padding: 8px; border-radius: 4px; margin-bottom: 15px; justify-content: center; font-weight: bold; color: #ffb703; font-size: 16px; }
+        .btn-refresh { background: #0077b6; color: #fff; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-submit { background-color: #38b000; color: #fff; padding: 12px; border: none; border-radius: 6px; width: 100%; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .btn-submit:hover { background-color: #2e9000; }
+        .signup-link { text-align: center; margin-top: 15px; font-size: 12px; color: #adb5bd; }
+        .signup-link a { color: #38b000; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="auth-container" id="auth-box">
-        <h2 id="form-title">🏴‍☠️ Cards Zones Club 🏴‍☠️</h2>
-        <div id="error-alert" class="error-msg"></div>
+    <div class="login-box">
+        <h2>🏴‍☠️ Cards Zones Club 🏴‍☠️</h2>
+        <div id="error-msg" class="error-box">Invalid username, password, or private key. Captcha renewed.</div>
 
-        <!-- Login Form -->
-        <div id="login-form">
-            <div class="form-group">
-                <label>Username:</label>
-                <input type="text" id="login-user" placeholder="Enter username" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Password:</label>
-                <input type="password" id="login-pass" placeholder="Enter password" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>36-Digit Private Key:</label>
-                <input type="password" id="login-key" placeholder="Enter 36-digit private key" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Captcha Verification:</label>
-                <div class="captcha-box-container">
-                    <div class="captcha-display" id="login-captcha-code">5938</div>
-                    <button type="button" class="refresh-captcha" onclick="refreshCaptcha('login')">🔄</button>
-                </div>
-                <input type="text" id="login-captcha-input" placeholder="Enter captcha code" autocomplete="off">
-            </div>
-            <button class="action-btn" onclick="handleLogin()">Verify & Continue</button>
-            <div class="switch-text" onclick="toggleAuthMode()">Don't have an account? <span>Sign Up</span></div>
+        <label>Username:</label>
+        <input type="text" id="login-username" placeholder="Enter username">
+
+        <label>Password:</label>
+        <input type="password" id="login-password" placeholder="Enter password">
+
+        <label>36-Digit Private Key:</label>
+        <input type="password" id="login-privkey" placeholder="Enter 36-digit private key">
+
+        <label>Captcha Verification:</label>
+        <div class="captcha-container">
+            <span id="captcha-question">5 + 4</span>
+            <button type="button" class="btn-refresh" onclick="generateCaptcha()">🔄</button>
         </div>
+        <input type="text" id="captcha-input" placeholder="Enter captcha code">
 
-        <!-- Signup Form -->
-        <div id="signup-form" style="display:none;">
-            <div class="form-group">
-                <label>Name:</label>
-                <input type="text" id="signup-name" placeholder="Enter your name" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Username:</label>
-                <input type="text" id="signup-user" placeholder="Enter username" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Gmail:</label>
-                <input type="email" id="signup-email" placeholder="Enter your email" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Password:</label>
-                <input type="password" id="signup-pass" placeholder="Enter password" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Captcha Verification:</label>
-                <div class="captcha-box-container">
-                    <div class="captcha-display" id="signup-captcha-code">7124</div>
-                    <button type="button" class="refresh-captcha" onclick="refreshCaptcha('signup')">🔄</button>
-                </div>
-                <input type="text" id="signup-captcha-input" placeholder="Enter captcha code" autocomplete="off">
-            </div>
-            <button class="action-btn" onclick="handleSignup()">Create Secure Account</button>
-            <div class="switch-text" onclick="toggleAuthMode()">Already have an account? <span>Log In</span></div>
-        </div>
-    </div>
+        <button onclick="handleLogin()" class="btn-submit">Verify & Continue</button>
 
-    <!-- Private Key Modal -->
-    <div class="modal" id="key-modal">
-        <div class="modal-content">
-            <h3 style="color: #4ade80; margin-top:0;">⚠️ Save Your Private Key!</h3>
-            <p style="font-size: 13px; color: #9ca3af;">This is your 36-character private key. Save it securely, as it will be used to recognize your account. If lost, the account cannot be recovered!</p>
-            <div class="private-key-box" id="display-private-key"></div>
-            <button class="action-btn" onclick="proceedToStore()">I have saved it, Continue</button>
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign Up</a>
         </div>
     </div>
 
     <script>
-        let currentLoginCaptcha = "";
-        let currentSignupCaptcha = "";
+        let num1 = 5, num2 = 4, correctAnswer = 9;
 
-        function generateRandomCaptcha() {
-            const options = [
-                () => { let a = Math.floor(Math.random() * 10) + 1; let b = Math.floor(Math.random() * 10) + 1; return { text: `${a} + ${b}`, ans: String(a + b) }; },
-                () => { let a = Math.floor(Math.random() * 10) + 5; let b = Math.floor(Math.random() * 5) + 1; return { text: `${a} - ${b}`, ans: String(a - b) }; },
-                () => { const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'; let res = ''; for(let i=0; i<4; i++) res += chars.charAt(Math.floor(Math.random()*chars.length)); return { text: res, ans: res }; }
-            ];
-            let chosen = options[Math.floor(Math.random() * options.length)]();
-            return chosen;
-        }
-
-        function refreshCaptcha(type) {
-            if (type === 'login') {
-                let cap = generateRandomCaptcha();
-                currentLoginCaptcha = cap.ans;
-                document.getElementById('login-captcha-code').innerText = cap.text;
-                document.getElementById('login-captcha-input').value = '';
-            } else {
-                let cap = generateRandomCaptcha();
-                currentSignupCaptcha = cap.ans;
-                document.getElementById('signup-captcha-code').innerText = cap.text;
-                document.getElementById('signup-captcha-input').value = '';
-            }
-        }
-
-        function initializeDefaultAccounts() {
-            let users = [];
-            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
-
-            const defaultAccounts = [
-                {
-                    name: 'Alexander Hamilton',
-                    username: 'alexander_hamilton',
-                    email: 'hellokitty11@gmail.com',
-                    password: 'Alex Devil',
-                    privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
-                    balance_usd: 5000.00,
-                    role: 'Owner'
-                },
-                {
-                    name: 'Williams',
-                    username: 'williams',
-                    email: 'williams39@gmail.com',
-                    password: 'Willams123',
-                    privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
-                    balance_usd: 1500.00,
-                    role: 'Personal Assistant'
-                },
-                {
-                    name: 'Nexus Vendor',
-                    username: 'nexus_vendor',
-                    email: 'nexus_vendor@czc.club',
-                    password: 'seller123_d',
-                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123454',
-                    balance_usd: 1000.00,
-                    role: 'Vendor'
-                },
-                {
-                    name: 'Matrix Node',
-                    username: 'matrix_node',
-                    email: 'matrix_node@czc.club',
-                    password: 'seller123_c',
-                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123453',
-                    balance_usd: 1000.00,
-                    role: 'Vendor'
-                },
-                {
-                    name: 'Admin',
-                    username: 'admin',
-                    email: 'treasurerman89@gmail.com',
-                    password: 'admin201215',
-                    privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
-                    balance_usd: 5000.00,
-                    role: 'Owner'
-                },
-                {
-                    name: 'Shadow Seller',
-                    username: 'shadow_seller',
-                    email: 'shadow_seller@czc.club',
-                    password: 'seller123_a',
-                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123451',
-                    balance_usd: 1000.00,
-                    role: 'Seller'
-                },
-                {
-                    name: 'Viper Cards',
-                    username: 'viper_cards',
-                    email: 'viper_cards@czc.club',
-                    password: 'seller123_b',
-                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123452',
-                    balance_usd: 1000.00,
-                    role: 'Seller'
-                },
-                {
-                    name: 'Phantom Store',
-                    username: 'phantom_store',
-                    email: 'phantom@czc.club',
-                    password: 'seller123_g',
-                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123457',
-                    balance_usd: 1000.00,
-                    role: 'Vendor'
-                },
-                {
-                    name: 'Apex Vendor',
-                    username: 'apex_vendor',
-                    email: 'apex@czc.club',
-                    password: 'seller123_h',
-                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123458',
-                    balance_usd: 1000.00,
-                    role: 'Vendor'
-                },
-                {
-                    name: 'Zenith Merchant',
-                    username: 'zenith_merchant',
-                    email: 'zenith@czc.club',
-                    password: 'seller123_i',
-                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123459',
-                    balance_usd: 1000.00,
-                    role: 'Merchant'
-                }
-            ];
-
-            defaultAccounts.forEach(acc => {
-                let index = users.findIndex(u => u.username.toLowerCase() === acc.username.toLowerCase());
-                if (index === -1) {
-                    users.push(acc);
-                } else {
-                    users[index].password = acc.password;
-                    users[index].privateKey = acc.privateKey;
-                    users[index].email = acc.email;
-                    users[index].role = acc.role;
-                }
-            });
-
-            localStorage.setItem('czc_users', JSON.stringify(users));
-        }
-
-        window.onload = function() {
-            initializeDefaultAccounts();
-            refreshCaptcha('login');
-            refreshCaptcha('signup');
-        };
-
-        function generate36DigitKey() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < 36; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-
-        function toggleAuthMode() {
-            let loginForm = document.getElementById('login-form');
-            let signupForm = document.getElementById('signup-form');
-            let title = document.getElementById('form-title');
-            let err = document.getElementById('error-alert');
-            err.style.display = 'none';
-
-            if (loginForm.style.display === 'none') {
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
-                title.innerText = '🏴‍☠️ Cards Zones Club 🏴‍☠️';
-                refreshCaptcha('login');
-            } else {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'block';
-                title.innerText = 'CREATE NEW ACCOUNT';
-                refreshCaptcha('signup');
-            }
-        }
-
-        function showAlert(msg) {
-            let err = document.getElementById('error-alert');
-            err.innerText = msg;
-            err.style.display = 'block';
-        }
-
-        function handleSignup() {
-            let nameInp = document.getElementById('signup-name').value.trim();
-            let userInp = document.getElementById('signup-user').value.trim();
-            let emailInp = document.getElementById('signup-email').value.trim();
-            let passInp = document.getElementById('signup-pass').value.trim();
-            let captchaInp = document.getElementById('signup-captcha-input').value.trim();
-
-            if (!nameInp || !userInp || !emailInp || !passInp || !captchaInp) {
-                showAlert('Please fill in all fields including captcha.');
-                refreshCaptcha('signup');
-                return;
-            }
-
-            if (captchaInp !== currentSignupCaptcha) {
-                showAlert('Invalid Captcha Code. A new captcha has been generated.');
-                refreshCaptcha('signup');
-                return;
-            }
-
-            let users = [];
-            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
-
-            if (users.some(u => u.username.toLowerCase() === userInp.toLowerCase())) {
-                showAlert('Username already taken.');
-                refreshCaptcha('signup');
-                return;
-            }
-
-            let privateKey = generate36DigitKey();
-
-            let newUser = {
-                name: nameInp,
-                username: userInp,
-                email: emailInp,
-                password: passInp,
-                privateKey: privateKey,
-                balance_usd: 0.00,
-                role: 'Member'
-            };
-
-            users.push(newUser);
-            localStorage.setItem('czc_users', JSON.stringify(users));
-            localStorage.setItem('czc_current_user', newUser.username);
-
-            document.getElementById('display-private-key').innerText = privateKey;
-            document.getElementById('key-modal').style.display = 'flex';
-        }
-
-        function proceedToStore() {
-            window.location.href = 'store.html';
+        function generateCaptcha() {
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 + num2;
+            document.getElementById('captcha-question').innerText = `${num1} + ${num2}`;
+            document.getElementById('captcha-input').value = '';
         }
 
         function handleLogin() {
-            let userInp = document.getElementById('login-user').value.trim();
-            let passInp = document.getElementById('login-pass').value.trim();
-            let keyInp = document.getElementById('login-key').value.trim();
-            let captchaInp = document.getElementById('login-captcha-input').value.trim();
+            let username = document.getElementById('login-username').value.trim();
+            let password = document.getElementById('login-password').value.trim();
+            let privKey = document.getElementById('login-privkey').value.trim();
+            let captchaInput = document.getElementById('captcha-input').value.trim();
+            let errorBox = document.getElementById('error-msg');
 
-            if (!userInp || !passInp || !keyInp || !captchaInp) {
-                showAlert('Please fill in all fields including captcha.');
-                refreshCaptcha('login');
+            if (!username || !password) {
+                errorBox.innerText = "Please enter both username and password.";
+                errorBox.style.display = 'block';
+                generateCaptcha();
                 return;
             }
 
-            if (captchaInp !== currentLoginCaptcha) {
-                showAlert('Invalid Captcha Code. A new captcha has been generated.');
-                refreshCaptcha('login');
+            if (parseInt(captchaInput) !== correctAnswer) {
+                errorBox.innerText = "Invalid Captcha verification code. Captcha renewed.";
+                errorBox.style.display = 'block';
+                generateCaptcha();
                 return;
             }
 
             let users = [];
-            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
+            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
 
-            let found = users.find(u => 
-                u.username.toLowerCase() === userInp.toLowerCase() && 
-                u.password === passInp && 
-                u.privateKey === keyInp
-            );
+            let user = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
 
-            if (found) {
-                localStorage.setItem('czc_current_user', found.username);
-                window.location.href = 'store.html';
-            } else {
-                showAlert('Invalid username, password, or private key. Captcha renewed.');
-                refreshCaptcha('login');
+            if (!user || (password && user.password && user.password !== password)) {
+                errorBox.innerText = "Invalid username, password, or private key. Captcha renewed.";
+                errorBox.style.display = 'block';
+                generateCaptcha();
+                return;
             }
+
+            localStorage.setItem('czc_current_user', user.username);
+            window.location.href = 'store.html';
         }
+
+        window.onload = function() {
+            generateCaptcha();
+        };
     </script>
 </body>
 </html>
