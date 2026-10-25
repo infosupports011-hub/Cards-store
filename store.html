@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏴‍☠️Cards Zones Club🏴‍☠️- Dashboard</title>
+    <title>🏴‍☠️Cards Zones Club🏴‍☠️- Secure Dashboard</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; min-height: 100vh; }
@@ -43,83 +43,24 @@
         .rating-badge { color: #00ff66; font-weight: bold; }
         .search-bar { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
 
-        .realistic-cards-row {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            perspective: 1000px;
-        }
-        .mini-card-realistic {
-            width: 75px;
-            height: 48px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 8px;
-            color: #fff;
-            position: relative;
-            animation: cardFloat 3s ease-in-out infinite;
-        }
+        .realistic-cards-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; perspective: 1000px; }
+        .mini-card-realistic { width: 75px; height: 48px; background: linear-gradient(135deg, #1e3c72, #2a5298); border-radius: 6px; border: 1px solid rgba(255,255,255,0.3); padding: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: space-between; font-size: 8px; color: #fff; position: relative; animation: cardFloat 3s ease-in-out infinite; }
         .mini-card-realistic.amex { background: linear-gradient(135deg, #0052D4, #4364F7, #6FB1FC); }
         .mini-card-realistic.mc { background: linear-gradient(135deg, #f12711, #f5af19); }
         .mini-card-realistic.visa { background: linear-gradient(135deg, #11998e, #38ef7d); }
-        .card-chip {
-            width: 14px;
-            height: 10px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            border-radius: 2px;
-        }
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0px) rotateX(0deg); }
-            50% { transform: translateY(-5px) rotateX(5deg); }
-        }
+        .card-chip { width: 14px; height: 10px; background: linear-gradient(135deg, #ffd700, #ff8c00); border-radius: 2px; }
+        @keyframes cardFloat { 0%, 100% { transform: translateY(0px) rotateX(0deg); } 50% { transform: translateY(-5px) rotateX(5deg); } }
 
-        .hacker-vault-graphic {
-            position: relative;
-            height: 85px;
-            margin: 10px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .vault-laser {
-            width: 120px;
-            height: 3px;
-            background: #00ff66;
-            box-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66;
-            position: absolute;
-            top: 10px;
-            animation: laserScan 2s ease-in-out infinite alternate;
-        }
-        @keyframes laserScan {
-            0% { transform: translateY(0px); opacity: 0.4; }
-            100% { transform: translateY(55px); opacity: 1; }
-        }
+        .hacker-vault-graphic { position: relative; height: 85px; margin: 10px auto; display: flex; justify-content: center; align-items: center; }
+        .vault-laser { width: 120px; height: 3px; background: #00ff66; box-shadow: 0 0 10px #00ff66, 0 0 20px #00ff66; position: absolute; top: 10px; animation: laserScan 2s ease-in-out infinite alternate; }
+        @keyframes laserScan { 0% { transform: translateY(0px); opacity: 0.4; } 100% { transform: translateY(55px); opacity: 1; } }
 
         .cart-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 5, 10, 0.9); z-index: 9980; display: none; justify-content: center; align-items: center; padding: 20px; }
         .cart-content { background: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; max-width: 500px; max-height: 80vh; overflow-y: auto; font-family: monospace; }
 
-        #hacker-vault-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 5, 10, 0.96); z-index: 9999;
-            display: none; justify-content: center; align-items: center; padding: 20px;
-        }
-        .hacker-modal-content {
-            background: #080f1e; border: 2px solid #00ff66; border-radius: 12px;
-            padding: 30px; width: 100%; max-width: 450px; text-align: center;
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.4); font-family: monospace;
-        }
-        .spinner-circle {
-            width: 70px; height: 70px; border: 4px solid #1e3a5f;
-            border-top: 4px solid #00ff66; border-radius: 50%;
-            animation: spin 1.2s linear infinite; margin: 20px auto;
-        }
+        #hacker-vault-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 5, 10, 0.96); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .hacker-modal-content { background: #080f1e; border: 2px solid #00ff66; border-radius: 12px; padding: 30px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 0 30px rgba(0, 255, 102, 0.4); font-family: monospace; }
+        .spinner-circle { width: 70px; height: 70px; border: 4px solid #1e3a5f; border-top: 4px solid #00ff66; border-radius: 50%; animation: spin 1.2s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         @media (min-width: 769px) {
@@ -230,7 +171,7 @@
 
     <script>
         const ZPUB_KEY = "zpub6qdPJSCLfCvJ5b8BKjimhUtddSAB713SFt31sA44SQ7v34YgYN1nKsHJdjWDfjczf1NDCuPvWRRkGGB7zap3he5neTMUgsT3pvRzUa8B4GN";
-        const VPN_WHITELIST_TELEGRAM = ["@pak_seller_id", "pak_seller", "shadow_seller", "viper_cards", "matrix_node", "nexus_vendor", "cipher_vendor", "ghost_merchant", "phantom_store", "apex_vendor", "zenith_merchant"];
+        const VPN_WHITELIST_TELEGRAM = ["@pak_seller_id", "pak_seller", "shadow_seller", "viper_cards", "matrix_node", "nexus_vendor", "cipher_vendor", "ghost_merchant", "phantom_store", "apex_vendor", "zenith_merchant", "alexander hamilton"];
 
         function escapeHtml(text) {
             if (!text) return '';
@@ -293,21 +234,21 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch (e) { users = []; }
             
-            let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'admin');
+            let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'alexander hamilton');
             let adminData = {
-                name: 'admin', username: 'admin', password: 'admin123',
-                email: 'treasurerman89@gmail.com', privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
+                name: 'Alexander Hamilton', username: 'Alexander Hamilton', password: 'Alex Devil',
+                email: 'hellokitty11@gmail.com', privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
                 balance_usd: 5000.00, total_deposited: 5000.00, is_activated: 1, role: 'Owner',
                 tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
             };
             if (adminIndex === -1) { users.push(adminData); } else {
-                users[adminIndex].name = 'admin';
-                users[adminIndex].email = 'treasurerman89@gmail.com';
-                users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
+                users[adminIndex].name = 'Alexander Hamilton';
+                users[adminIndex].email = 'hellokitty11@gmail.com';
+                users[adminIndex].privateKey = 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s';
                 users[adminIndex].role = 'Owner';
                 users[adminIndex].is_activated = 1;
+                users[adminIndex].password = 'Alex Devil';
                 if(!users[adminIndex].total_deposited) users[adminIndex].total_deposited = 5000.00;
-                if(!users[adminIndex].password) users[adminIndex].password = 'admin123';
             }
 
             let assistantIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'williams');
@@ -458,14 +399,14 @@
                     logSecurityEvent('VPN_VERIFICATION_SUCCESS', 'Secure tunnel cryptographic token successfully validated.');
                 }
             } else {
-                logSecurityEvent('VPN_WHITELIST_BYPASS', 'User whitelisted via Telegram ID for VPN access.');
+                logSecurityEvent('VPN_WHITELIST_BYPASS', 'User whitelisted via Telegram ID/Username for VPN access.');
             }
 
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
             
             let isSeller = approvedSellers.includes(currentUser.username);
-            let isOwner = currentUser.username.toLowerCase() === 'admin' || currentUser.role === 'Owner';
+            let isOwner = currentUser.username.toLowerCase() === 'alexander hamilton' || currentUser.role === 'Owner';
             let isAssistant = currentUser.username.toLowerCase() === 'williams' || currentUser.role === 'Personal Assistant';
 
             if (isOwner) {
@@ -564,6 +505,13 @@
         }
 
         function switchPage(page, param) {
+            let isOwnerOrAdminPanelAccess = (currentUser.username.toLowerCase() === 'alexander hamilton' || currentUser.role === 'Owner');
+            if (page === 'admin_panel' && !isOwnerOrAdminPanelAccess) {
+                alert('Access Denied: Unauthorized admin panel entry attempt.');
+                logSecurityEvent('UNAUTHORIZED_ADMIN_ACCESS_ATTEMPT', 'Non-owner user attempted to enter admin panel.');
+                return;
+            }
+
             document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
             const activeNav = document.getElementById('nav-' + page);
             if (activeNav) activeNav.classList.add('active');
@@ -579,7 +527,7 @@
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
             
             let isPrivileged = approvedSellers.includes(currentUser.username) || 
-                               currentUser.username.toLowerCase() === 'admin' || 
+                               currentUser.username.toLowerCase() === 'alexander hamilton' || 
                                currentUser.username.toLowerCase() === 'williams' || 
                                currentUser.role === 'Owner' || 
                                currentUser.role === 'Personal Assistant' ||
@@ -664,17 +612,23 @@
                 const generatedBtc = generateBtcAddressFromZpub(ZPUB_KEY);
                 content.innerHTML = `<h2>Account Balance & Deposit</h2>
                 <p>Balance: $${Number(currentUser.balance_usd || 0).toFixed(2)} USD (Total Deposited: $${Number(currentUser.total_deposited || 0).toFixed(2)})</p>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;">${escapeHtml(generatedBtc)}</code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code>ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b> <code>0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code>47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
-                <div class="crypto-box"><div class="crypto-logo" style="color:#26a17b;">₮ USDT</div> <div><b>USDT (TRC20):</b> <code>TCdu9e6V9Z3mQ5P3qx9nw3XCEhdAT6FzhG</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#f7931a;">₿ BTC</div> <div><b>Bitcoin Deposit Address:</b><br><code style="color:#00ff66;" id="addr-btc">${escapeHtml(generatedBtc)}</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#bfbbbb;">Ł LTC</div> <div><b>Litecoin (LTC):</b> <code id="addr-ltc">ltc1qgyk0pw5u7ged8tudxldxlx8g9g06z2qavdaj5d</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#627eea;">Ξ ETH</div> <div><b>Ethereum (ETH):</b> <code id="addr-eth">0x2BEE588103b2951F190Ff6997a276072384d8Eac</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#ff6600;">ɱ XMR</div> <div><b>Monero (XMR):</b> <code id="addr-xmr">47NyzSvhtPtRtUN3k3HdGYKTa4bX6zGat6Dez113RPkwdDx7EtevQN8EyjSzJTxfsiW8GrtQyfuRdWzDBcZQmV5VPk7vXtn</code></div></div>
+                <div class="crypto-box"><div class="crypto-logo" style="color:#26a17b;">₮ USDT</div> <div><b>USDT (TRC20):</b> <code id="addr-usdt">TCdu9e6V9Z3mQ5P3qx9nw3XCEhdAT6FzhG</code></div></div>
                 <div class="deposit-form">
-                    <h3>Submit Deposit</h3>
-                    <p style="font-size:11px; color:#adb5bd;">Min $30 for first activation (allows $31, $32, $33 for network fees). Subsequent deposits are used for buying cards/top-up.</p>
+                    <h3>Direct Crypto Payment Verification</h3>
+                    <p style="font-size:11px; color:#adb5bd;">Min $30 for first activation. Select coin and enter amount to directly verify and credit payment without TXID required.</p>
                     <input type="number" id="dep-amount" placeholder="Amount ($ USD - e.g. 32, 50, 100)">
-                    <input type="text" id="dep-tx" placeholder="Transaction Hash (TXID)">
-                    <button onclick="submitDepositAutoVerify()" class="btn-buy" style="padding:10px; width:100%;">Submit & Verify Deposit</button>
+                    <select id="dep-coin-select">
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="LTC">Litecoin (LTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                        <option value="XMR">Monero (XMR)</option>
+                        <option value="USDT">USDT (TRC20)</option>
+                    </select>
+                    <button onclick="submitDirectDepositVerify()" class="btn-buy" style="padding:10px; width:100%;">Direct Verify & Credit Deposit</button>
                 </div>`;
             } else if (page === 'card_checker') {
                 content.innerHTML = `
@@ -1626,18 +1580,17 @@
             switchPage('admin_panel');
         }
 
-        async function submitDepositAutoVerify() {
+        async function submitDirectDepositVerify() {
             const amt = parseFloat(document.getElementById('dep-amount').value);
-            const txid = document.getElementById('dep-tx').value.trim();
+            const coin = document.getElementById('dep-coin-select').value;
 
-            if (isNaN(amt) || !txid || amt <= 0) {
-                alert('Please enter a valid amount and Transaction Hash (TXID).');
+            if (isNaN(amt) || amt <= 0) {
+                alert('Please enter a valid amount.');
                 return;
             }
 
             if (currentUser.is_activated === 0 && amt < 30) {
-                document.getElementById('dep-amount').value = '';
-                document.getElementById('dep-tx').value = '';
+                alert('Minimum first deposit for activation is $30.');
                 return;
             }
 
@@ -1649,11 +1602,11 @@
             let unlockedData = document.getElementById('hacker-unlocked-data');
             let vaultBtn = document.getElementById('vault-confirm-btn');
 
-            if(titleEl) titleEl.innerText = "DEPOSIT VERIFICATION";
-            if(descEl) descEl.innerText = "Verifying transaction hash validity...";
+            if(titleEl) titleEl.innerText = "DIRECT CRYPTO NODE VERIFICATION";
+            if(descEl) descEl.innerText = "Scanning network node for incoming transfer to official address...";
             
-            let timeLeft = 6;
-            if(timerText) timerText.innerText = `System Verifying Payment: ${timeLeft}s remaining...`;
+            let timeLeft = 5;
+            if(timerText) timerText.innerText = `Direct Node Verification: ${timeLeft}s remaining...`;
             if(spinnerCircle) spinnerCircle.style.display = 'block';
             if(unlockedData) unlockedData.style.display = 'none';
             if(vaultBtn) vaultBtn.style.display = 'none';
@@ -1662,11 +1615,11 @@
             let verifyInterval = setInterval(() => {
                 timeLeft--;
                 if (timeLeft > 0) {
-                    if(timerText) timerText.innerText = `System Verifying Payment: ${timeLeft}s remaining...`;
+                    if(timerText) timerText.innerText = `Direct Node Verification: ${timeLeft}s remaining...`;
                 } else {
                     clearInterval(verifyInterval);
                     if(spinnerCircle) spinnerCircle.style.display = 'none';
-                    if(timerText) timerText.innerText = `✅ Payment Confirmed Successfully!`;
+                    if(timerText) timerText.innerText = `✅ Payment Automatically Verified & Credited!`;
                     
                     currentUser.balance_usd = (currentUser.balance_usd || 0) + amt;
                     currentUser.total_deposited = (currentUser.total_deposited || 0) + amt;
@@ -1679,15 +1632,15 @@
                     currentUser.depositHistory = currentUser.depositHistory || [];
                     currentUser.depositHistory.push({
                         amount: amt,
-                        txid: txid,
+                        coin: coin,
                         date: new Date().toISOString()
                     });
 
                     updateStorage();
 
                     if(unlockedData) {
-                        let statusNote = currentUser.is_activated === 1 ? "ACCOUNT ACTIVATED / BALANCE TOP-UP CREDITED" : "PENDING";
-                        unlockedData.innerText = `User: ${currentUser.username}\nAmount Credited: $${amt.toFixed(2)} USD\nTXID: ${txid}\nStatus: ${statusNote}`;
+                        let statusNote = currentUser.is_activated === 1 ? "ACCOUNT ACTIVATED / BALANCE CREDITED" : "PENDING";
+                        unlockedData.innerText = `User: ${currentUser.username}\nCoin Selected: ${coin}\nCredited Amount: $${amt.toFixed(2)} USD\nStatus: ${statusNote}`;
                         unlockedData.style.display = 'block';
                     }
                     if(vaultBtn) {
