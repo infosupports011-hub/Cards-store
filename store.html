@@ -300,7 +300,11 @@
                 }
             });
 
+            // --- ALL EXISTING USERS/BUYERS ACCOUNTS ARE PRESERVED & SAVED SAFELY ---
             localStorage.setItem('czc_users', JSON.stringify(users));
+
+            // --- ONLY PRODUCTS LISTINGS ARE CLEARED COMPLETELY FOR A FRESH START ---
+            localStorage.setItem('czc_products', JSON.stringify([]));
 
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch (e) { approvedSellers = []; }
@@ -438,7 +442,6 @@
             let isSeller = approvedSellers.includes(currentUser.username.toLowerCase()) || approvedSellers.includes(currentUser.username);
             let isAssistant = currentUser.username.toLowerCase() === 'williams' || currentUser.role === 'Personal Assistant';
 
-            // --- FIXED: ALEXANDER HAMILTON IS NOW TREATED STRICTLY AS AN OFFICIAL SELLER ---
             if (currentUser.username.toLowerCase() === 'alexander hamilton') {
                 currentUser.role = 'Official Seller';
                 currentUser.is_activated = 1;
@@ -695,7 +698,6 @@
                 let allProducts = [];
                 try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
                 
-                // --- ROBUST FILTERING: MATCHES SELLER NAME EXACTLY OR CASE-INSENSITIVELY ---
                 let myItems = allProducts.filter(p => {
                     if (!p.seller) return false;
                     return p.seller.toLowerCase() === currentUser.username.toLowerCase();
