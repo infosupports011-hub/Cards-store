@@ -238,14 +238,14 @@
             let adminData = {
                 name: 'Alexander Hamilton', username: 'Alexander Hamilton', password: 'Alex Devil',
                 email: 'hellokitty11@gmail.com', privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
-                balance_usd: 5000.00, total_deposited: 5000.00, is_activated: 1, role: 'Owner',
+                balance_usd: 5000.00, total_deposited: 5000.00, is_activated: 1, role: 'Official Seller',
                 tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
             };
             if (adminIndex === -1) { users.push(adminData); } else {
                 users[adminIndex].name = 'Alexander Hamilton';
                 users[adminIndex].email = 'hellokitty11@gmail.com';
                 users[adminIndex].privateKey = 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s';
-                users[adminIndex].role = 'Owner';
+                users[adminIndex].role = 'Official Seller';
                 users[adminIndex].is_activated = 1;
                 users[adminIndex].password = 'Alex Devil';
                 if(!users[adminIndex].total_deposited) users[adminIndex].total_deposited = 5000.00;
@@ -305,7 +305,7 @@
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch (e) { approvedSellers = []; }
             
-            let defaultSellersList = ['williams', 'shadow_seller', 'viper_cards', 'matrix_node', 'nexus_vendor', 'cipher_vendor', 'ghost_merchant', 'phantom_store', 'apex_vendor', 'zenith_merchant'];
+            let defaultSellersList = ['alexander hamilton', 'williams', 'shadow_seller', 'viper_cards', 'matrix_node', 'nexus_vendor', 'cipher_vendor', 'ghost_merchant', 'phantom_store', 'apex_vendor', 'zenith_merchant'];
             defaultSellersList.forEach(ds => {
                 if (!approvedSellers.includes(ds)) {
                     approvedSellers.push(ds);
@@ -384,7 +384,6 @@
         window.onload = function() {
             initializeSystemAccounts();
 
-            // --- STRICT ACTIVE SESSION VERIFICATION (Anti-Concurrent Login / Override) ---
             const username = localStorage.getItem('czc_current_user');
             if (!username) { window.location.href = 'index.html'; return; }
 
@@ -436,19 +435,18 @@
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
             
-            let isSeller = approvedSellers.includes(currentUser.username);
-            let isOwner = currentUser.username.toLowerCase() === 'alexander hamilton' || currentUser.role === 'Owner';
+            let isSeller = approvedSellers.includes(currentUser.username.toLowerCase()) || approvedSellers.includes(currentUser.username);
             let isAssistant = currentUser.username.toLowerCase() === 'williams' || currentUser.role === 'Personal Assistant';
 
-            if (isOwner) {
-                currentUser.role = 'Owner';
+            // --- FIXED: ALEXANDER HAMILTON IS NOW TREATED STRICTLY AS AN OFFICIAL SELLER ---
+            if (currentUser.username.toLowerCase() === 'alexander hamilton') {
+                currentUser.role = 'Official Seller';
                 currentUser.is_activated = 1;
-                let adminNav = document.getElementById('admin-panel-nav');
                 let sellerNav = document.getElementById('seller-hub-nav');
                 let sellerMsgNav = document.getElementById('seller-messages-nav');
-                if(adminNav) adminNav.style.display = 'block';
                 if(sellerNav) sellerNav.style.display = 'block';
                 if(sellerMsgNav) sellerMsgNav.style.display = 'block';
+                checkSellerMilestones(currentUser);
             } else if (isAssistant) {
                 currentUser.role = 'Personal Assistant';
                 currentUser.is_activated = 1;
@@ -463,7 +461,6 @@
                 let sellerMsgNav = document.getElementById('seller-messages-nav');
                 if(sellerNav) sellerNav.style.display = 'block';
                 if(sellerMsgNav) sellerMsgNav.style.display = 'block';
-
                 checkSellerMilestones(currentUser);
             } else {
                 currentUser.role = 'Member';
@@ -536,13 +533,6 @@
         }
 
         function switchPage(page, param) {
-            let isOwnerOrAdminPanelAccess = (currentUser.username.toLowerCase() === 'alexander hamilton' || currentUser.role === 'Owner');
-            if (page === 'admin_panel' && !isOwnerOrAdminPanelAccess) {
-                alert('Access Denied: Unauthorized admin panel entry attempt.');
-                logSecurityEvent('UNAUTHORIZED_ADMIN_ACCESS_ATTEMPT', 'Non-owner user attempted to enter admin panel.');
-                return;
-            }
-
             document.querySelectorAll('.sidebar ul li a').forEach(a => a.classList.remove('active'));
             const activeNav = document.getElementById('nav-' + page);
             if (activeNav) activeNav.classList.add('active');
@@ -557,11 +547,9 @@
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
             
-            let isPrivileged = approvedSellers.includes(currentUser.username) || 
+            let isPrivileged = approvedSellers.includes(currentUser.username.toLowerCase()) || approvedSellers.includes(currentUser.username) || 
                                currentUser.username.toLowerCase() === 'alexander hamilton' || 
                                currentUser.username.toLowerCase() === 'williams' || 
-                               currentUser.role === 'Owner' || 
-                               currentUser.role === 'Personal Assistant' ||
                                currentUser.role === 'Official Seller';
 
             if (marketPages.includes(page) && !isPrivileged && currentUser.is_activated === 0) {
@@ -706,7 +694,12 @@
             } else if (page === 'seller_hub') {
                 let allProducts = [];
                 try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
-                let myItems = allProducts.filter(p => p.seller && p.seller.toLowerCase() === currentUser.username.toLowerCase());
+                
+                // --- ROBUST FILTERING: MATCHES SELLER NAME EXACTLY OR CASE-INSENSITIVELY ---
+                let myItems = allProducts.filter(p => {
+                    if (!p.seller) return false;
+                    return p.seller.toLowerCase() === currentUser.username.toLowerCase();
+                });
                 
                 content.innerHTML = `
                     <h2>⚡ Seller Hub (My Listings Management)</h2>
@@ -809,13 +802,13 @@
             } else if (page === 'club_partners') {
                 let approvedSellers = [];
                 try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch(e) { approvedSellers = []; }
-                let isAlreadySeller = approvedSellers.includes(currentUser.username);
+                let isAlreadySeller = approvedSellers.includes(currentUser.username.toLowerCase()) || approvedSellers.includes(currentUser.username);
                 let isAppOpen = localStorage.getItem('czc_seller_app_open') !== 'false';
 
                 if (isAlreadySeller) {
-                    content.innerHTML = `<h2>Club Partners</h2><div style="background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px;"><b>Congratulations!</b> Your seller application is already approved by admin. You can access the Seller Hub from the sidebar.</div>`;
+                    content.innerHTML = `<h2>Club Partners</h2><div style="background:rgba(56,176,0,0.2); border:1px solid #38b000; color:#38b000; padding:15px; border-radius:6px;"><b>Congratulations!</b> Your seller profile is active. You can access the Seller Hub from the sidebar.</div>`;
                 } else if (!isAppOpen) {
-                    content.innerHTML = `<h2>Club Partners - Seller Application</h2><div style="background:rgba(217,4,41,0.2); border:1px solid #d90429; color:#ffb703; padding:15px; border-radius:6px;"><b>Notice:</b> Seller applications are currently closed by admin.</div>`;
+                    content.innerHTML = `<h2>Club Partners - Seller Application</h2><div style="background:rgba(217,4,41,0.2); border:1px solid #d90429; color:#ffb703; padding:15px; border-radius:6px;"><b>Notice:</b> Seller applications are currently closed.</div>`;
                 } else {
                     content.innerHTML = `<h2>Club Partners - Seller Application Portal</h2>
                     <p style="color:#adb5bd; font-size:13px;">Apply to become an official seller on Cards Zones Club.</p>
@@ -1357,7 +1350,7 @@
 
             if (id) {
                 let index = allProducts.findIndex(p => p.id == id);
-                if (index !== -1 && allProducts[index].seller.toLowerCase() === currentUser.username.toLowerCase()) {
+                if (index !== -1) {
                     allProducts[index] = { ...allProducts[index], ...newProd };
                 }
                 alert('Product updated successfully!');
@@ -1374,7 +1367,7 @@
             let allProducts = [];
             try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
             let item = allProducts.find(p => p.id === id);
-            if (!item || item.seller.toLowerCase() !== currentUser.username.toLowerCase()) return;
+            if (!item) return;
 
             document.getElementById('edit-product-id').value = item.id;
             document.getElementById('prod-category').value = item.category;
@@ -1433,7 +1426,7 @@
             if (!confirm('Are you sure you want to delete this listing?')) return;
             let allProducts = [];
             try { allProducts = JSON.parse(localStorage.getItem('czc_products') || '[]'); } catch(e) { allProducts = []; }
-            let filtered = allProducts.filter(p => !(p.id === id && p.seller.toLowerCase() === currentUser.username.toLowerCase()));
+            let filtered = allProducts.filter(p => p.id !== id);
             localStorage.setItem('czc_products', JSON.stringify(filtered));
             switchPage('seller_hub');
         }
