@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏴‍☠️Cards Zones Club🏴‍☠️- Secure Dashboard</title>
+    <title>🏴‍☠️Cards Zones Club🏴‍☠️ - Secure Dashboard</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; min-height: 100vh; }
@@ -141,7 +141,7 @@
                 <div class="balance-badge">Balance: $<span id="user-balance">0.00</span> USD</div>
                 <div class="user-info">
                     User: <b id="username-display"></b> | Role: <b id="user-role-display" style="color:#00ff66;"></b> | 
-                    <a href="index.html" class="logout-btn" onclick="localStorage.removeItem('czc_current_user')">Log Out</a>
+                    <a href="index.html" class="logout-btn" onclick="logoutSession()">Log Out</a>
                 </div>
             </div>
         </div>
@@ -366,11 +366,42 @@
             if (sidebar) sidebar.classList.toggle('active');
         }
 
+        function logoutSession() {
+            let username = localStorage.getItem('czc_current_user');
+            if (username) {
+                let userKey = username.toLowerCase();
+                let activeSessions = {};
+                try { activeSessions = JSON.parse(localStorage.getItem('czc_active_sessions') || '{}'); } catch(e) {}
+                if (activeSessions[userKey]) {
+                    delete activeSessions[userKey];
+                    localStorage.setItem('czc_active_sessions', JSON.stringify(activeSessions));
+                }
+            }
+            localStorage.removeItem('czc_current_user');
+            localStorage.removeItem('czc_local_session_token');
+        }
+
         window.onload = function() {
             initializeSystemAccounts();
 
+            // --- STRICT ACTIVE SESSION VERIFICATION (Anti-Concurrent Login / Override) ---
             const username = localStorage.getItem('czc_current_user');
             if (!username) { window.location.href = 'index.html'; return; }
+
+            let activeSessions = {};
+            try { activeSessions = JSON.parse(localStorage.getItem('czc_active_sessions') || '{}'); } catch(e) {}
+            
+            let userKey = username.toLowerCase();
+            let globalSessionToken = activeSessions[userKey] ? activeSessions[userKey].token : null;
+            let localSessionToken = localStorage.getItem('czc_local_session_token');
+
+            if (!globalSessionToken || globalSessionToken !== localSessionToken) {
+                alert('Security Notice: Your account has been logged in from another device or browser. This session is now terminated.');
+                logoutSession();
+                window.location.href = 'index.html';
+                return;
+            }
+
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
             currentUser = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
