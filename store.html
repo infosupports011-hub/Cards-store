@@ -238,7 +238,7 @@
             let adminData = {
                 name: 'Alexander Hamilton', username: 'Alexander Hamilton', password: 'Alex Devil',
                 email: 'hellokitty11@gmail.com', privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
-                balance_usd: 5000.00, total_deposited: 5000.00, is_activated: 1, role: 'Official Seller',
+                balance_usd: 100.00, total_deposited: 100.00, is_activated: 1, role: 'Official Seller',
                 tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
             };
             if (adminIndex === -1) { users.push(adminData); } else {
@@ -248,14 +248,17 @@
                 users[adminIndex].role = 'Official Seller';
                 users[adminIndex].is_activated = 1;
                 users[adminIndex].password = 'Alex Devil';
-                if(!users[adminIndex].total_deposited) users[adminIndex].total_deposited = 5000.00;
+                if(users[adminIndex].balance_usd === undefined || users[adminIndex].balance_usd > 100.00) {
+                    users[adminIndex].balance_usd = 100.00;
+                }
+                if(users[adminIndex].total_deposited === undefined) users[adminIndex].total_deposited = 100.00;
             }
 
             let assistantIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'williams');
             let assistantData = {
                 name: 'williams', username: 'williams', password: 'williams123',
                 email: 'williams39@gmail.com', privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
-                balance_usd: 1500.00, total_deposited: 1500.00, is_activated: 1, role: 'Personal Assistant',
+                balance_usd: 0.00, total_deposited: 0.00, is_activated: 1, role: 'Personal Assistant',
                 tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
             };
             if (assistantIndex === -1) { users.push(assistantData); } else {
@@ -264,7 +267,8 @@
                 users[assistantIndex].privateKey = 'CZCWILLIAMS9876543210abcdefABCDEF123';
                 users[assistantIndex].role = 'Personal Assistant';
                 users[assistantIndex].is_activated = 1;
-                if(!users[assistantIndex].total_deposited) users[assistantIndex].total_deposited = 1500.00;
+                users[assistantIndex].balance_usd = 0.00;
+                users[assistantIndex].total_deposited = 0.00;
                 if(!users[assistantIndex].password) users[assistantIndex].password = 'williams123';
             }
 
@@ -285,7 +289,7 @@
                 let pData = {
                     name: ps.name, username: ps.username, password: ps.password,
                     email: ps.email, privateKey: ps.privateKey,
-                    balance_usd: ps.balance_usd, total_deposited: ps.total_deposited || 0, is_activated: 1, role: 'Official Seller',
+                    balance_usd: 0.00, total_deposited: 0.00, is_activated: 1, role: 'Official Seller',
                     telegramId: ps.telegramId || '@seller', tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
                 };
                 if (uIdx === -1) {
@@ -295,16 +299,21 @@
                     users[uIdx].privateKey = ps.privateKey;
                     users[uIdx].is_activated = 1;
                     users[uIdx].role = 'Official Seller';
+                    users[uIdx].balance_usd = 0.00; // Force balance to 0 for other sellers
                     if(!users[uIdx].telegramId) users[uIdx].telegramId = ps.telegramId || '@seller';
-                    if(users[uIdx].total_deposited === undefined) users[uIdx].total_deposited = 0;
                 }
             });
 
-            // --- ALL EXISTING USERS/BUYERS ACCOUNTS ARE PRESERVED & SAVED SAFELY ---
-            localStorage.setItem('czc_users', JSON.stringify(users));
+            // Ensure any other existing users/sellers (except admin) have 0 balance unless deposited
+            users.forEach(u => {
+                if (u.username && u.username.toLowerCase() === 'alexander hamilton') {
+                    u.balance_usd = 100.00;
+                } else if (u.balance_usd === undefined) {
+                    u.balance_usd = 0.00;
+                }
+            });
 
-            // --- ONLY PRODUCTS LISTINGS ARE CLEARED COMPLETELY FOR A FRESH START ---
-            localStorage.setItem('czc_products', JSON.stringify([]));
+            localStorage.setItem('czc_users', JSON.stringify(users));
 
             let approvedSellers = [];
             try { approvedSellers = JSON.parse(localStorage.getItem('czc_approved_sellers') || '[]'); } catch (e) { approvedSellers = []; }
@@ -409,6 +418,12 @@
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
             currentUser = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
             if (!currentUser) { window.location.href = 'index.html'; return; }
+
+            // Strictly enforce $100 balance for Alexander Hamilton, 0.00 for others unless deposited
+            if (currentUser.username.toLowerCase() === 'alexander hamilton') {
+                currentUser.balance_usd = 100.00;
+                updateStorage();
+            }
 
             let isVpnWhitelisted = VPN_WHITELIST_TELEGRAM.includes(currentUser.username.toLowerCase()) || 
                                    (currentUser.telegramId && VPN_WHITELIST_TELEGRAM.includes(currentUser.telegramId.toLowerCase()));
