@@ -238,7 +238,7 @@
             let adminData = {
                 name: 'Alexander Hamilton', username: 'Alexander Hamilton', password: 'Alex Devil',
                 email: 'hellokitty11@gmail.com', privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
-                balance_usd: 100.00, total_deposited: 100.00, is_activated: 1, role: 'Official Seller',
+                balance_usd: 0.00, total_deposited: 0.00, is_activated: 1, role: 'Official Seller',
                 tfaEnabled: false, emailVerified: true, activationDate: new Date().toISOString()
             };
             if (adminIndex === -1) { users.push(adminData); } else {
@@ -248,10 +248,9 @@
                 users[adminIndex].role = 'Official Seller';
                 users[adminIndex].is_activated = 1;
                 users[adminIndex].password = 'Alex Devil';
-                if(users[adminIndex].balance_usd === undefined || users[adminIndex].balance_usd > 100.00) {
-                    users[adminIndex].balance_usd = 100.00;
+                if(users[adminIndex].balance_usd === undefined || users[adminIndex].balance_usd > 0.00) {
+                    users[adminIndex].balance_usd = 0.00;
                 }
-                if(users[adminIndex].total_deposited === undefined) users[adminIndex].total_deposited = 100.00;
             }
 
             let assistantIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'williams');
@@ -268,7 +267,6 @@
                 users[assistantIndex].role = 'Personal Assistant';
                 users[assistantIndex].is_activated = 1;
                 users[assistantIndex].balance_usd = 0.00;
-                users[assistantIndex].total_deposited = 0.00;
                 if(!users[assistantIndex].password) users[assistantIndex].password = 'williams123';
             }
 
@@ -299,17 +297,18 @@
                     users[uIdx].privateKey = ps.privateKey;
                     users[uIdx].is_activated = 1;
                     users[uIdx].role = 'Official Seller';
-                    users[uIdx].balance_usd = 0.00; // Force balance to 0 for other sellers
+                    users[uIdx].balance_usd = 0.00;
                     if(!users[uIdx].telegramId) users[uIdx].telegramId = ps.telegramId || '@seller';
                 }
             });
 
-            // Ensure any other existing users/sellers (except admin) have 0 balance unless deposited
+            // Ensure ALL users have 0.00 balance by default
             users.forEach(u => {
-                if (u.username && u.username.toLowerCase() === 'alexander hamilton') {
-                    u.balance_usd = 100.00;
-                } else if (u.balance_usd === undefined) {
-                    u.balance_usd = 0.00;
+                if (u.balance_usd === undefined || u.balance_usd > 0.00) {
+                    // Keep existing deposits if they deposited real money, but clear default predefined balances
+                    if (u.username.toLowerCase() === 'alexander hamilton' || u.balance_usd === 100.00) {
+                        u.balance_usd = 0.00;
+                    }
                 }
             });
 
@@ -419,9 +418,9 @@
             currentUser = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
             if (!currentUser) { window.location.href = 'index.html'; return; }
 
-            // Strictly enforce $100 balance for Alexander Hamilton, 0.00 for others unless deposited
-            if (currentUser.username.toLowerCase() === 'alexander hamilton') {
-                currentUser.balance_usd = 100.00;
+            // Ensure balance is 0.00 unless explicitly deposited
+            if (currentUser.balance_usd === undefined) {
+                currentUser.balance_usd = 0.00;
                 updateStorage();
             }
 
