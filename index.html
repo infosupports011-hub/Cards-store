@@ -15,6 +15,7 @@
         .captcha-container { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #ffb703; border-radius: 4px; font-size: 16px; font-weight: bold; text-align: center; letter-spacing: 3px; cursor: pointer; user-select: none; }
         .btn-submit { background-color: #38b000; color: #fff; padding: 12px; border: none; border-radius: 6px; width: 100%; font-size: 14px; font-weight: bold; cursor: pointer; }
         .btn-submit:hover { background-color: #2e9000; }
+        .btn-submit:disabled { background-color: #415a77; cursor: not-allowed; }
         .signup-link { text-align: center; margin-top: 15px; font-size: 12px; color: #adb5bd; }
         .signup-link a { color: #38b000; text-decoration: none; font-weight: bold; }
     </style>
@@ -26,21 +27,21 @@
         <div id="error-msg" class="error-box">Invalid credentials or security mismatch. Captcha renewed.</div>
 
         <label>Username:</label>
-        <input type="text" id="login-username" placeholder="Enter username">
+        <input type="text" id="login-username" placeholder="Enter username" autocomplete="off">
 
         <label>Password:</label>
-        <input type="password" id="login-password" placeholder="Enter password">
+        <input type="password" id="login-password" placeholder="Enter password" autocomplete="new-password">
 
         <label>37-Digit Private Key:</label>
-        <input type="password" id="login-privkey" placeholder="Enter private key">
+        <input type="password" id="login-privkey" placeholder="Enter private key" autocomplete="new-password">
 
         <label>Captcha Verification:</label>
         <div class="captcha-container" onclick="generateCaptcha()" title="Click to refresh captcha">
             <span id="captcha-question">Loading...</span>
         </div>
-        <input type="text" id="captcha-input" placeholder="Enter exact captcha code">
+        <input type="text" id="captcha-input" placeholder="Enter exact captcha code" autocomplete="off">
 
-        <button onclick="handleLogin()" class="btn-submit">Secure Verify & Continue</button>
+        <button id="login-btn" onclick="handleLogin()" class="btn-submit">Secure Verify & Continue</button>
 
         <div class="signup-link">
             Don't have an account? <a href="signup.html">Sign Up</a>
@@ -49,6 +50,8 @@
 
     <script>
         let currentCaptchaText = "";
+        let failedAttempts = 0;
+        let lockoutTimer = null;
 
         function initializeDefaultUsers() {
             let users = [];
@@ -92,12 +95,37 @@
             document.getElementById('captcha-input').value = '';
         }
 
+        function triggerLockout() {
+            failedAttempts = 0;
+            let btn = document.getElementById('login-btn');
+            let errorBox = document.getElementById('error-msg');
+            btn.disabled = true;
+            let seconds = 30;
+            
+            errorBox.innerText = `Too many failed attempts. Security lockout active for ${seconds}s.`;
+            errorBox.style.display = 'block';
+
+            lockoutTimer = setInterval(() => {
+                seconds--;
+                if (seconds > 0) {
+                    errorBox.innerText = `Security lockout active for ${seconds}s.`;
+                } else {
+                    clearInterval(lockoutTimer);
+                    btn.disabled = false;
+                    errorBox.style.display = 'none';
+                    generateCaptcha();
+                }
+            }, 1000);
+        }
+
         function handleLogin() {
+            let errorBox = document.getElementById('error-msg');
+            if (lockoutTimer) return;
+
             let username = document.getElementById('login-username').value.trim();
             let password = document.getElementById('login-password').value.trim();
             let privKey = document.getElementById('login-privkey').value.trim();
             let captchaInput = document.getElementById('captcha-input').value.trim();
-            let errorBox = document.getElementById('error-msg');
 
             if (!username || !password || !privKey) {
                 errorBox.innerText = "All fields (Username, Password, Private Key) are required.";
@@ -107,9 +135,11 @@
             }
 
             if (captchaInput !== currentCaptchaText) {
+                failedAttempts++;
                 errorBox.innerText = "Invalid Captcha verification code. Captcha renewed.";
                 errorBox.style.display = 'block';
                 generateCaptcha();
+                if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
 
@@ -119,13 +149,32 @@
             let user = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
 
             if (!user || user.password !== password || user.privateKey !== privKey) {
+                failedAttempts++;
                 errorBox.innerText = "Invalid username, password, or private key. Captcha renewed.";
                 errorBox.style.display = 'block';
                 generateCaptcha();
+                if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
 
+            // --- STRICT SINGLE-DEVICE SESSION ENFORCEMENT ---
+            let userKey = user.username.toLowerCase();
+            let newSessionToken = 'sess_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+            // Global active session register update (This will overwrite any previous device session)
+            let activeSessions = {};
+            try { activeSessions = JSON.parse(localStorage.getItem('czc_active_sessions') || '{}'); } catch(e) {}
+            
+            activeSessions[userKey] = {
+                token: newSessionToken,
+                time: Date.now()
+            };
+            localStorage.setItem('czc_active_sessions', JSON.stringify(activeSessions));
+            
+            // Set local browser session identifier
+            localStorage.setItem('czc_local_session_token', newSessionToken);
             localStorage.setItem('czc_current_user', user.username);
+
             window.location.href = 'store.html';
         }
 
