@@ -9,10 +9,9 @@
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .login-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 30px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         
-        /* Perfect cropping to remove stone background and outer frame completely */
         .logo-container { 
             text-align: center; 
-            margin-bottom: 15px; 
+            margin-bottom: 20px; 
             overflow: hidden; 
             height: 85px; 
             background: transparent;
@@ -30,7 +29,33 @@
         .error-box { background-color: rgba(217,4,41,0.2); border: 1px solid #d90429; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; display: none; text-align: center; }
         label { font-size: 13px; color: #adb5bd; display: block; margin-top: 10px; }
         input { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-size: 13px; }
-        .captcha-container { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #ffb703; border-radius: 4px; font-size: 16px; font-weight: bold; text-align: center; letter-spacing: 3px; cursor: pointer; user-select: none; }
+        
+        /* Hard & Secure Hard-Style Captcha Canvas Box */
+        .captcha-box-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 5px 0 15px 0;
+            background: #0d1b2a;
+            border: 1px solid #415a77;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            text-align: center;
+        }
+        #captcha-canvas {
+            display: block;
+            width: 100%;
+            height: 45px;
+            background: #111a28;
+        }
+        .captcha-hint {
+            font-size: 10px;
+            color: #8d99ae;
+            padding: 3px;
+            background: #0b131a;
+            border-top: 1px solid #233142;
+        }
+
         .btn-submit { background-color: #38b000; color: #fff; padding: 12px; border: none; border-radius: 6px; width: 100%; font-size: 14px; font-weight: bold; cursor: pointer; }
         .btn-submit:hover { background-color: #2e9000; }
         .btn-submit:disabled { background-color: #415a77; cursor: not-allowed; }
@@ -48,7 +73,7 @@
         
         <div id="error-msg" class="error-box">Invalid credentials or security mismatch.</div>
 
-        <!-- STEP 1: Username, Password & Auto-refreshing Captcha -->
+        <!-- STEP 1: Username, Password & Hard Canvas Captcha -->
         <div id="login-step-1">
             <label>Username or Gmail:</label>
             <input type="text" id="login-username" placeholder="Enter username or gmail" autocomplete="off">
@@ -56,11 +81,12 @@
             <label>Password:</label>
             <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
 
-            <label>Captcha Verification:</label>
-            <div class="captcha-container" onclick="generateCaptcha()" title="Click to refresh captcha">
-                <span id="captcha-question">Loading...</span>
+            <label>Security Captcha Verification:</label>
+            <div class="captcha-box-wrapper" onclick="generateHardCaptcha()" title="Click to refresh captcha">
+                <canvas id="captcha-canvas"></canvas>
+                <div class="captcha-hint">Click image to reload hard captcha</div>
             </div>
-            <input type="text" id="captcha-input" placeholder="Enter exact captcha code" autocomplete="off">
+            <input type="text" id="captcha-input" placeholder="Enter exact characters shown above" autocomplete="off">
 
             <button onclick="proceedToStepTwo()" class="btn-submit">Next: Private Key Verification</button>
 
@@ -92,7 +118,6 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
 
-            // Owner / Admin Account Configuration
             let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'admin');
             let adminData = {
                 name: 'System Administrator',
@@ -119,7 +144,6 @@
                 users[adminIndex].is_activated = 1;
             }
 
-            // Alexander Hamilton Seller Account
             let alexIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'alexander hamilton');
             let alexData = {
                 name: 'Alexander Hamilton',
@@ -149,14 +173,60 @@
             localStorage.setItem('czc_users', JSON.stringify(users));
         }
 
-        function generateCaptcha() {
+        function generateHardCaptcha() {
             const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
             let captcha = "";
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 6; i++) {
                 captcha += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             currentCaptchaText = captcha;
-            document.getElementById('captcha-question').innerText = captcha;
+            
+            let canvas = document.getElementById('captcha-canvas');
+            if (!canvas) return;
+            let ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth || 300;
+            canvas.height = 45;
+
+            // Background fill with dark texture feel
+            ctx.fillStyle = "#0d1b2a";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw disturbing lines (Hard obstacle lines)
+            for (let i = 0; i < 7; i++) {
+                ctx.strokeStyle = `rgba(${Math.floor(Math.random()*150+50)}, ${Math.floor(Math.random()*150+50)}, ${Math.floor(Math.random()*255)}, 0.6)`;
+                ctx.lineWidth = Math.random() * 2 + 1;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+
+            // Draw noise dots
+            for (let i = 0; i < 40; i++) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5})`;
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+            }
+
+            // Draw twisted / styled text characters
+            ctx.font = "bold 24px monospace";
+            ctx.textBaseline = "middle";
+            
+            let charSpacing = canvas.width / (captcha.length + 1);
+            for (let i = 0; i < captcha.length; i++) {
+                ctx.save();
+                let x = charSpacing * (i + 1) + (Math.random() * 10 - 5);
+                let y = canvas.height / 2 + (Math.random() * 10 - 5);
+                ctx.translate(x, y);
+                
+                let angle = (Math.random() * 0.4) - 0.2;
+                ctx.rotate(angle);
+                
+                ctx.fillStyle = i % 2 === 0 ? "#ffb703" : "#48cae4";
+                ctx.fillText(captcha[i], -10, 0);
+                ctx.restore();
+            }
+
             document.getElementById('captcha-input').value = '';
         }
 
@@ -178,7 +248,7 @@
                     clearInterval(lockoutTimer);
                     btn.disabled = false;
                     errorBox.style.display = 'none';
-                    generateCaptcha();
+                    generateHardCaptcha();
                 }
             }, 1000);
         }
@@ -195,12 +265,11 @@
                 return;
             }
 
-            // Captcha mismatch -> Automatically refreshes instantly
             if (captchaInput !== currentCaptchaText) {
                 failedAttempts++;
-                errorBox.innerText = "Invalid Captcha code. Captcha automatically refreshed.";
+                errorBox.innerText = "Invalid Captcha code. Hard captcha automatically refreshed.";
                 errorBox.style.display = 'block';
-                generateCaptcha();
+                generateHardCaptcha();
                 if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
@@ -208,7 +277,6 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
 
-            // Match by username or email
             let user = users.find(u => 
                 (u.username && u.username.toLowerCase() === usernameInput.toLowerCase()) || 
                 (u.email && u.email.toLowerCase() === usernameInput.toLowerCase())
@@ -218,16 +286,14 @@
                 failedAttempts++;
                 errorBox.innerText = "Invalid username/gmail or password. Captcha refreshed.";
                 errorBox.style.display = 'block';
-                generateCaptcha();
+                generateHardCaptcha();
                 if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
 
-            // Save matched user temporarily for step 2 verification
             tempVerifiedUser = user;
             errorBox.style.display = 'none';
 
-            // Switch to Step 2 (Only Private Key)
             document.getElementById('login-step-1').classList.add('step-hidden');
             document.getElementById('login-step-2').classList.remove('step-hidden');
         }
@@ -237,7 +303,7 @@
             document.getElementById('login-step-1').classList.remove('step-hidden');
             document.getElementById('error-msg').style.display = 'none';
             tempVerifiedUser = null;
-            generateCaptcha();
+            generateHardCaptcha();
         }
 
         function handleLogin() {
@@ -260,7 +326,6 @@
                 return;
             }
 
-            // --- SESSION ENFORCEMENT & REDIRECT ---
             let userKey = tempVerifiedUser.username.toLowerCase();
             let newSessionToken = 'sess_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
 
@@ -281,7 +346,7 @@
 
         window.onload = function() {
             initializeDefaultUsers();
-            generateCaptcha();
+            generateHardCaptcha();
         };
     </script>
 </body>
