@@ -14,7 +14,7 @@
             margin-bottom: 20px; 
             overflow: hidden; 
             height: 85px; 
-            background: transparent;
+            background: #1b263b;
         }
         .logo-container img { 
             width: 155%; 
@@ -30,7 +30,6 @@
         label { font-size: 13px; color: #adb5bd; display: block; margin-top: 10px; }
         input { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-size: 13px; }
         
-        /* Hard & Secure Hard-Style Captcha Canvas Box */
         .captcha-box-wrapper {
             position: relative;
             width: 100%;
@@ -39,7 +38,6 @@
             border: 1px solid #415a77;
             border-radius: 4px;
             overflow: hidden;
-            cursor: pointer;
             text-align: center;
         }
         #captcha-canvas {
@@ -47,13 +45,6 @@
             width: 100%;
             height: 45px;
             background: #111a28;
-        }
-        .captcha-hint {
-            font-size: 10px;
-            color: #8d99ae;
-            padding: 3px;
-            background: #0b131a;
-            border-top: 1px solid #233142;
         }
 
         .btn-submit { background-color: #38b000; color: #fff; padding: 12px; border: none; border-radius: 6px; width: 100%; font-size: 14px; font-weight: bold; cursor: pointer; }
@@ -75,16 +66,15 @@
 
         <!-- STEP 1: Username, Password & Hard Canvas Captcha -->
         <div id="login-step-1">
-            <label>Username or Gmail:</label>
-            <input type="text" id="login-username" placeholder="Enter username or gmail" autocomplete="off">
+            <label>Username:</label>
+            <input type="text" id="login-username" placeholder="Enter username" autocomplete="off">
 
             <label>Password:</label>
             <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
 
             <label>Security Captcha Verification:</label>
-            <div class="captcha-box-wrapper" onclick="generateHardCaptcha()" title="Click to refresh captcha">
+            <div class="captcha-box-wrapper">
                 <canvas id="captcha-canvas"></canvas>
-                <div class="captcha-hint">Click image to reload hard captcha</div>
             </div>
             <input type="text" id="captcha-input" placeholder="Enter exact characters shown above" autocomplete="off">
 
@@ -188,11 +178,9 @@
             canvas.width = canvas.offsetWidth || 300;
             canvas.height = 45;
 
-            // Background fill with dark texture feel
             ctx.fillStyle = "#0d1b2a";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw disturbing lines (Hard obstacle lines)
             for (let i = 0; i < 7; i++) {
                 ctx.strokeStyle = `rgba(${Math.floor(Math.random()*150+50)}, ${Math.floor(Math.random()*150+50)}, ${Math.floor(Math.random()*255)}, 0.6)`;
                 ctx.lineWidth = Math.random() * 2 + 1;
@@ -202,13 +190,11 @@
                 ctx.stroke();
             }
 
-            // Draw noise dots
             for (let i = 0; i < 40; i++) {
                 ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5})`;
                 ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
             }
 
-            // Draw twisted / styled text characters
             ctx.font = "bold 24px monospace";
             ctx.textBaseline = "middle";
             
@@ -267,7 +253,7 @@
 
             if (captchaInput !== currentCaptchaText) {
                 failedAttempts++;
-                errorBox.innerText = "Invalid Captcha code. Hard captcha automatically refreshed.";
+                errorBox.innerText = "Invalid Captcha code. Captcha automatically refreshed.";
                 errorBox.style.display = 'block';
                 generateHardCaptcha();
                 if (failedAttempts >= 4) { triggerLockout(); }
@@ -284,7 +270,7 @@
 
             if (!user || user.password !== passwordInput) {
                 failedAttempts++;
-                errorBox.innerText = "Invalid username/gmail or password. Captcha refreshed.";
+                errorBox.innerText = "Invalid username or password. Captcha refreshed.";
                 errorBox.style.display = 'block';
                 generateHardCaptcha();
                 if (failedAttempts >= 4) { triggerLockout(); }
