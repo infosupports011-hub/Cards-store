@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cards Zones Club — Secure Underground Cards Markets</title>
+    <title>Cards Zones Club — Secure Market</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Backdrop Overlay */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 99; display: none; }
         .sidebar-overlay.active { display: block; }
 
-        /* Sidebar & Hamburger Menu Drawer */
         .sidebar { width: 280px; background-color: #1b263b; border-right: 1px solid #415a77; display: flex; flex-direction: column; flex-shrink: 0; position: fixed; height: 100%; top: 0; left: 0; z-index: 100; transition: transform 0.3s ease; transform: translateX(-100%); }
         .sidebar.open { transform: translateX(0); }
         
@@ -25,10 +23,8 @@
         .sidebar-menu li { padding: 10px 12px; margin-bottom: 6px; background: #0d1b2a; border: 1px solid #415a77; border-radius: 4px; font-size: 12px; color: #adb5bd; cursor: pointer; transition: all 0.2s; }
         .sidebar-menu li:hover, .sidebar-menu li.active { background: #38b000; color: #ffffff; border-color: #38b000; font-weight: bold; }
 
-        /* Main Container */
         .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; background-color: #0d1b2a; width: 100%; }
 
-        /* Top Navbar */
         .top-navbar { height: 60px; background-color: #1b263b; border-bottom: 1px solid #415a77; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-shrink: 0; }
         .nav-left { display: flex; align-items: center; gap: 15px; }
         .btn-hamburger { background: #0d1b2a; border: 1px solid #415a77; color: #38b000; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
@@ -44,14 +40,12 @@
         .btn-logout { background-color: #d90429; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .btn-logout:hover { background-color: #c90426; }
 
-        /* Viewport */
         .content-viewport { padding: 25px; overflow-y: auto; flex-grow: 1; }
         .view-section { display: none; }
         .view-section.active-content { display: block; }
 
         .section-title { font-size: 16px; color: #ffb703; text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #415a77; padding-bottom: 10px; margin-bottom: 20px; }
 
-        /* Cards Grid */
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
         .card-item { background-color: #1b263b; border: 1px solid #415a77; border-radius: 6px; padding: 15px; }
         .card-title { font-size: 13px; color: #ffb703; font-weight: bold; margin-bottom: 6px; }
@@ -59,7 +53,6 @@
         .btn-buy { background-color: #38b000; color: #fff; border: none; width: 100%; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 10px; text-transform: uppercase; }
         .btn-buy:hover { background-color: #2e9000; }
 
-        /* Crypto Modal Overlay */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; }
         .crypto-modal { background: #1b263b; border: 1px solid #38b000; padding: 25px; border-radius: 8px; width: 90%; max-width: 450px; }
         .crypto-modal h3 { color: #38b000; margin-top: 0; font-size: 16px; text-transform: uppercase; border-bottom: 1px solid #415a77; padding-bottom: 8px; }
@@ -68,17 +61,14 @@
         .deposit-box { background: #0d1b2a; border: 1px solid #415a77; padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 11px; color: #adb5bd; word-break: break-all; display: none; }
         .crypto-address { color: #ffb703; font-family: monospace; margin-top: 5px; }
 
-        /* Panels */
         .admin-banner { background: rgba(255, 183, 3, 0.05); border: 1px dashed #ffb703; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
         .seller-banner { background: rgba(72, 202, 228, 0.05); border: 1px dashed #48cae4; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Backdrop Overlay -->
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Left Sidebar Drawer -->
     <div id="sidebar-menu" class="sidebar">
         <div class="sidebar-brand-box">
             <div>
@@ -98,8 +88,212 @@
         </ul>
     </div>
 
-    <!-- Crypto Top-Up Modal -->
     <div id="crypto-modal" class="modal-overlay">
         <div class="crypto-modal">
             <h3>Select Cryptocurrency for Deposit</h3>
-            <p style="font-size: 11px; color: #adb5bd; margin-bottom: 15px;">Choose your
+            <p style="font-size: 11px; color: #adb5bd; margin-bottom: 15px;">Choose your preferred coin to generate the secure deposit address.</p>
+            
+            <div class="crypto-option" onclick="selectCrypto('BTC')">
+              <span>⚡ Bitcoin (BTC)</span>
+              <span style="color: #38b000; font-weight: bold;">Select</span>
+            </div>
+            <div class="crypto-option" onclick="selectCrypto('XMR')">
+              <span>🔒 Monero (XMR)</span>
+              <span style="color: #38b000; font-weight: bold;">Select</span>
+            </div>
+            <div class="crypto-option" onclick="selectCrypto('LTC')">
+              <span>🚀 Litecoin (LTC)</span>
+              <span style="color: #38b000; font-weight: bold;">Select</span>
+            </div>
+            <div class="crypto-option" onclick="selectCrypto('DOGE')">
+              <span>🐕 Dogecoin (DOGE)</span>
+              <span style="color: #38b000; font-weight: bold;">Select</span>
+            </div>
+
+            <div id="deposit-address-box" class="deposit-box">
+                <div id="deposit-title" style="font-weight: bold; color: #fff;"></div>
+                <div class="crypto-address" id="deposit-address-val"></div>
+                <p style="margin-top: 8px; font-size: 10px; color: #ff4d4d;">Send exact amount. Balance updates after network confirmation.</p>
+            </div>
+
+            <button onclick="closeCryptoModal()" style="background: #d90429; color: #fff; border: none; width: 100%; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 11px; text-transform: uppercase;">Close Portal</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="top-navbar">
+            <div class="nav-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div id="nav-user-info" class="user-meta-info">
+                    <span>ID: <strong>loading...</strong></span>
+                    <span>Role: ...</span>
+                    <span>Balance: <strong class="balance-text">$0.00 USD</strong></span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="openCryptoModal()" class="btn-topup">+ Top Up Crypto</button>
+                <button onclick="executeLogout()" class="btn-logout">Log Out</button>
+            </div>
+        </div>
+
+        <div class="content-viewport">
+            
+            <div id="admin-panel-box" class="admin-banner">
+                <h3 style="color: #ffb703; margin: 0 0 4px 0; font-size: 13px;">⚡ Owner & Admin Control Panel</h3>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Root privileges active. Full system and database access unlocked.</p>
+                <button onclick="alert('Root database manager initialized.')" style="background: #ffb703; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Open Root Manager</button>
+            </div>
+
+            <div id="seller-panel-box" class="seller-banner">
+                <h3 style="color: #48cae4; margin: 0 0 4px 0; font-size: 13px;">🛍️ Official Vendor Injection Panel</h3>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Strict category filters active. Upload listings inside authorized partitions.</p>
+                <button onclick="alert('Asset injector ready.')" style="background: #48cae4; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Inject New Asset</button>
+            </div>
+
+            <div id="section-store" class="view-section active-content">
+                <h2 class="section-title" id="partition-title">Catalog: All Assets</h2>
+                <div class="grid-cards" id="store-catalog-grid">
+                    <div class="card-item">
+                        <div class="card-title">[CC] US Gold Verified Node</div>
+                        <div class="card-detail">Type: Visa / Classic / Non-VBV</div>
+                        <div class="card-detail">Price: $15.00 USD</div>
+                        <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
+                    </div>
+                    <div class="card-item">
+                        <div class="card-title">[Fullz] Full Identity Record</div>
+                        <div class="card-detail">Includes: CC + SSN + DOB + DL</div>
+                        <div class="card-detail">Price: $35.00 USD</div>
+                        <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
+                    </div>
+                    <div class="card-item">
+                        <div class="card-title">[RDP] Admin Access Server</div>
+                        <div class="card-detail">Location: EU / High-Speed 1Gbps</div>
+                        <div class="card-detail">Price: $20.00 USD</div>
+                        <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            let sidebar = document.getElementById('sidebar-menu');
+            let overlay = document.getElementById('sidebar-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        function openCryptoModal() {
+            let modal = document.getElementById('crypto-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeCryptoModal() {
+            let modal = document.getElementById('crypto-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function selectCrypto(coin) {
+            let box = document.getElementById('deposit-address-box');
+            let title = document.getElementById('deposit-title');
+            let addrVal = document.getElementById('deposit-address-val');
+            
+            if (box && title && addrVal) {
+                box.style.display = 'block';
+                if (coin === 'BTC') {
+                    title.innerText = "Bitcoin (BTC) Deposit Address:";
+                    addrVal.innerText = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+                } else if (coin === 'XMR') {
+                    title.innerText = "Monero (XMR) Stealth Address:";
+                    addrVal.innerText = "888tNkZrPN6JsEgekjMnSB9pA2s8jJvY42a7q6m5n8Xp2";
+                } else if (coin === 'LTC') {
+                    title.innerText = "Litecoin (LTC) Deposit Address:";
+                    addrVal.innerText = "LTC1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+                } else if (coin === 'DOGE') {
+                    title.innerText = "Dogecoin (DOGE) Deposit Address:";
+                    addrVal.innerText = "D8VzP9pA2s8jJvY42a7q6m5n8Xp2xy2kgdygjrs";
+                }
+            }
+        }
+
+        function initializeSession() {
+            try {
+                let activeUser = localStorage.getItem('czc_current_user');
+                let sessionToken = localStorage.getItem('czc_local_session_token');
+
+                if (!activeUser || !sessionToken) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                let userDatabase = [];
+                try { userDatabase = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { userDatabase = []; }
+
+                let sessionProfile = userDatabase.find(u => u.username && u.username.toLowerCase() === activeUser.toLowerCase());
+
+                if (!sessionProfile) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                if (sessionProfile.username.toLowerCase() === 'admin') {
+                    sessionProfile.role = 'Owner';
+                    if (sessionProfile.balance_usd < 99999) sessionProfile.balance_usd = 99999.00;
+                    localStorage.setItem('czc_users', JSON.stringify(userDatabase));
+                } else {
+                    if (sessionProfile.balance_usd === undefined) {
+                        sessionProfile.balance_usd = 0.00;
+                        localStorage.setItem('czc_users', JSON.stringify(userDatabase));
+                    }
+                }
+
+                let roleClass = 'role-member';
+                let adminBox = document.getElementById('admin-panel-box');
+                let sellerBox = document.getElementById('seller-panel-box');
+
+                if (sessionProfile.role === 'Owner') {
+                    roleClass = 'role-owner';
+                    if (adminBox) adminBox.style.display = 'block';
+                } else if (sessionProfile.role === 'Official Seller') {
+                    roleClass = 'role-seller';
+                    if (sellerBox) sellerBox.style.display = 'block';
+                }
+
+                let userInfo = document.getElementById('nav-user-info');
+                if (userInfo) {
+                    userInfo.innerHTML = `
+                        <span>ID: <strong>${sessionProfile.username}</strong></span>
+                        <span>Role: <span class="${roleClass}">${sessionProfile.role}</span></span>
+                        <span>Balance: <strong class="balance-text">$${(sessionProfile.balance_usd || 0).toFixed(2)} USD</strong></span>
+                    `;
+                }
+            } catch(err) {
+                console.error("Session load error:", err);
+            }
+        }
+
+        function switchView(mode, key, element) {
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            let titleElem = document.getElementById('partition-title');
+            if (titleElem) titleElem.innerText = `Catalog: ${key.toUpperCase()}`;
+            toggleSidebar();
+        }
+
+        function executeLogout() {
+            localStorage.removeItem('czc_local_session_token');
+            localStorage.removeItem('czc_current_user');
+            window.location.href = 'index.html';
+        }
+
+        window.onload = function() {
+            initializeSession();
+        };
+    </script>
+</body>
+</html>
