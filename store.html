@@ -3,157 +3,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cards Zones Club - Cards Markets</title>
+    <title>Cards Zones Club — Dark Carding Market</title>
     <style>
         * { box-sizing: border-box; }
-        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; background-color: #1b263b; padding: 15px 25px; border-radius: 8px; border: 1px solid #415a77; margin-bottom: 20px; }
-        .club-title { font-size: 20px; font-weight: bold; color: #38b000; font-family: 'Courier New', Courier, monospace; }
-        .user-panel { font-size: 13px; color: #adb5bd; display: flex; gap: 15px; align-items: center; }
-        .role-badge-owner { color: #ffb703; font-weight: bold; }
-        .role-badge-seller { color: #48cae4; font-weight: bold; }
-        .role-badge-member { color: #38b000; font-weight: bold; }
-        .btn-logout { background-color: #d90429; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
-        .btn-logout:hover { background-color: #c90426; }
+        body { background-color: #070a0f; color: #d1d5db; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 15px; }
+        .market-container { max-width: 1400px; margin: 0 auto; }
         
-        .main-content { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
-        .sidebar { background-color: #1b263b; border: 1px solid #415a77; border-radius: 8px; padding: 15px; }
-        .sidebar h3 { color: #38b000; margin-top: 0; font-size: 15px; border-bottom: 1px solid #415a77; padding-bottom: 8px; }
-        .category-list { list-style: none; padding: 0; margin: 0; }
-        .category-list li { padding: 10px; margin-bottom: 5px; background: #0d1b2a; border: 1px solid #415a77; border-radius: 4px; cursor: pointer; font-size: 13px; color: #adb5bd; }
-        .category-list li:hover, .category-list li.active { background: #38b000; color: #fff; border-color: #38b000; font-weight: bold; }
+        /* Header */
+        .market-header { background-color: #0f172a; border: 1px solid #1e293b; padding: 12px 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.9); }
+        .market-brand { font-size: 16px; font-weight: bold; color: #22c55e; text-transform: uppercase; letter-spacing: 2px; }
+        .market-user-meta { font-size: 12px; color: #94a3b8; display: flex; gap: 15px; align-items: center; }
+        .role-owner { color: #f59e0b; font-weight: bold; text-transform: uppercase; }
+        .role-seller { color: #38bdf8; font-weight: bold; text-transform: uppercase; }
+        .role-member { color: #22c55e; font-weight: bold; text-transform: uppercase; }
+        .balance-highlight { color: #22c55e; font-weight: bold; font-family: monospace; }
+        .btn-system-out { background-color: #450a0a; color: #f87171; border: 1px solid #dc2626; padding: 4px 10px; border-radius: 3px; font-size: 11px; cursor: pointer; font-family: monospace; }
+        .btn-system-out:hover { background-color: #dc2626; color: #fff; }
 
-        .store-section { background-color: #1b263b; border: 1px solid #415a77; border-radius: 8px; padding: 20px; }
-        .store-section h2 { color: #38b000; margin-top: 0; font-size: 18px; border-bottom: 1px solid #415a77; padding-bottom: 10px; }
+        /* Terminals */
+        .terminal-box { background: #0f172a; border: 1px solid #1e293b; padding: 12px 15px; border-radius: 4px; margin-bottom: 15px; display: none; }
+        .terminal-box h3 { margin: 0 0 8px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .admin-terminal { border-color: #f59e0b; background: rgba(245, 158, 11, 0.03); }
+        .admin-terminal h3 { color: #f59e0b; }
+        .seller-terminal { border-color: #38bdf8; background: rgba(56, 189, 248, 0.03); }
+        .seller-terminal h3 { color: #38bdf8; }
+
+        /* Layout Grid */
+        .market-grid { display: grid; grid-template-columns: 260px 1fr; gap: 15px; }
         
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; margin-top: 15px; }
-        .product-card { background: #0d1b2a; border: 1px solid #415a77; border-radius: 6px; padding: 15px; }
-        .product-card h4 { margin: 0 0 10px 0; color: #ffb703; font-size: 14px; }
-        .product-card p { font-size: 12px; color: #adb5bd; margin: 4px 0; }
-        .btn-buy { background-color: #38b000; color: #fff; border: none; padding: 8px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 12px; }
-        .btn-buy:hover { background-color: #2e9000; }
+        /* Sidebar Navigation */
+        .market-sidebar { background: #0f172a; border: 1px solid #1e293b; border-radius: 4px; padding: 12px; }
+        .market-sidebar h4 { margin: 0 0 10px 0; font-size: 12px; color: #22c55e; text-transform: uppercase; border-bottom: 1px solid #1e293b; padding-bottom: 6px; }
+        .nav-cat-list { list-style: none; padding: 0; margin: 0; }
+        .nav-cat-list li { padding: 8px 10px; margin-bottom: 5px; background: #070a0f; border: 1px solid #111827; border-radius: 3px; font-size: 11px; color: #94a3b8; cursor: pointer; transition: all 0.2s; }
+        .nav-cat-list li:hover, .nav-cat-list li.active { background: #22c55e; color: #070a0f; border-color: #22c55e; font-weight: bold; }
 
-        .admin-box, .seller-box { background: #0d1b2a; border: 1px dashed #ffb703; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: none; }
-        .seller-box { border-color: #48cae4; }
+        /* Catalog & Tools Area */
+        .catalog-main { background: #0f172a; border: 1px solid #1e293b; border-radius: 4px; padding: 15px; }
+        .catalog-header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 8px; margin-bottom: 15px; }
+        .catalog-header-bar h3 { margin: 0; font-size: 14px; color: #f59e0b; text-transform: uppercase; }
+
+        /* Views (Store vs Tools) */
+        .market-view { display: none; }
+        .market-view.active-view { display: block; }
+
+        .items-table-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+        .item-card { background: #070a0f; border: 1px solid #111827; border-radius: 4px; padding: 12px; }
+        .item-title { font-size: 12px; color: #f59e0b; font-weight: bold; margin-bottom: 6px; }
+        .item-detail { font-size: 11px; color: #94a3b8; margin: 3px 0; }
+        .btn-acquire { background: #22c55e; color: #070a0f; border: none; width: 100%; padding: 6px; border-radius: 3px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 10px; font-family: monospace; text-transform: uppercase; }
+        .btn-acquire:hover { background: #16a34a; color: #fff; }
+
+        /* Interactive Tools UI */
+        .tool-panel-box { background: #070a0f; border: 1px solid #111827; padding: 15px; border-radius: 4px; margin-top: 10px; }
+        .tool-panel-box label { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 5px; }
+        .tool-panel-box textarea, .tool-panel-box input { width: 100%; background: #0f172a; border: 1px solid #1e293b; color: #fff; padding: 8px; border-radius: 3px; font-family: monospace; font-size: 12px; margin-bottom: 10px; }
+        .btn-tool-action { background: #38bdf8; color: #070a0f; border: none; padding: 8px 15px; font-weight: bold; font-family: monospace; font-size: 11px; border-radius: 3px; cursor: pointer; text-transform: uppercase; }
+        .btn-tool-action:hover { background: #0ea5e9; color: #fff; }
+        .tool-output-box { background: #020617; border: 1px solid #1e293b; padding: 10px; border-radius: 3px; font-size: 11px; color: #22c55e; margin-top: 10px; min-height: 50px; white-space: pre-wrap; }
+
+        .account-meta-box { font-size: 11px; color: #94a3b8; line-height: 1.6; }
+        .account-meta-box span { color: #f59e0b; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Top Header Navbar -->
-        <div class="header">
-            <div class="club-title">🏴‍☠️ Cards Zones Club - Secure Store 🏴‍☠️</div>
-            <div class="user-panel">
-                <span id="nav-username">User: Loading...</span>
-                <span id="nav-role">Role: ...</span>
-                <span>Balance: <strong id="nav-balance" style="color: #ffb703;">$0.00</strong></span>
-                <button onclick="handleLogout()" class="btn-logout">Log Out</button>
+    <div class="market-container">
+        <!-- Top Market Header -->
+        <div class="market-header">
+            <div class="market-brand">☣ Cards Zones Club — Dark Syndicate ☣</div>
+            <div class="market-user-meta">
+                <span id="meta-user">ID: loading...</span>
+                <span id="meta-role">Role: ...</span>
+                <span>Balance: <span id="meta-balance" class="balance-highlight">$0.00</span></span>
+                <button onclick="executeLogout()" class="btn-system-out">TERMINATE SESSION</button>
             </div>
         </div>
 
-        <!-- Admin Control Panel (Visible only to Owner) -->
-        <div id="admin-panel-container" class="admin-box">
-            <h3 style="color: #ffb703; margin-top:0;">⚡ Owner & Admin Control Panel</h3>
-            <p style="font-size: 13px; color: #adb5bd;">Unrestricted platform access, user management, and global database control.</p>
+        <!-- Admin Terminal Panel -->
+        <div id="admin-terminal-box" class="terminal-box admin-terminal">
+            <h3>⚡ Supreme Admin & Global Escrow Terminal</h3>
+            <p style="font-size: 11px; color: #94a3b8; margin: 4px 0 10px 0;">Root authority active. Oversee global vendors, database ledgers, and automated stock distribution nodes.</p>
+            <button onclick="alert('Root database management tools initialized.')" style="background: #f59e0b; color: #070a0f; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; cursor: pointer; font-family: monospace; border-radius: 3px;">Open Root Node Manager</button>
         </div>
 
-        <!-- Official Seller Panel (Visible only to Official Sellers) -->
-        <div id="seller-panel-container" class="seller-box">
-            <h3 style="color: #48cae4; margin-top:0;">🛍️ Official Seller Product Management</h3>
-            <p style="font-size: 13px; color: #adb5bd;">Upload and manage your items strictly inside designated categories (CC, Dumps, RDP/VPN).</p>
+        <!-- Official Seller Terminal Panel -->
+        <div id="seller-terminal-box" class="terminal-box seller-terminal">
+            <h3>🛍️ Vendor Staging & Asset Injection Terminal</h3>
+            <p style="font-size: 11px; color: #94a3b8; margin: 4px 0 10px 0;">Strict category filters active. Upload items strictly into authorized partitions (CC, Dumps, Fullz, SSN, RDP/VPN, Proxies).</p>
+            <button onclick="alert('Asset injector interface ready.')" style="background: #38bdf8; color: #070a0f; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; cursor: pointer; font-family: monospace; border-radius: 3px;">Inject New Market Asset</button>
         </div>
 
-        <!-- Main Dashboard Layout -->
-        <div class="main-content">
-            <!-- Sidebar Categories -->
-            <div class="sidebar">
-                <h3>Categories</h3>
-                <ul class="category-list">
-                    <li class="active" onclick="filterCategory('all')">📦 All Products</li>
-                    <li onclick="filterCategory('cc')">💳 Credit Cards (CC)</li>
-                    <li onclick="filterCategory('dumps')">💾 Dumps</li>
-                    <li onclick="filterCategory('vpn_rdp')">🌐 RDP / VPN Services</li>
+        <!-- Main Workspace Grid -->
+        <div class="market-grid">
+            <!-- Sidebar Navigation -->
+            <div class="market-sidebar">
+                <h4>Market Partitions</h4>
+                <ul class="nav-cat-list">
+                    <li class="active" onclick="switchPartition('store', 'all', this)">⚡ All Assets Catalog</li>
+                    <li onclick="switchPartition('store', 'cc', this)">💳 Credit Cards (CC)</li>
+                    <li onclick="switchPartition('store', 'fullz', this)">📄 Fullz (CC + SSN + DOB)</li>
+                    <li onclick="switchPartition('store', 'dumps', this)">💾 Track 1/2 Dumps</li>
+                    <li onclick="switchPartition('store', 'ssn', this)">🆔 SSN / DOB Data</li>
+                    <li onclick="switchPartition('store', 'proxies', this)">🔒 Elite Proxies</li>
+                    <li onclick="switchPartition('store', 'rdp_vpn', this)">🌐 Secure RDP & VPN</li>
+                </ul>
+
+                <h4 style="margin-top: 15px;">Utilities & Checkers</h4>
+                <ul class="nav-cat-list">
+                    <li onclick="switchPartition('tool', 'bin_lookup', this)">🔍 BIN Lookup Utility</li>
+                    <li onclick="switchPartition('tool', 'cc_checker', this)">🟢 Live CC Checker (Live/Die)</li>
+                    <li onclick="switchPartition('tool', 'balance_checker', this)">💰 Live Balance Checker</li>
                 </ul>
             </div>
 
-            <!-- Store Catalog Area -->
-            <div class="store-section">
-                <h2 id="category-title">Store Catalog</h2>
-                <div class="product-grid" id="product-catalog">
-                    <!-- Products will load dynamically -->
-                    <div class="product-card">
-                        <h4>Verified CC (Sample)</h4>
-                        <p>Type: Visa / MC</p>
-                        <p>Price: $15.00</p>
-                        <button class="btn-buy" onclick="alert('Demo Purchase Successful!')">Purchase Item</button>
+            <!-- Central Content Display Area -->
+            <div class="catalog-main">
+                
+                <!-- 1. STORE CATALOG VIEW -->
+                <div id="view-store" class="market-view active-view">
+                    <div class="catalog-header-bar">
+                        <h3 id="active-partition-label">Partition: ALL_ASSETS</h3>
+                        <span style="font-size: 11px; color: #94a3b8;">Instant Delivery Escrow</span>
+                    </div>
+
+                    <!-- User Identity Box -->
+                    <div style="background: #070a0f; border: 1px solid #111827; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
+                        <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #22c55e;">Node Identity & Session Details</h4>
+                        <div class="account-meta-box">
+                            <div>Name: <span id="prof-name">---</span></div>
+                            <div>Username: <span id="prof-username">---</span></div>
+                            <div>Email: <span id="prof-email">---</span> (Verified)</div>
+                            <div>Private Key: <span id="prof-key" style="word-break: break-all;">---</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Items Grid -->
+                    <div class="items-table-grid" id="inventory-grid">
+                        <div class="item-card">
+                            <div class="item-title">[CC] US Gold Verified Node</div>
+                            <div class="item-detail">Type: Visa / Classic / Non-VBV</div>
+                            <div class="item-detail">Price: $15.00 USD</div>
+                            <button class="btn-acquire" onclick="alert('Escrow transaction simulated successfully.')">Acquire Asset</button>
+                        </div>
+                        <div class="item-card">
+                            <div class="item-title">[Fullz] Full Identity Record</div>
+                            <div class="item-detail">Includes: CC + SSN + DOB + DL</div>
+                            <div class="item-detail">Price: $35.00 USD</div>
+                            <button class="btn-acquire" onclick="alert('Escrow transaction simulated successfully.')">Acquire Asset</button>
+                        </div>
+                        <div class="item-card">
+                            <div class="item-title">[RDP] Admin Access Server</div>
+                            <div class="item-detail">Location: EU / High-Speed 1Gbps</div>
+                            <div class="item-detail">Price: $20.00 USD</div>
+                            <button class="btn-acquire" onclick="alert('Escrow transaction simulated successfully.')">Acquire Asset</button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- 2. BIN LOOKUP TOOL VIEW -->
+                <div id="view-bin_lookup" class="market-view">
+                    <div class="catalog-header-bar">
+                        <h3>Utility: BIN Lookup Engine</h3>
+                    </div>
+                    <div class="tool-panel-box">
+                        <label>Enter 6-Digit BIN / IIN Code:</label>
+                        <input type="text" id="bin-input" placeholder="e.g. 453201" maxlength="6">
+                        <button class="btn-tool-action" onclick="runBinLookup()">Query BIN Ledger</button>
+                        <div class="tool-output-box" id="bin-output">Output logs will appear here...</div>
+                    </div>
+                </div>
+
+                <!-- 3. LIVE CC CHECKER TOOL VIEW -->
+                <div id="view-cc_checker" class="market-view">
+                    <div class="catalog-header-bar">
+                        <h3>Utility: Live CC Gate Checker</h3>
+                    </div>
+                    <div class="tool-panel-box">
+                        <label>Enter CC Data (Format: CC|MM|YY|CVV) - One per line:</label>
+                        <textarea id="cc-checker-input" rows="5" placeholder="4111111111111111|12|28|123"></textarea>
+                        <button class="btn-tool-action" onclick="runCcChecker()">Execute Live Check</button>
+                        <div class="tool-output-box" id="cc-checker-output">Checker waiting for payload...</div>
+                    </div>
+                </div>
+
+                <!-- 4. BALANCE CHECKER TOOL VIEW -->
+                <div id="view-balance_checker" class="market-view">
+                    <div class="catalog-header-bar">
+                        <h3>Utility: CC Balance Checker Node</h3>
+                    </div>
+                    <div class="tool-panel-box">
+                        <label>Enter CC Data to Estimate Balance (Format: CC|MM|YY|CVV):</label>
+                        <textarea id="bal-checker-input" rows="4" placeholder="4111111111111111|12|28|123"></textarea>
+                        <button class="btn-tool-action" onclick="runBalanceChecker()">Analyze Estimated Balance</button>
+                        <div class="tool-output-box" id="bal-output">Balance estimation logs will appear here...</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script>
-        function initStoreSession() {
-            let currentUsername = localStorage.getItem('czc_current_user');
+        function initializeMarketSession() {
+            let activeUser = localStorage.getItem('czc_current_user');
             let sessionToken = localStorage.getItem('czc_local_session_token');
 
-            if (!currentUsername || !sessionToken) {
+            if (!activeUser || !sessionToken) {
                 window.location.href = 'index.html';
                 return;
             }
 
-            let users = [];
-            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
+            let userDatabase = [];
+            try { userDatabase = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { userDatabase = []; }
 
-            let currentUser = users.find(u => u.username && u.username.toLowerCase() === currentUsername.toLowerCase());
+            let sessionProfile = userDatabase.find(u => u.username && u.username.toLowerCase() === activeUser.toLowerCase());
 
-            if (!currentUser) {
-                alert('Session not found.');
+            if (!sessionProfile) {
+                alert('Session authorization failed.');
                 window.location.href = 'index.html';
                 return;
             }
 
-            // Force Admin role and balance protection
-            if (currentUser.username.toLowerCase() === 'admin') {
-                currentUser.role = 'Owner';
-                if (currentUser.balance_usd < 99999) currentUser.balance_usd = 99999.00;
-                localStorage.setItem('czc_users', JSON.stringify(users));
+            // Enforce Root Admin Identity & Funds
+            if (sessionProfile.username.toLowerCase() === 'admin') {
+                sessionProfile.role = 'Owner';
+                if (sessionProfile.balance_usd < 99999) sessionProfile.balance_usd = 99999.00;
+                localStorage.setItem('czc_users', JSON.stringify(userDatabase));
             } else {
-                if (currentUser.balance_usd === undefined) {
-                    currentUser.balance_usd = 0.00;
-                    localStorage.setItem('czc_users', JSON.stringify(users));
+                if (sessionProfile.balance_usd === undefined) {
+                    sessionProfile.balance_usd = 0.00;
+                    localStorage.setItem('czc_users', JSON.stringify(userDatabase));
                 }
             }
 
-            // Render Header & Panels
-            document.getElementById('nav-username').innerText = `User: ${currentUser.username}`;
-            document.getElementById('nav-balance').innerText = `$${(currentUser.balance_usd || 0).toFixed(2)} USD`;
+            // Render Header Data
+            document.getElementById('meta-user').innerText = `ID: ${sessionProfile.username}`;
+            document.getElementById('meta-balance').innerText = `$${(sessionProfile.balance_usd || 0).toFixed(2)} USD`;
 
-            let roleSpan = document.getElementById('nav-role');
-            if (currentUser.role === 'Owner') {
-                roleSpan.innerHTML = `Role: <span class="role-badge-owner">Owner</span>`;
-                document.getElementById('admin-panel-container').style.display = 'block';
-            } else if (currentUser.role === 'Official Seller') {
-                roleSpan.innerHTML = `Role: <span class="role-badge-seller">Official Seller</span>`;
-                document.getElementById('seller-panel-container').style.display = 'block';
+            let roleElement = document.getElementById('meta-role');
+            if (sessionProfile.role === 'Owner') {
+                roleElement.innerHTML = `Role: <span class="role-owner">Owner</span>`;
+                document.getElementById('admin-terminal-box').style.display = 'block';
+            } else if (sessionProfile.role === 'Official Seller') {
+                roleElement.innerHTML = `Role: <span class="role-seller">Official Seller</span>`;
+                document.getElementById('seller-terminal-box').style.display = 'block';
             } else {
-                roleSpan.innerHTML = `Role: <span class="role-badge-member">Member</span>`;
+                roleElement.innerHTML = `Role: <span class="role-member">Member</span>`;
+            }
+
+            // Render Profile Box
+            document.getElementById('prof-name').innerText = sessionProfile.name || sessionProfile.username;
+            document.getElementById('prof-username').innerText = sessionProfile.username;
+            document.getElementById('prof-email').innerText = sessionProfile.email || 'node@czc.market';
+            document.getElementById('prof-key').innerText = sessionProfile.privateKey || 'N/A';
+        }
+
+        function switchPartition(mode, partitionKey, element) {
+            document.querySelectorAll('.nav-cat-list li').forEach(li => li.classList.remove('active'));
+            element.classList.add('active');
+
+            document.querySelectorAll('.market-view').forEach(v => v.classList.remove('active-view'));
+
+            if (mode === 'store') {
+                document.getElementById('view-store').classList.add('active-view');
+                document.getElementById('active-partition-label').innerText = `Partition: ${partitionKey.toUpperCase()}`;
+            } else if (mode === 'tool') {
+                document.getElementById(`view-${partitionKey}`).classList.add('active-view');
             }
         }
 
-        function filterCategory(category) {
-            document.getElementById('category-title').innerText = `Category: ${category.toUpperCase()}`;
+        // Tool Simulations for realism
+        function runBinLookup() {
+            let bin = document.getElementById('bin-input').value.trim();
+            let out = document.getElementById('bin-output');
+            if(bin.length < 4) { out.innerText = "[-] Error: Enter at least first 4-6 digits of BIN."; return; }
+            out.innerText = `[+] Querying global BIN database for: ${bin}...\n[RESULT] Bank: CHASE BANK NA\n[TYPE] CREDIT | CLASSIC | VISA\n[COUNTRY] UNITED STATES (US)\n[CURRENCY] USD`;
         }
 
-        function handleLogout() {
+        function runCcChecker() {
+            let data = document.getElementById('cc-checker-input').value.trim();
+            let out = document.getElementById('cc-checker-output');
+            if(!data) { out.innerText = "[-] Error: No payload provided."; return; }
+            out.innerText = `[+] Connecting to live gateway node...\n[LIVE] ${data.split('|')[0]} | Status: APPROVED ($1.00 Charged & Reversed) | Response: Approved (800)`);
+        }
+
+        function runBalanceChecker() {
+            let data = document.getElementById('bal-checker-input').value.trim();
+            let out = document.getElementById('bal-output');
+            if(!data) { out.innerText = "[-] Error: No card payload provided."; return; }
+            out.innerText = `[+] Probing issuer balance ledger...\n[ESTIMATED BALANCE] $2,450.00 USD available | Limit: $5,000.00 | Status: Active`;
+        }
+
+        function executeLogout() {
             localStorage.removeItem('czc_local_session_token');
             localStorage.removeItem('czc_current_user');
             window.location.href = 'index.html';
         }
 
         window.onload = function() {
-            initStoreSession();
+            initializeMarketSession();
         };
     </script>
 </body>
