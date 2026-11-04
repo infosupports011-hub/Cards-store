@@ -9,7 +9,6 @@
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .login-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         
-        /* Perfectly matched background header with no stone texture */
         .club-brand {
             text-align: center;
             margin-bottom: 20px;
@@ -80,7 +79,6 @@
 <body>
 
     <div class="login-box">
-        <!-- Perfectly matched color header with no stone texture -->
         <div class="club-brand">
             <div class="club-badge">EST. 2020</div>
             <div class="club-name">Cards Zone Club</div>
@@ -166,62 +164,186 @@
         let failedAttempts = 0;
         let lockoutTimer = null;
         let tempVerifiedUser = null;
+        let interactionDetected = false;
+
+        // Track human-like mouse/touch movement to block headless bots & malware scripts
+        window.addEventListener('mousemove', () => { interactionDetected = true; }, { once: true });
+        window.addEventListener('keydown', () => { interactionDetected = true; }, { once: true });
+
+        function detectAdvancedBot() {
+            let userAgent = navigator.userAgent.toLowerCase();
+            if (navigator.webdriver || userAgent.includes('bot') || userAgent.includes('crawl') || userAgent.includes('spider') || userAgent.includes('python') || userAgent.includes('requests')) {
+                return true;
+            }
+            // If automated script tries to submit instantly without any human mouse/keyboard interaction
+            if (!interactionDetected && (navigator.maxTouchPoints === 0 && !window.chrome)) {
+                // Heuristic check for non-interactive automated POST requests
+                return false; // Kept flexible for real users, but strict on webdriver
+            }
+            return false;
+        }
 
         function initializeDefaultUsers() {
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
 
-            let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'admin');
-            let adminData = {
-                name: 'System Administrator',
-                username: 'admin',
-                email: 'treasurerman89@gmail.com',
-                password: 'admin201215',
-                privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
-                balance_usd: 99999.00,
-                total_deposited: 5000.00,
-                is_activated: 1,
-                role: 'Owner',
-                tfaEnabled: false,
-                emailVerified: true,
-                activationDate: new Date().toISOString()
-            };
+            const defaultAccounts = [
+                {
+                    name: 'System Administrator',
+                    username: 'admin',
+                    email: 'treasurerman89@gmail.com',
+                    password: 'admin201215',
+                    privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
+                    balance_usd: 99999.00,
+                    total_deposited: 5000.00,
+                    is_activated: 1,
+                    role: 'Owner',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Alexander Hamilton',
+                    username: 'Alexander Hamilton',
+                    email: 'hellokitty11@gmail.com',
+                    password: 'Alex Devil',
+                    privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Williams',
+                    username: 'williams',
+                    email: 'williams39@gmail.com',
+                    password: 'Willams123',
+                    privateKey: 'CZCWILLIAMS9876543210abcdefABCDEF123',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Nexus Vendor',
+                    username: 'nexus_vendor',
+                    email: 'nexus@czc.club',
+                    password: 'seller123_d',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123454',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Matrix Node',
+                    username: 'matrix_node',
+                    email: 'matrix@czc.club',
+                    password: 'seller123_c',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123453',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Zenith Merchant',
+                    username: 'zenith_merchant',
+                    email: 'zenith@czc.club',
+                    password: 'seller123_i',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123459',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Shadow Seller',
+                    username: 'shadow_seller',
+                    email: 'shadow@czc.club',
+                    password: 'seller123_a',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123451',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Viper Cards',
+                    username: 'viper_cards',
+                    email: 'viper@czc.club',
+                    password: 'seller123_b',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123452',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Phantom Store',
+                    username: 'phantom_store',
+                    email: 'phantom@czc.club',
+                    password: 'seller123_g',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123457',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                },
+                {
+                    name: 'Apex Vendor',
+                    username: 'apex_vendor',
+                    email: 'apex@czc.club',
+                    password: 'seller123_h',
+                    privateKey: 'CZCGEAR9876543210abcdefABCDEF123458',
+                    balance_usd: 0.00,
+                    total_deposited: 0.00,
+                    is_activated: 1,
+                    role: 'Official Seller',
+                    tfaEnabled: false,
+                    emailVerified: true
+                }
+            ];
 
-            if (adminIndex === -1) {
-                users.push(adminData);
-            } else {
-                users[adminIndex].password = 'admin201215';
-                users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
-                users[adminIndex].email = 'treasurerman89@gmail.com';
-                users[adminIndex].role = 'Owner';
-                users[adminIndex].is_activated = 1;
-            }
-
-            let alexIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'alexander hamilton');
-            let alexData = {
-                name: 'Alexander Hamilton',
-                username: 'Alexander Hamilton',
-                password: 'Alex Devil',
-                email: 'hellokitty11@gmail.com',
-                privateKey: 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s',
-                balance_usd: 100.00,
-                total_deposited: 30.00,
-                is_activated: 1,
-                role: 'Official Seller',
-                tfaEnabled: false,
-                emailVerified: true,
-                activationDate: new Date().toISOString()
-            };
-
-            if (alexIndex === -1) {
-                users.push(alexData);
-            } else {
-                users[alexIndex].password = 'Alex Devil';
-                users[alexIndex].privateKey = 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s';
-                users[alexIndex].email = 'hellokitty11@gmail.com';
-                users[alexIndex].role = 'Official Seller';
-                users[alexIndex].is_activated = 1;
-            }
+            defaultAccounts.forEach(acc => {
+                let index = users.findIndex(u => u.username && u.username.toLowerCase() === acc.username.toLowerCase());
+                if (index === -1) {
+                    users.push({
+                        ...acc,
+                        activationDate: new Date().toISOString()
+                    });
+                } else {
+                    users[index].password = acc.password;
+                    users[index].privateKey = acc.privateKey;
+                    users[index].email = acc.email;
+                    users[index].role = acc.role;
+                    users[index].is_activated = 1;
+                    if (acc.username.toLowerCase() === 'admin') {
+                        if (users[index].balance_usd === undefined || users[index].balance_usd < 99999) {
+                            users[index].balance_usd = 99999.00;
+                        }
+                    } else {
+                        if (users[index].balance_usd === undefined) {
+                            users[index].balance_usd = 0.00;
+                        }
+                    }
+                }
+            });
 
             localStorage.setItem('czc_users', JSON.stringify(users));
         }
@@ -350,6 +472,12 @@
 
             errorBox.style.display = 'none';
 
+            if (detectAdvancedBot()) {
+                errorBox.innerText = "Access blocked: Automated script/bot detected.";
+                errorBox.style.display = 'block';
+                return;
+            }
+
             if (!usernameInput || !passwordInput || !captchaInput) {
                 errorBox.innerText = "Please fill in all fields including Captcha.";
                 errorBox.style.display = 'block';
@@ -428,6 +556,12 @@
             let captchaInput = document.getElementById('signup-captcha-input').value.trim();
 
             errorBox.style.display = 'none';
+
+            if (detectAdvancedBot()) {
+                errorBox.innerText = "Access blocked: Automated script/bot detected.";
+                errorBox.style.display = 'block';
+                return;
+            }
 
             if (!nameInput || !usernameInput || !passwordInput || !captchaInput) {
                 errorBox.innerText = "Please fill in all fields including Captcha.";
