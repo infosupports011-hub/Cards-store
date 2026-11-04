@@ -6,65 +6,80 @@
     <title>Cards Zones Club — Secure Market</title>
     <style>
         * { box-sizing: border-box; }
-        body { background-color: #0b0f19; color: #e5e7eb; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
+        body { background-color: #0d1b2a; color: #ffffff; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Left Sidebar Menu (Hamburger / Navigation Style) */
-        .sidebar { width: 260px; background-color: #111827; border-right: 1px solid #1f2937; display: flex; flex-direction: column; flex-shrink: 0; }
-        .sidebar-brand { padding: 20px; font-size: 15px; font-weight: bold; color: #22c55e; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #1f2937; background: #0f172a; }
-        .sidebar-menu { list-style: none; padding: 15px; margin: 0; overflow-y: auto; flex-grow: 1; }
-        .sidebar-menu li { padding: 10px 12px; margin-bottom: 6px; background: #0b0f19; border: 1px solid #1f2937; border-radius: 4px; font-size: 12px; color: #9ca3af; cursor: pointer; transition: all 0.2s; }
-        .sidebar-menu li:hover, .sidebar-menu li.active { background: #22c55e; color: #0b0f19; border-color: #22c55e; font-weight: bold; }
-
-        /* Main Content Area */
-        .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; background-color: #0b0f19; }
+        /* Sidebar & Hamburger Menu */
+        .sidebar { width: 280px; background-color: #1b263b; border-right: 1px solid #415a77; display: flex; flex-direction: column; flex-shrink: 0; position: fixed; height: 100%; z-index: 100; transition: transform 0.3s ease; }
+        .sidebar.closed { transform: translateX(-100%); }
         
-        /* Top Header Navbar */
-        .top-navbar { height: 60px; background-color: #111827; border-bottom: 1px solid #1f2937; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; flex-shrink: 0; }
-        .user-meta-info { font-size: 12px; color: #9ca3af; display: flex; gap: 20px; align-items: center; }
-        .role-owner { color: #f59e0b; font-weight: bold; text-transform: uppercase; }
-        .role-seller { color: #38bdf8; font-weight: bold; text-transform: uppercase; }
-        .role-member { color: #22c55e; font-weight: bold; text-transform: uppercase; }
-        .balance-text { color: #22c55e; font-weight: bold; font-family: monospace; }
+        .sidebar-brand-box { padding: 15px; border-bottom: 1px solid #415a77; background: #0d1b2a; display: flex; justify-content: space-between; align-items: center; }
+        .club-badge { display: inline-block; border: 1px solid #415a77; padding: 2px 6px; font-size: 9px; letter-spacing: 2px; color: #adb5bd; background-color: #1b263b; border-radius: 3px; text-transform: uppercase; }
+        .club-name { font-size: 16px; font-weight: bold; color: #ffffff; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+        .btn-close-menu { background: none; border: none; color: #ff4d4d; font-size: 18px; cursor: pointer; font-weight: bold; }
+
+        .sidebar-menu { list-style: none; padding: 12px; margin: 0; overflow-y: auto; flex-grow: 1; }
+        .sidebar-menu li { padding: 9px 12px; margin-bottom: 5px; background: #0d1b2a; border: 1px solid #415a77; border-radius: 4px; font-size: 12px; color: #adb5bd; cursor: pointer; transition: all 0.2s; }
+        .sidebar-menu li:hover, .sidebar-menu li.active { background: #38b000; color: #ffffff; border-color: #38b000; font-weight: bold; }
+
+        /* Main Container */
+        .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; background-color: #0d1b2a; margin-left: 280px; transition: margin-left 0.3s ease; }
+        .main-container.full-width { margin-left: 0; }
+
+        /* Top Navbar */
+        .top-navbar { height: 60px; background-color: #1b263b; border-bottom: 1px solid #415a77; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-shrink: 0; }
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+        .btn-hamburger { background: #0d1b2a; border: 1px solid #415a77; color: #38b000; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
         
-        .btn-topup { background-color: #1d4ed8; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; font-family: monospace; text-transform: uppercase; }
-        .btn-topup:hover { background-color: #2563eb; }
+        .user-meta-info { font-size: 12px; color: #adb5bd; display: flex; gap: 15px; align-items: center; }
+        .role-owner { color: #ffb703; font-weight: bold; text-transform: uppercase; }
+        .role-seller { color: #48cae4; font-weight: bold; text-transform: uppercase; }
+        .role-member { color: #38b000; font-weight: bold; text-transform: uppercase; }
+        .balance-text { color: #38b000; font-weight: bold; font-family: monospace; }
 
-        .btn-logout { background-color: #7f1d1d; color: #fca5a5; border: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; font-family: monospace; text-transform: uppercase; }
-        .btn-logout:hover { background-color: #991b1b; color: #fff; }
+        .btn-topup { background-color: #38b000; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-topup:hover { background-color: #2e9000; }
+        .btn-logout { background-color: #d90429; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-logout:hover { background-color: #c90426; }
 
-        /* Content Viewport */
-        .content-viewport { padding: 25px; overflow-y: auto; flex-grow: 1; }
+        /* Viewport */
+        .content-viewport { padding: 20px; overflow-y: auto; flex-grow: 1; }
         .view-section { display: none; }
         .view-section.active-content { display: block; }
 
-        .section-title { font-size: 16px; color: #f59e0b; text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #1f2937; padding-bottom: 10px; margin-bottom: 20px; }
+        .section-title { font-size: 16px; color: #ffb703; text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #415a77; padding-bottom: 10px; margin-bottom: 15px; }
 
-        /* Cards & Grids */
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-        .card-item { background-color: #111827; border: 1px solid #1f2937; border-radius: 6px; padding: 15px; }
-        .card-title { font-size: 13px; color: #f59e0b; font-weight: bold; margin-bottom: 8px; }
-        .card-detail { font-size: 12px; color: #9ca3af; margin: 4px 0; }
-        .btn-buy { background-color: #22c55e; color: #0b0f19; border: none; width: 100%; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 12px; font-family: monospace; text-transform: uppercase; }
-        .btn-buy:hover { background-color: #16a34a; color: #fff; }
+        /* Cards Grid */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
+        .card-item { background-color: #1b263b; border: 1px solid #415a77; border-radius: 6px; padding: 15px; }
+        .card-title { font-size: 13px; color: #ffb703; font-weight: bold; margin-bottom: 6px; }
+        .card-detail { font-size: 12px; color: #adb5bd; margin: 3px 0; }
+        .btn-buy { background-color: #38b000; color: #fff; border: none; width: 100%; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 10px; text-transform: uppercase; }
+        .btn-buy:hover { background-color: #2e9000; }
 
-        /* Terminal Tools Box */
-        .tool-box { background: #111827; border: 1px solid #1f2937; padding: 20px; border-radius: 6px; max-width: 600px; }
-        .tool-box label { font-size: 12px; color: #9ca3af; display: block; margin-bottom: 8px; }
-        .tool-box input, .tool-box textarea { width: 100%; background: #0b0f19; border: 1px solid #1f2937; color: #fff; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin-bottom: 12px; }
-        .btn-action { background: #38bdf8; color: #0b0f19; border: none; padding: 8px 18px; font-weight: bold; font-family: monospace; font-size: 12px; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
-        .btn-action:hover { background: #0ea5e9; color: #fff; }
-        .tool-result { background: #020617; border: 1px solid #1f2937; padding: 12px; border-radius: 4px; font-size: 12px; color: #22c55e; margin-top: 15px; min-height: 60px; white-space: pre-wrap; }
+        /* Tool Box */
+        .tool-box { background: #1b263b; border: 1px solid #415a77; padding: 20px; border-radius: 6px; max-width: 550px; }
+        .tool-box label { font-size: 12px; color: #adb5bd; display: block; margin-bottom: 6px; }
+        .tool-box input, .tool-box textarea { width: 100%; background: #0d1b2a; border: 1px solid #415a77; color: #fff; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin-bottom: 12px; }
+        .btn-action { background: #48cae4; color: #0d1b2a; border: none; padding: 8px 15px; font-weight: bold; font-size: 12px; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
+        .btn-action:hover { background: #3ab0cc; }
+        .tool-result { background: #0d1b2a; border: 1px solid #415a77; padding: 12px; border-radius: 4px; font-size: 12px; color: #38b000; margin-top: 12px; min-height: 50px; white-space: pre-wrap; }
 
-        /* Admin & Seller Panels */
-        .admin-banner { background: rgba(245, 158, 11, 0.05); border: 1px dashed #f59e0b; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: none; }
-        .seller-banner { background: rgba(56, 189, 248, 0.05); border: 1px dashed #38bdf8; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        /* Panels */
+        .admin-banner { background: rgba(255, 183, 3, 0.05); border: 1px dashed #ffb703; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; }
+        .seller-banner { background: rgba(72, 202, 228, 0.05); border: 1px dashed #48cae4; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Left Sidebar Hamburger Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-brand">☣ Cards Zones Club</div>
+    <!-- Left Sidebar with Hamburger & Logo -->
+    <div id="sidebar-menu" class="sidebar">
+        <div class="sidebar-brand-box">
+            <div>
+                <div class="club-badge">EST. 2020</div>
+                <div class="club-name">Cards Zone Club</div>
+            </div>
+            <button class="btn-close-menu" onclick="toggleSidebar()">✕</button>
+        </div>
         <ul class="sidebar-menu">
             <li class="active" onclick="switchView('store', 'all', this)">⚡ All Assets Catalog</li>
             <li onclick="switchView('store', 'cc', this)">💳 Credit Cards (CC)</li>
@@ -73,7 +88,7 @@
             <li onclick="switchView('store', 'ssn', this)">🆔 SSN / DOB Records</li>
             <li onclick="switchView('store', 'proxies', this)">🔒 Elite Proxies</li>
             <li onclick="switchView('store', 'rdp_vpn', this)">🌐 Secure RDP & VPN</li>
-            <li style="border-top: 1px solid #1f2937; margin-top: 10px; padding-top: 12px; color: #f59e0b; font-weight: bold;">[ TOOLS & CHECKERS ]</li>
+            <li style="border-top: 1px solid #415a77; margin-top: 8px; padding-top: 10px; color: #ffb703; font-weight: bold; font-size: 11px;">[ UTILITIES & CHECKERS ]</li>
             <li onclick="switchView('tool', 'bin_lookup', this)">🔍 BIN Lookup Utility</li>
             <li onclick="switchView('tool', 'cc_checker', this)">🟢 Live CC Checker</li>
             <li onclick="switchView('tool', 'balance_checker', this)">💰 Balance Estimator</li>
@@ -81,16 +96,19 @@
     </div>
 
     <!-- Main Container -->
-    <div class="main-container">
+    <div id="main-content-area" class="main-container">
         <!-- Top Navbar -->
         <div class="top-navbar">
-            <div id="nav-user-info" class="user-meta-info">
-                <span>ID: loading...</span>
-                <span>Role: ...</span>
-                <span>Balance: <strong id="nav-balance" class="balance-text">$0.00 USD</strong></span>
+            <div class="nav-left">
+                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+                <div id="nav-user-info" class="user-meta-info">
+                    <span>ID: <strong>loading...</strong></span>
+                    <span>Role: ...</span>
+                    <span>Balance: <strong class="balance-text">$0.00 USD</strong></span>
+                </div>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <button onclick="openTopUpModal()" class="btn-topup">+ Top Up Balance</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button onclick="openTopUpModal()" class="btn-topup">+ Top Up</button>
                 <button onclick="executeLogout()" class="btn-logout">Log Out</button>
             </div>
         </div>
@@ -100,16 +118,16 @@
             
             <!-- Admin Control Banner -->
             <div id="admin-panel-box" class="admin-banner">
-                <h3 style="color: #f59e0b; margin: 0 0 5px 0; font-size: 13px;">⚡ Owner & Admin Control Panel</h3>
-                <p style="font-size: 11px; color: #9ca3af; margin: 0 0 10px 0;">Full database root access granted. Manage users, vendors, and marketplace parameters.</p>
-                <button onclick="alert('Root database manager initialized.')" style="background: #f59e0b; color: #0b0f19; border: none; padding: 5px 10px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Open Root Manager</button>
+                <h3 style="color: #ffb703; margin: 0 0 4px 0; font-size: 13px;">⚡ Owner & Admin Control Panel</h3>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Root privileges active. Full system and database access unlocked.</p>
+                <button onclick="alert('Root database manager initialized.')" style="background: #ffb703; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Open Root Manager</button>
             </div>
 
             <!-- Seller Control Banner -->
             <div id="seller-panel-box" class="seller-banner">
-                <h3 style="color: #38bdf8; margin: 0 0 5px 0; font-size: 13px;">🛍️ Official Vendor Injection Panel</h3>
-                <p style="font-size: 11px; color: #9ca3af; margin: 0 0 10px 0;">Strict category filters active. Upload listings strictly inside authorized partitions.</p>
-                <button onclick="alert('Asset injector ready.')" style="background: #38bdf8; color: #0b0f19; border: none; padding: 5px 10px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Inject New Asset</button>
+                <h3 style="color: #48cae4; margin: 0 0 4px 0; font-size: 13px;">🛍️ Official Vendor Injection Panel</h3>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Strict category filters active. Upload listings inside authorized partitions.</p>
+                <button onclick="alert('Asset injector ready.')" style="background: #48cae4; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Inject New Asset</button>
             </div>
 
             <!-- 1. STORE VIEW -->
@@ -174,6 +192,13 @@
     </div>
 
     <script>
+        function toggleSidebar() {
+            let sidebar = document.getElementById('sidebar-menu');
+            let main = document.getElementById('main-content-area');
+            sidebar.classList.toggle('closed');
+            main.classList.toggle('full-width');
+        }
+
         function initializeSession() {
             let activeUser = localStorage.getItem('czc_current_user');
             let sessionToken = localStorage.getItem('czc_local_session_token');
@@ -194,7 +219,6 @@
                 return;
             }
 
-            // Enforce Root Admin Identity & Funds
             if (sessionProfile.username.toLowerCase() === 'admin') {
                 sessionProfile.role = 'Owner';
                 if (sessionProfile.balance_usd < 99999) sessionProfile.balance_usd = 99999.00;
@@ -206,7 +230,6 @@
                 }
             }
 
-            // Render Navbar Info
             let roleClass = 'role-member';
             if (sessionProfile.role === 'Owner') {
                 roleClass = 'role-owner';
@@ -221,7 +244,6 @@
                 <span>Role: <span class="${roleClass}">${sessionProfile.role}</span></span>
                 <span>Balance: <strong class="balance-text">$${(sessionProfile.balance_usd || 0).toFixed(2)} USD</strong></span>
             `;
-            document.getElementById('nav-balance').innerText = `$${(sessionProfile.balance_usd || 0).toFixed(2)} USD`;
         }
 
         function switchView(mode, key, element) {
@@ -235,6 +257,11 @@
                 document.getElementById('partition-title').innerText = `Catalog: ${key.toUpperCase()}`;
             } else if (mode === 'tool') {
                 document.getElementById(`section-${key}`).classList.add('active-content');
+            }
+
+            // Auto close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
             }
         }
 
