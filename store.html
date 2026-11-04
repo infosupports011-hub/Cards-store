@@ -3,76 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cards Zones Club - Secure Dashboard</title>
+    <title>Cards Zones Club - Secure Store</title>
     <style>
         * { box-sizing: border-box; }
-        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .dashboard-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; max-width: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        
-        .header-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #415a77; padding-bottom: 15px; margin-bottom: 20px; }
-        .club-title { font-size: 18px; font-weight: bold; color: #38b000; font-family: 'Courier New', Courier, monospace; }
-        .user-info { font-size: 13px; color: #adb5bd; margin-bottom: 15px; background: #0d1b2a; padding: 10px; border-radius: 6px; border: 1px solid #415a77; display: flex; justify-content: space-between; align-items: center; }
-        
+        body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background-color: #1b263b; padding: 15px 25px; border-radius: 8px; border: 1px solid #415a77; margin-bottom: 20px; }
+        .club-title { font-size: 20px; font-weight: bold; color: #38b000; font-family: 'Courier New', Courier, monospace; }
+        .user-panel { font-size: 13px; color: #adb5bd; display: flex; gap: 15px; align-items: center; }
         .role-badge-owner { color: #ffb703; font-weight: bold; }
         .role-badge-seller { color: #48cae4; font-weight: bold; }
         .role-badge-member { color: #38b000; font-weight: bold; }
-
         .btn-logout { background-color: #d90429; color: #fff; padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; }
         .btn-logout:hover { background-color: #c90426; }
-
-        .section-card { background: #0d1b2a; border: 1px solid #415a77; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-        .section-card h3 { color: #38b000; margin-top: 0; font-size: 16px; }
-        p { font-size: 13px; color: #adb5bd; margin: 6px 0; }
-        .highlight { color: #ffb703; font-family: monospace; }
         
-        .admin-panel { border: 1px dashed #ffb703; background: rgba(255, 183, 3, 0.05); padding: 15px; border-radius: 6px; margin-top: 15px; display: none; }
-        .admin-panel h3 { color: #ffb703; }
+        .main-content { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+        .sidebar { background-color: #1b263b; border: 1px solid #415a77; border-radius: 8px; padding: 15px; }
+        .sidebar h3 { color: #38b000; margin-top: 0; font-size: 15px; border-bottom: 1px solid #415a77; padding-bottom: 8px; }
+        .category-list { list-style: none; padding: 0; margin: 0; }
+        .category-list li { padding: 10px; margin-bottom: 5px; background: #0d1b2a; border: 1px solid #415a77; border-radius: 4px; cursor: pointer; font-size: 13px; color: #adb5bd; }
+        .category-list li:hover, .category-list li.active { background: #38b000; color: #fff; border-color: #38b000; font-weight: bold; }
 
-        .seller-panel { border: 1px dashed #48cae4; background: rgba(72, 202, 228, 0.05); padding: 15px; border-radius: 6px; margin-top: 15px; display: none; }
-        .seller-panel h3 { color: #48cae4; }
+        .store-section { background-color: #1b263b; border: 1px solid #415a77; border-radius: 8px; padding: 20px; }
+        .store-section h2 { color: #38b000; margin-top: 0; font-size: 18px; border-bottom: 1px solid #415a77; padding-bottom: 10px; }
+        
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; margin-top: 15px; }
+        .product-card { background: #0d1b2a; border: 1px solid #415a77; border-radius: 6px; padding: 15px; }
+        .product-card h4 { margin: 0 0 10px 0; color: #ffb703; font-size: 14px; }
+        .product-card p { font-size: 12px; color: #adb5bd; margin: 4px 0; }
+        .btn-buy { background-color: #38b000; color: #fff; border: none; padding: 8px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 12px; }
+        .btn-buy:hover { background-color: #2e9000; }
+
+        .admin-box, .seller-box { background: #0d1b2a; border: 1px dashed #ffb703; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        .seller-box { border-color: #48cae4; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-box">
-        <div class="header-top">
-            <div class="club-title">🏴‍☠️ Cards Zones Club 🏴‍☠️</div>
-            <button onclick="handleLogout()" class="btn-logout">Log Out</button>
+    <div class="container">
+        <!-- Top Header Navbar -->
+        <div class="header">
+            <div class="club-title">🏴‍☠️ Cards Zones Club - Secure Store 🏴‍☠️</div>
+            <div class="user-panel">
+                <span id="nav-username">User: Loading...</span>
+                <span id="nav-role">Role: ...</span>
+                <span>Balance: <strong id="nav-balance" style="color: #ffb703;">$0.00</strong></span>
+                <button onclick="handleLogout()" class="btn-logout">Log Out</button>
+            </div>
         </div>
 
-        <div class="user-info">
-            <span id="user-display-text">Loading session...</span>
-            <span id="role-display-text"></span>
+        <!-- Admin Control Panel (Visible only to Owner) -->
+        <div id="admin-panel-container" class="admin-box">
+            <h3 style="color: #ffb703; margin-top:0;">⚡ Owner & Admin Control Panel</h3>
+            <p style="font-size: 13px; color: #adb5bd;">Unrestricted platform access, user management, and global database control.</p>
         </div>
 
-        <!-- Account Management & Settings -->
-        <div class="section-card">
-            <h3>Account Management & Settings</h3>
-            <p>Name: <span id="profile-name" class="highlight"></span></p>
-            <p>Username: <span id="profile-username" class="highlight"></span></p>
-            <p>Email: <span id="profile-email" class="highlight"></span> <span style="color: #38b000;">(Verified)</span></p>
-            <p>Private Key (36-Char): <span id="profile-key" class="highlight" style="font-size: 11px; word-break: break-all;"></span></p>
-            <p>Account Status: <span style="color: #38b000;">Activated</span></p>
-            <p>Balance: <span id="profile-balance" class="highlight">$0.00 USD</span></p>
+        <!-- Official Seller Panel (Visible only to Official Sellers) -->
+        <div id="seller-panel-container" class="seller-box">
+            <h3 style="color: #48cae4; margin-top:0;">🛍️ Official Seller Product Management</h3>
+            <p style="font-size: 13px; color: #adb5bd;">Upload and manage your items strictly inside designated categories (CC, Dumps, RDP/VPN).</p>
         </div>
 
-        <!-- OWNER / ADMIN EXCLUSIVE PANEL -->
-        <div id="admin-exclusive-panel" class="admin-panel">
-            <h3>⚡ Owner & Admin Control Panel</h3>
-            <p>Welcome, Supreme Owner! You have unrestricted system permissions, isolated category management, and full site access.</p>
-            <button onclick="alert('Full category isolation and platform configuration tools unlocked!')" style="background: #38b000; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 8px; width: 100%;">Manage Categories & Store Settings</button>
-        </div>
+        <!-- Main Dashboard Layout -->
+        <div class="main-content">
+            <!-- Sidebar Categories -->
+            <div class="sidebar">
+                <h3>Categories</h3>
+                <ul class="category-list">
+                    <li class="active" onclick="filterCategory('all')">📦 All Products</li>
+                    <li onclick="filterCategory('cc')">💳 Credit Cards (CC)</li>
+                    <li onclick="filterCategory('dumps')">💾 Dumps</li>
+                    <li onclick="filterCategory('vpn_rdp')">🌐 RDP / VPN Services</li>
+                </ul>
+            </div>
 
-        <!-- OFFICIAL SELLER PANEL -->
-        <div id="seller-exclusive-panel" class="seller-panel">
-            <h3>🛍️ Official Seller Management Panel</h3>
-            <p>Welcome, Official Vendor! You can list items strictly inside their designated categories (CC, Dumps, VPN/RDP) without cross-contamination.</p>
-            <button onclick="alert('Strict category product upload panel unlocked!')" style="background: #48cae4; color: #0d1b2a; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 8px; width: 100%;">Upload & Manage Categorized Products</button>
+            <!-- Store Catalog Area -->
+            <div class="store-section">
+                <h2 id="category-title">Store Catalog</h2>
+                <div class="product-grid" id="product-catalog">
+                    <!-- Products will load dynamically -->
+                    <div class="product-card">
+                        <h4>Verified CC (Sample)</h4>
+                        <p>Type: Visa / MC</p>
+                        <p>Price: $15.00</p>
+                        <button class="btn-buy" onclick="alert('Demo Purchase Successful!')">Purchase Item</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        function checkStoreSession() {
+        function initStoreSession() {
             let currentUsername = localStorage.getItem('czc_current_user');
             let sessionToken = localStorage.getItem('czc_local_session_token');
 
@@ -87,12 +109,12 @@
             let currentUser = users.find(u => u.username && u.username.toLowerCase() === currentUsername.toLowerCase());
 
             if (!currentUser) {
-                alert('Session expired or user not found.');
+                alert('Session not found.');
                 window.location.href = 'index.html';
                 return;
             }
 
-            // Force Admin to Owner role and correct balance
+            // Force Admin role and balance protection
             if (currentUser.username.toLowerCase() === 'admin') {
                 currentUser.role = 'Owner';
                 if (currentUser.balance_usd < 99999) currentUser.balance_usd = 99999.00;
@@ -104,25 +126,24 @@
                 }
             }
 
-            // Populate User Data on Dashboard
-            document.getElementById('user-display-text').innerText = `User: ${currentUser.username}`;
-            
-            let roleSpan = document.getElementById('role-display-text');
+            // Render Header & Panels
+            document.getElementById('nav-username').innerText = `User: ${currentUser.username}`;
+            document.getElementById('nav-balance').innerText = `$${(currentUser.balance_usd || 0).toFixed(2)} USD`;
+
+            let roleSpan = document.getElementById('nav-role');
             if (currentUser.role === 'Owner') {
                 roleSpan.innerHTML = `Role: <span class="role-badge-owner">Owner</span>`;
-                document.getElementById('admin-exclusive-panel').style.display = 'block';
+                document.getElementById('admin-panel-container').style.display = 'block';
             } else if (currentUser.role === 'Official Seller') {
                 roleSpan.innerHTML = `Role: <span class="role-badge-seller">Official Seller</span>`;
-                document.getElementById('seller-exclusive-panel').style.display = 'block';
+                document.getElementById('seller-panel-container').style.display = 'block';
             } else {
                 roleSpan.innerHTML = `Role: <span class="role-badge-member">Member</span>`;
             }
+        }
 
-            document.getElementById('profile-name').innerText = currentUser.name || currentUser.username;
-            document.getElementById('profile-username').innerText = currentUser.username;
-            document.getElementById('profile-email').innerText = currentUser.email || 'user@czc.club';
-            document.getElementById('profile-key').innerText = currentUser.privateKey || 'N/A';
-            document.getElementById('profile-balance').innerText = `$${(currentUser.balance_usd || 0).toFixed(2)} USD`;
+        function filterCategory(category) {
+            document.getElementById('category-title').innerText = `Category: ${category.toUpperCase()}`;
         }
 
         function handleLogout() {
@@ -132,7 +153,7 @@
         }
 
         window.onload = function() {
-            checkStoreSession();
+            initStoreSession();
         };
     </script>
 </body>
