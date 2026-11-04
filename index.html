@@ -8,8 +8,25 @@
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .login-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 30px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo-container img { max-width: 240px; height: auto; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        
+        /* Cropping the outer frame so only the inner logo text/design shows cleanly */
+        .logo-container { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            overflow: hidden; 
+            max-height: 95px; 
+            border-radius: 6px; 
+            border: 1px solid #415a77;
+            background: #0d1b2a;
+        }
+        .logo-container img { 
+            width: 140%; 
+            max-width: none; 
+            margin-top: -38px; 
+            margin-left: -20%; 
+            display: block;
+        }
+
         h2 { color: #38b000; text-align: center; margin-top: 0; font-size: 20px; letter-spacing: 1px; }
         .error-box { background-color: rgba(217,4,41,0.2); border: 1px solid #d90429; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; display: none; text-align: center; }
         label { font-size: 13px; color: #adb5bd; display: block; margin-top: 10px; }
@@ -27,13 +44,13 @@
 
     <div class="login-box">
         <div class="logo-container">
-            <!-- Updated correct logo image link -->
+            <!-- Clean cropped view showing only the inner name/design -->
             <img src="https://i.postimg.cc/zBkBgr6C/1793257012618.jpg" alt="Cards Zones Club Logo">
         </div>
         
         <div id="error-msg" class="error-box">Invalid credentials or security mismatch.</div>
 
-        <!-- STEP 1: Username, Password & Captcha -->
+        <!-- STEP 1: Username, Password & Auto-refreshing Captcha -->
         <div id="login-step-1">
             <label>Username or Gmail:</label>
             <input type="text" id="login-username" placeholder="Enter username or gmail" autocomplete="off">
@@ -41,7 +58,7 @@
             <label>Password:</label>
             <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
 
-            <label>Captcha Verification (Auto-refreshes):</label>
+            <label>Captcha Verification:</label>
             <div class="captcha-container" onclick="generateCaptcha()" title="Click to refresh captcha">
                 <span id="captcha-question">Loading...</span>
             </div>
@@ -180,11 +197,12 @@
                 return;
             }
 
+            // Captcha mismatch -> Automatically refreshes instantly without manual reload
             if (captchaInput !== currentCaptchaText) {
                 failedAttempts++;
-                errorBox.innerText = "Invalid Captcha verification code. Captcha renewed.";
+                errorBox.innerText = "Invalid Captcha code. Captcha automatically refreshed.";
                 errorBox.style.display = 'block';
-                generateCaptcha();
+                generateCaptcha(); // Auto refresh on error
                 if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
@@ -200,9 +218,9 @@
 
             if (!user || user.password !== passwordInput) {
                 failedAttempts++;
-                errorBox.innerText = "Invalid username/gmail or password.";
+                errorBox.innerText = "Invalid username/gmail or password. Captcha refreshed.";
                 errorBox.style.display = 'block';
-                generateCaptcha();
+                generateCaptcha(); // Auto refresh on credentials error too
                 if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
@@ -262,13 +280,6 @@
 
             window.location.href = 'store.html';
         }
-
-        // Auto-refresh captcha every 45 seconds to keep it active on step 1
-        setInterval(() => {
-            if (!document.getElementById('login-step-1').classList.contains('step-hidden')) {
-                generateCaptcha();
-            }
-        }, 45000);
 
         window.onload = function() {
             initializeDefaultUsers();
