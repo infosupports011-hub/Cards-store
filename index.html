@@ -7,40 +7,46 @@
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .login-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 30px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .login-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 25px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         
         .logo-container { 
             text-align: center; 
-            margin-bottom: 20px; 
+            margin-bottom: 15px; 
             overflow: hidden; 
-            height: 85px; 
-            background: #1b263b;
+            height: 95px; 
+            background-color: #1b263b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
         }
         .logo-container img { 
-            width: 155%; 
+            width: 140%; 
             max-width: none; 
-            margin-top: -34px; 
-            margin-left: -27%; 
+            height: auto;
             display: block;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            mix-blend-mode: luminosity;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
         }
 
         h2 { color: #38b000; text-align: center; margin-top: 0; font-size: 20px; letter-spacing: 1px; }
         .error-box { background-color: rgba(217,4,41,0.2); border: 1px solid #d90429; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; display: none; text-align: center; }
-        label { font-size: 13px; color: #adb5bd; display: block; margin-top: 10px; }
-        input { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-size: 13px; }
+        .success-box { background-color: rgba(56,176,0,0.2); border: 1px solid #38b000; color: #38b000; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; display: none; text-align: center; }
+        
+        label { font-size: 13px; color: #adb5bd; display: block; margin-top: 8px; }
+        input { width: 100%; padding: 10px; margin: 5px 0 12px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-size: 13px; }
         
         .captcha-box-wrapper {
             position: relative;
             width: 100%;
-            margin: 5px 0 15px 0;
+            margin: 5px 0 12px 0;
             background: #0d1b2a;
             border: 1px solid #415a77;
             border-radius: 4px;
             overflow: hidden;
             text-align: center;
         }
-        #captcha-canvas {
+        #captcha-canvas, #signup-captcha-canvas {
             display: block;
             width: 100%;
             height: 45px;
@@ -50,9 +56,14 @@
         .btn-submit { background-color: #38b000; color: #fff; padding: 12px; border: none; border-radius: 6px; width: 100%; font-size: 14px; font-weight: bold; cursor: pointer; }
         .btn-submit:hover { background-color: #2e9000; }
         .btn-submit:disabled { background-color: #415a77; cursor: not-allowed; }
-        .signup-link { text-align: center; margin-top: 15px; font-size: 12px; color: #adb5bd; }
-        .signup-link a { color: #38b000; text-decoration: none; font-weight: bold; }
-        .step-hidden { display: none; }
+        .link-text { text-align: center; margin-top: 15px; font-size: 12px; color: #adb5bd; }
+        .link-text a { color: #38b000; text-decoration: none; font-weight: bold; cursor: pointer; }
+        .hidden-section { display: none; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #1b263b; border: 1px solid #38b000; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px; text-align: center; }
+        .modal-content h3 { color: #38b000; margin-top: 0; }
+        .privkey-display { background: #0d1b2a; padding: 10px; color: #ffb703; font-family: monospace; font-size: 12px; word-break: break-all; border: 1px solid #415a77; border-radius: 4px; margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -62,10 +73,12 @@
             <img src="https://i.postimg.cc/zBkBgr6C/1793257012618.jpg" alt="Cards Zones Club Logo">
         </div>
         
-        <div id="error-msg" class="error-box">Invalid credentials or security mismatch.</div>
+        <div id="error-msg" class="error-box"></div>
+        <div id="success-msg" class="success-box"></div>
 
-        <!-- STEP 1: Username, Password & Hard Canvas Captcha -->
+        <!-- LOGIN STEP 1 -->
         <div id="login-step-1">
+            <h2>Secure Login</h2>
             <label>Username:</label>
             <input type="text" id="login-username" placeholder="Enter username" autocomplete="off">
 
@@ -80,26 +93,63 @@
 
             <button onclick="proceedToStepTwo()" class="btn-submit">Next: Private Key Verification</button>
 
-            <div class="signup-link">
-                Don't have an account? <a href="signup.html">Sign Up</a>
+            <div class="link-text">
+                Don't have an account? <a onclick="switchView('signup')">Sign Up</a>
             </div>
         </div>
 
-        <!-- STEP 2: Only 36-Digit Private Key -->
-        <div id="login-step-2" class="step-hidden">
+        <!-- LOGIN STEP 2: Private Key -->
+        <div id="login-step-2" class="hidden-section">
+            <h2>Private Key Check</h2>
             <label>36-Digit Private Key:</label>
             <input type="password" id="login-privkey" placeholder="Enter 36-digit private key" autocomplete="new-password">
 
             <button id="login-btn" onclick="handleLogin()" class="btn-submit">Secure Verify & Continue</button>
             
-            <div style="text-align: center; margin-top: 15px;">
-                <a href="#" onclick="backToStepOne()" style="color: #adb5bd; font-size: 12px; text-decoration: underline;">Back to Login</a>
+            <div class="link-text">
+                <a onclick="backToLoginStep1()">Back to Login</a>
             </div>
+        </div>
+
+        <!-- SIGNUP SECTION -->
+        <div id="signup-section" class="hidden-section">
+            <h2>Create Account</h2>
+            <label>Full Name:</label>
+            <input type="text" id="reg-name" placeholder="Enter your full name" autocomplete="off">
+
+            <label>Username:</label>
+            <input type="text" id="reg-username" placeholder="Choose a username" autocomplete="off">
+
+            <label>Password:</label>
+            <input type="password" id="reg-password" placeholder="Choose a password" autocomplete="new-password">
+
+            <label>Security Captcha Verification:</label>
+            <div class="captcha-box-wrapper">
+                <canvas id="signup-captcha-canvas"></canvas>
+            </div>
+            <input type="text" id="signup-captcha-input" placeholder="Enter exact characters shown above" autocomplete="off">
+
+            <button onclick="handleSignup()" class="btn-submit">Register Account</button>
+
+            <div class="link-text">
+                Already have an account? <a onclick="switchView('login')">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Private Key Modal -->
+    <div id="privkey-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Save Your Private Key!</h3>
+            <p style="font-size: 12px; color: #adb5bd;">This 36-digit key is required for login. Keep it secure, it cannot be recovered if lost.</p>
+            <div class="privkey-display" id="generated-key-box"></div>
+            <button onclick="closeModalAndLogin()" class="btn-submit">I Have Saved It - Go to Login</button>
         </div>
     </div>
 
     <script>
         let currentCaptchaText = "";
+        let signupCaptchaText = "";
         let failedAttempts = 0;
         let lockoutTimer = null;
         let tempVerifiedUser = null;
@@ -163,15 +213,8 @@
             localStorage.setItem('czc_users', JSON.stringify(users));
         }
 
-        function generateHardCaptcha() {
-            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-            let captcha = "";
-            for (let i = 0; i < 6; i++) {
-                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            currentCaptchaText = captcha;
-            
-            let canvas = document.getElementById('captcha-canvas');
+        function drawCaptcha(canvasId, text) {
+            let canvas = document.getElementById(canvasId);
             if (!canvas) return;
             let ctx = canvas.getContext('2d');
             
@@ -198,8 +241,8 @@
             ctx.font = "bold 24px monospace";
             ctx.textBaseline = "middle";
             
-            let charSpacing = canvas.width / (captcha.length + 1);
-            for (let i = 0; i < captcha.length; i++) {
+            let charSpacing = canvas.width / (text.length + 1);
+            for (let i = 0; i < text.length; i++) {
                 ctx.save();
                 let x = charSpacing * (i + 1) + (Math.random() * 10 - 5);
                 let y = canvas.height / 2 + (Math.random() * 10 - 5);
@@ -209,11 +252,58 @@
                 ctx.rotate(angle);
                 
                 ctx.fillStyle = i % 2 === 0 ? "#ffb703" : "#48cae4";
-                ctx.fillText(captcha[i], -10, 0);
+                ctx.fillText(text[i], -10, 0);
                 ctx.restore();
             }
+        }
 
-            document.getElementById('captcha-input').value = '';
+        function generateLoginCaptcha() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+            let captcha = "";
+            for (let i = 0; i < 6; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            currentCaptchaText = captcha;
+            drawCaptcha('captcha-canvas', currentCaptchaText);
+            let input = document.getElementById('captcha-input');
+            if(input) input.value = '';
+        }
+
+        function generateSignupCaptcha() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+            let captcha = "";
+            for (let i = 0; i < 6; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            signupCaptchaText = captcha;
+            drawCaptcha('signup-captcha-canvas', signupCaptchaText);
+            let input = document.getElementById('signup-captcha-input');
+            if(input) input.value = '';
+        }
+
+        function switchView(view) {
+            document.getElementById('error-msg').style.display = 'none';
+            document.getElementById('success-msg').style.display = 'none';
+            
+            document.getElementById('login-step-1').classList.add('hidden-section');
+            document.getElementById('login-step-2').classList.add('hidden-section');
+            document.getElementById('signup-section').classList.add('hidden-section');
+
+            if (view === 'login') {
+                document.getElementById('login-step-1').classList.remove('hidden-section');
+                generateLoginCaptcha();
+            } else if (view === 'signup') {
+                document.getElementById('signup-section').classList.remove('hidden-section');
+                generateSignupCaptcha();
+            }
+        }
+
+        function backToLoginStep1() {
+            document.getElementById('login-step-2').classList.add('hidden-section');
+            document.getElementById('login-step-1').classList.remove('hidden-section');
+            document.getElementById('error-msg').style.display = 'none';
+            tempVerifiedUser = null;
+            generateLoginCaptcha();
         }
 
         function triggerLockout() {
@@ -234,7 +324,7 @@
                     clearInterval(lockoutTimer);
                     btn.disabled = false;
                     errorBox.style.display = 'none';
-                    generateHardCaptcha();
+                    generateLoginCaptcha();
                 }
             }, 1000);
         }
@@ -244,6 +334,8 @@
             let usernameInput = document.getElementById('login-username').value.trim();
             let passwordInput = document.getElementById('login-password').value.trim();
             let captchaInput = document.getElementById('captcha-input').value.trim();
+
+            errorBox.style.display = 'none';
 
             if (!usernameInput || !passwordInput || !captchaInput) {
                 errorBox.innerText = "Please fill in all fields including Captcha.";
@@ -255,7 +347,7 @@
                 failedAttempts++;
                 errorBox.innerText = "Invalid Captcha code. Captcha automatically refreshed.";
                 errorBox.style.display = 'block';
-                generateHardCaptcha();
+                generateLoginCaptcha();
                 if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
@@ -263,33 +355,20 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
 
-            let user = users.find(u => 
-                (u.username && u.username.toLowerCase() === usernameInput.toLowerCase()) || 
-                (u.email && u.email.toLowerCase() === usernameInput.toLowerCase())
-            );
+            let user = users.find(u => u.username && u.username.toLowerCase() === usernameInput.toLowerCase());
 
             if (!user || user.password !== passwordInput) {
                 failedAttempts++;
                 errorBox.innerText = "Invalid username or password. Captcha refreshed.";
                 errorBox.style.display = 'block';
-                generateHardCaptcha();
+                generateLoginCaptcha();
                 if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
 
             tempVerifiedUser = user;
-            errorBox.style.display = 'none';
-
-            document.getElementById('login-step-1').classList.add('step-hidden');
-            document.getElementById('login-step-2').classList.remove('step-hidden');
-        }
-
-        function backToStepOne() {
-            document.getElementById('login-step-2').classList.add('step-hidden');
-            document.getElementById('login-step-1').classList.remove('step-hidden');
-            document.getElementById('error-msg').style.display = 'none';
-            tempVerifiedUser = null;
-            generateHardCaptcha();
+            document.getElementById('login-step-1').classList.add('hidden-section');
+            document.getElementById('login-step-2').classList.remove('hidden-section');
         }
 
         function handleLogin() {
@@ -297,6 +376,7 @@
             if (lockoutTimer) return;
 
             let privKey = document.getElementById('login-privkey').value.trim();
+            errorBox.style.display = 'none';
 
             if (!privKey) {
                 errorBox.innerText = "Private Key is required.";
@@ -318,10 +398,7 @@
             let activeSessions = {};
             try { activeSessions = JSON.parse(localStorage.getItem('czc_active_sessions') || '{}'); } catch(e) {}
             
-            activeSessions[userKey] = {
-                token: newSessionToken,
-                time: Date.now()
-            };
+            activeSessions[userKey] = { token: newSessionToken, time: Date.now() };
             localStorage.setItem('czc_active_sessions', JSON.stringify(activeSessions));
             
             localStorage.setItem('czc_local_session_token', newSessionToken);
@@ -330,9 +407,74 @@
             window.location.href = 'store.html';
         }
 
+        function handleSignup() {
+            let errorBox = document.getElementById('error-msg');
+            let nameInput = document.getElementById('reg-name').value.trim();
+            let usernameInput = document.getElementById('reg-username').value.trim();
+            let passwordInput = document.getElementById('reg-password').value.trim();
+            let captchaInput = document.getElementById('signup-captcha-input').value.trim();
+
+            errorBox.style.display = 'none';
+
+            if (!nameInput || !usernameInput || !passwordInput || !captchaInput) {
+                errorBox.innerText = "Please fill in all fields including Captcha.";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            if (captchaInput !== signupCaptchaText) {
+                errorBox.innerText = "Invalid Captcha code. Captcha automatically refreshed.";
+                errorBox.style.display = 'block';
+                generateSignupCaptcha();
+                return;
+            }
+
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
+
+            let existing = users.find(u => u.username && u.username.toLowerCase() === usernameInput.toLowerCase());
+            if (existing) {
+                errorBox.innerText = "Username already exists. Choose another.";
+                errorBox.style.display = 'block';
+                generateSignupCaptcha();
+                return;
+            }
+
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let newPrivateKey = "";
+            for (let i = 0; i < 36; i++) {
+                newPrivateKey += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            let newUser = {
+                name: nameInput,
+                username: usernameInput,
+                password: passwordInput,
+                privateKey: newPrivateKey,
+                balance_usd: 0.00,
+                total_deposited: 0.00,
+                is_activated: 1,
+                role: 'Member',
+                tfaEnabled: false,
+                emailVerified: true,
+                activationDate: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('czc_users', JSON.stringify(users));
+
+            document.getElementById('generated-key-box').innerText = newPrivateKey;
+            document.getElementById('privkey-modal').style.display = 'flex';
+        }
+
+        function closeModalAndLogin() {
+            document.getElementById('privkey-modal').style.display = 'none';
+            switchView('login');
+        }
+
         window.onload = function() {
             initializeDefaultUsers();
-            generateHardCaptcha();
+            generateLoginCaptcha();
         };
     </script>
 </body>
