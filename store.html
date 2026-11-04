@@ -3,32 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cards Zones Club — Secure Market</title>
+    <title>Cards Zones Club — Secure Underground Cards Markets</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar & Hamburger Menu */
-        .sidebar { width: 280px; background-color: #1b263b; border-right: 1px solid #415a77; display: flex; flex-direction: column; flex-shrink: 0; position: fixed; height: 100%; z-index: 100; transition: transform 0.3s ease; }
-        .sidebar.closed { transform: translateX(-100%); }
+        /* Backdrop Overlay */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 99; display: none; }
+        .sidebar-overlay.active { display: block; }
+
+        /* Sidebar & Hamburger Menu Drawer */
+        .sidebar { width: 280px; background-color: #1b263b; border-right: 1px solid #415a77; display: flex; flex-direction: column; flex-shrink: 0; position: fixed; height: 100%; top: 0; left: 0; z-index: 100; transition: transform 0.3s ease; transform: translateX(-100%); }
+        .sidebar.open { transform: translateX(0); }
         
-        .sidebar-brand-box { padding: 15px; border-bottom: 1px solid #415a77; background: #0d1b2a; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-brand-box { padding: 18px 15px; border-bottom: 1px solid #415a77; background: #0d1b2a; display: flex; justify-content: space-between; align-items: center; }
         .club-badge { display: inline-block; border: 1px solid #415a77; padding: 2px 6px; font-size: 9px; letter-spacing: 2px; color: #adb5bd; background-color: #1b263b; border-radius: 3px; text-transform: uppercase; }
         .club-name { font-size: 16px; font-weight: bold; color: #ffffff; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
-        .btn-close-menu { background: none; border: none; color: #ff4d4d; font-size: 18px; cursor: pointer; font-weight: bold; }
+        .btn-close-menu { background: none; border: none; color: #ff4d4d; font-size: 20px; cursor: pointer; font-weight: bold; }
 
         .sidebar-menu { list-style: none; padding: 12px; margin: 0; overflow-y: auto; flex-grow: 1; }
-        .sidebar-menu li { padding: 9px 12px; margin-bottom: 5px; background: #0d1b2a; border: 1px solid #415a77; border-radius: 4px; font-size: 12px; color: #adb5bd; cursor: pointer; transition: all 0.2s; }
+        .sidebar-menu li { padding: 10px 12px; margin-bottom: 6px; background: #0d1b2a; border: 1px solid #415a77; border-radius: 4px; font-size: 12px; color: #adb5bd; cursor: pointer; transition: all 0.2s; }
         .sidebar-menu li:hover, .sidebar-menu li.active { background: #38b000; color: #ffffff; border-color: #38b000; font-weight: bold; }
 
         /* Main Container */
-        .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; background-color: #0d1b2a; margin-left: 280px; transition: margin-left 0.3s ease; }
-        .main-container.full-width { margin-left: 0; }
+        .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; background-color: #0d1b2a; width: 100%; }
 
         /* Top Navbar */
         .top-navbar { height: 60px; background-color: #1b263b; border-bottom: 1px solid #415a77; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; flex-shrink: 0; }
         .nav-left { display: flex; align-items: center; gap: 15px; }
-        .btn-hamburger { background: #0d1b2a; border: 1px solid #415a77; color: #38b000; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-hamburger { background: #0d1b2a; border: 1px solid #415a77; color: #38b000; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
         
         .user-meta-info { font-size: 12px; color: #adb5bd; display: flex; gap: 15px; align-items: center; }
         .role-owner { color: #ffb703; font-weight: bold; text-transform: uppercase; }
@@ -42,11 +45,11 @@
         .btn-logout:hover { background-color: #c90426; }
 
         /* Viewport */
-        .content-viewport { padding: 20px; overflow-y: auto; flex-grow: 1; }
+        .content-viewport { padding: 25px; overflow-y: auto; flex-grow: 1; }
         .view-section { display: none; }
         .view-section.active-content { display: block; }
 
-        .section-title { font-size: 16px; color: #ffb703; text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #415a77; padding-bottom: 10px; margin-bottom: 15px; }
+        .section-title { font-size: 16px; color: #ffb703; text-transform: uppercase; margin-top: 0; border-bottom: 1px solid #415a77; padding-bottom: 10px; margin-bottom: 20px; }
 
         /* Cards Grid */
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
@@ -56,22 +59,26 @@
         .btn-buy { background-color: #38b000; color: #fff; border: none; width: 100%; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 10px; text-transform: uppercase; }
         .btn-buy:hover { background-color: #2e9000; }
 
-        /* Tool Box */
-        .tool-box { background: #1b263b; border: 1px solid #415a77; padding: 20px; border-radius: 6px; max-width: 550px; }
-        .tool-box label { font-size: 12px; color: #adb5bd; display: block; margin-bottom: 6px; }
-        .tool-box input, .tool-box textarea { width: 100%; background: #0d1b2a; border: 1px solid #415a77; color: #fff; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin-bottom: 12px; }
-        .btn-action { background: #48cae4; color: #0d1b2a; border: none; padding: 8px 15px; font-weight: bold; font-size: 12px; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
-        .btn-action:hover { background: #3ab0cc; }
-        .tool-result { background: #0d1b2a; border: 1px solid #415a77; padding: 12px; border-radius: 4px; font-size: 12px; color: #38b000; margin-top: 12px; min-height: 50px; white-space: pre-wrap; }
+        /* Crypto Modal Overlay */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; }
+        .crypto-modal { background: #1b263b; border: 1px solid #38b000; padding: 25px; border-radius: 8px; width: 90%; max-width: 450px; }
+        .crypto-modal h3 { color: #38b000; margin-top: 0; font-size: 16px; text-transform: uppercase; border-bottom: 1px solid #415a77; padding-bottom: 8px; }
+        .crypto-option { background: #0d1b2a; border: 1px solid #415a77; padding: 10px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .crypto-option:hover { border-color: #38b000; }
+        .deposit-box { background: #0d1b2a; border: 1px solid #415a77; padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 11px; color: #adb5bd; word-break: break-all; display: none; }
+        .crypto-address { color: #ffb703; font-family: monospace; margin-top: 5px; }
 
         /* Panels */
-        .admin-banner { background: rgba(255, 183, 3, 0.05); border: 1px dashed #ffb703; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; }
-        .seller-banner { background: rgba(72, 202, 228, 0.05); border: 1px dashed #48cae4; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; }
+        .admin-banner { background: rgba(255, 183, 3, 0.05); border: 1px dashed #ffb703; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        .seller-banner { background: rgba(72, 202, 228, 0.05); border: 1px dashed #48cae4; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Left Sidebar with Hamburger & Logo -->
+    <!-- Backdrop Overlay -->
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Left Sidebar Drawer -->
     <div id="sidebar-menu" class="sidebar">
         <div class="sidebar-brand-box">
             <div>
@@ -88,228 +95,11 @@
             <li onclick="switchView('store', 'ssn', this)">🆔 SSN / DOB Records</li>
             <li onclick="switchView('store', 'proxies', this)">🔒 Elite Proxies</li>
             <li onclick="switchView('store', 'rdp_vpn', this)">🌐 Secure RDP & VPN</li>
-            <li style="border-top: 1px solid #415a77; margin-top: 8px; padding-top: 10px; color: #ffb703; font-weight: bold; font-size: 11px;">[ UTILITIES & CHECKERS ]</li>
-            <li onclick="switchView('tool', 'bin_lookup', this)">🔍 BIN Lookup Utility</li>
-            <li onclick="switchView('tool', 'cc_checker', this)">🟢 Live CC Checker</li>
-            <li onclick="switchView('tool', 'balance_checker', this)">💰 Balance Estimator</li>
         </ul>
     </div>
 
-    <!-- Main Container -->
-    <div id="main-content-area" class="main-container">
-        <!-- Top Navbar -->
-        <div class="top-navbar">
-            <div class="nav-left">
-                <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
-                <div id="nav-user-info" class="user-meta-info">
-                    <span>ID: <strong>loading...</strong></span>
-                    <span>Role: ...</span>
-                    <span>Balance: <strong class="balance-text">$0.00 USD</strong></span>
-                </div>
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-                <button onclick="openTopUpModal()" class="btn-topup">+ Top Up</button>
-                <button onclick="executeLogout()" class="btn-logout">Log Out</button>
-            </div>
-        </div>
-
-        <!-- Viewport -->
-        <div class="content-viewport">
-            
-            <!-- Admin Control Banner -->
-            <div id="admin-panel-box" class="admin-banner">
-                <h3 style="color: #ffb703; margin: 0 0 4px 0; font-size: 13px;">⚡ Owner & Admin Control Panel</h3>
-                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Root privileges active. Full system and database access unlocked.</p>
-                <button onclick="alert('Root database manager initialized.')" style="background: #ffb703; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Open Root Manager</button>
-            </div>
-
-            <!-- Seller Control Banner -->
-            <div id="seller-panel-box" class="seller-banner">
-                <h3 style="color: #48cae4; margin: 0 0 4px 0; font-size: 13px;">🛍️ Official Vendor Injection Panel</h3>
-                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Strict category filters active. Upload listings inside authorized partitions.</p>
-                <button onclick="alert('Asset injector ready.')" style="background: #48cae4; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Inject New Asset</button>
-            </div>
-
-            <!-- 1. STORE VIEW -->
-            <div id="section-store" class="view-section active-content">
-                <h2 class="section-title" id="partition-title">Catalog: All Assets</h2>
-                <div class="grid-cards" id="store-catalog-grid">
-                    <div class="card-item">
-                        <div class="card-title">[CC] US Gold Verified Node</div>
-                        <div class="card-detail">Type: Visa / Classic / Non-VBV</div>
-                        <div class="card-detail">Price: $15.00 USD</div>
-                        <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
-                    </div>
-                    <div class="card-item">
-                        <div class="card-title">[Fullz] Full Identity Record</div>
-                        <div class="card-detail">Includes: CC + SSN + DOB + DL</div>
-                        <div class="card-detail">Price: $35.00 USD</div>
-                        <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
-                    </div>
-                    <div class="card-item">
-                        <div class="card-title">[RDP] Admin Access Server</div>
-                        <div class="card-detail">Location: EU / High-Speed 1Gbps</div>
-                        <div class="card-detail">Price: $20.00 USD</div>
-                        <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 2. BIN LOOKUP VIEW -->
-            <div id="section-bin_lookup" class="view-section">
-                <h2 class="section-title">Utility: BIN Lookup Engine</h2>
-                <div class="tool-box">
-                    <label>Enter 6-Digit BIN Code:</label>
-                    <input type="text" id="bin-input" placeholder="e.g. 453201" maxlength="6">
-                    <button class="btn-action" onclick="runBinLookup()">Query BIN Ledger</button>
-                    <div class="tool-result" id="bin-output">Output logs will appear here...</div>
-                </div>
-            </div>
-
-            <!-- 3. LIVE CC CHECKER VIEW -->
-            <div id="section-cc_checker" class="view-section">
-                <h2 class="section-title">Utility: Live CC Gate Checker</h2>
-                <div class="tool-box">
-                    <label>Enter CC Data (Format: CC|MM|YY|CVV):</label>
-                    <textarea id="cc-input" rows="4" placeholder="4111111111111111|12|28|123"></textarea>
-                    <button class="btn-action" onclick="runCcChecker()">Execute Live Check</button>
-                    <div class="tool-result" id="cc-output">Checker waiting for payload...</div>
-                </div>
-            </div>
-
-            <!-- 4. BALANCE CHECKER VIEW -->
-            <div id="section-balance_checker" class="view-section">
-                <h2 class="section-title">Utility: Balance Estimator Node</h2>
-                <div class="tool-box">
-                    <label>Enter CC Data (Format: CC|MM|YY|CVV):</label>
-                    <textarea id="bal-input" rows="4" placeholder="4111111111111111|12|28|123"></textarea>
-                    <button class="btn-action" onclick="runBalanceChecker()">Analyze Estimated Balance</button>
-                    <div class="tool-result" id="bal-output">Balance estimation logs will appear here...</div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        function toggleSidebar() {
-            let sidebar = document.getElementById('sidebar-menu');
-            let main = document.getElementById('main-content-area');
-            sidebar.classList.toggle('closed');
-            main.classList.toggle('full-width');
-        }
-
-        function initializeSession() {
-            let activeUser = localStorage.getItem('czc_current_user');
-            let sessionToken = localStorage.getItem('czc_local_session_token');
-
-            if (!activeUser || !sessionToken) {
-                window.location.href = 'index.html';
-                return;
-            }
-
-            let userDatabase = [];
-            try { userDatabase = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { userDatabase = []; }
-
-            let sessionProfile = userDatabase.find(u => u.username && u.username.toLowerCase() === activeUser.toLowerCase());
-
-            if (!sessionProfile) {
-                alert('Session authorization failed.');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            if (sessionProfile.username.toLowerCase() === 'admin') {
-                sessionProfile.role = 'Owner';
-                if (sessionProfile.balance_usd < 99999) sessionProfile.balance_usd = 99999.00;
-                localStorage.setItem('czc_users', JSON.stringify(userDatabase));
-            } else {
-                if (sessionProfile.balance_usd === undefined) {
-                    sessionProfile.balance_usd = 0.00;
-                    localStorage.setItem('czc_users', JSON.stringify(userDatabase));
-                }
-            }
-
-            let roleClass = 'role-member';
-            if (sessionProfile.role === 'Owner') {
-                roleClass = 'role-owner';
-                document.getElementById('admin-panel-box').style.display = 'block';
-            } else if (sessionProfile.role === 'Official Seller') {
-                roleClass = 'role-seller';
-                document.getElementById('seller-panel-box').style.display = 'block';
-            }
-
-            document.getElementById('nav-user-info').innerHTML = `
-                <span>ID: <strong>${sessionProfile.username}</strong></span>
-                <span>Role: <span class="${roleClass}">${sessionProfile.role}</span></span>
-                <span>Balance: <strong class="balance-text">$${(sessionProfile.balance_usd || 0).toFixed(2)} USD</strong></span>
-            `;
-        }
-
-        function switchView(mode, key, element) {
-            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
-            element.classList.add('active');
-
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active-content'));
-
-            if (mode === 'store') {
-                document.getElementById('section-store').classList.add('active-content');
-                document.getElementById('partition-title').innerText = `Catalog: ${key.toUpperCase()}`;
-            } else if (mode === 'tool') {
-                document.getElementById(`section-${key}`).classList.add('active-content');
-            }
-
-            // Auto close sidebar on mobile after selection
-            if (window.innerWidth <= 768) {
-                toggleSidebar();
-            }
-        }
-
-        function openTopUpModal() {
-            let amount = prompt("Enter deposit amount in USD (e.g. 50):");
-            if (amount && !isNaN(amount) && Number(amount) > 0) {
-                let activeUser = localStorage.getItem('czc_current_user');
-                let userDatabase = JSON.parse(localStorage.getItem('czc_users') || '[]');
-                let user = userDatabase.find(u => u.username.toLowerCase() === activeUser.toLowerCase());
-                if(user) {
-                    user.balance_usd = (user.balance_usd || 0) + Number(amount);
-                    localStorage.setItem('czc_users', JSON.stringify(userDatabase));
-                    alert(`Successfully deposited $${Number(amount).toFixed(2)} USD!`);
-                    initializeSession();
-                }
-            }
-        }
-
-        function runBinLookup() {
-            let bin = document.getElementById('bin-input').value.trim();
-            let out = document.getElementById('bin-output');
-            if(bin.length < 4) { out.innerText = "[-] Error: Enter at least first 4-6 digits of BIN."; return; }
-            out.innerText = `[+] Querying BIN ledger for: ${bin}...\n[RESULT] Bank: CHASE BANK NA\n[TYPE] CREDIT | CLASSIC | VISA\n[COUNTRY] UNITED STATES (US)\n[CURRENCY] USD`;
-        }
-
-        function runCcChecker() {
-            let data = document.getElementById('cc-input').value.trim();
-            let out = document.getElementById('cc-output');
-            if(!data) { out.innerText = "[-] Error: No payload provided."; return; }
-            out.innerText = `[+] Connecting to secure gateway node...\n[LIVE] ${data.split('|')[0]} | Status: APPROVED ($1.00 Auth) | Response: Approved (800)`;
-        }
-
-        function runBalanceChecker() {
-            let data = document.getElementById('bal-input').value.trim();
-            let out = document.getElementById('bal-output');
-            if(!data) { out.innerText = "[-] Error: No card payload provided."; return; }
-            out.innerText = `[+] Probing issuer balance ledger...\n[ESTIMATED BALANCE] $3,120.00 USD available | Limit: $7,500.00 | Status: Active`;
-        }
-
-        function executeLogout() {
-            localStorage.removeItem('czc_local_session_token');
-            localStorage.removeItem('czc_current_user');
-            window.location.href = 'index.html';
-        }
-
-        window.onload = function() {
-            initializeSession();
-        };
-    </script>
-</body>
-</html>
+    <!-- Crypto Top-Up Modal -->
+    <div id="crypto-modal" class="modal-overlay">
+        <div class="crypto-modal">
+            <h3>Select Cryptocurrency for Deposit</h3>
+            <p style="font-size: 11px; color: #adb5bd; margin-bottom: 15px;">Choose your
