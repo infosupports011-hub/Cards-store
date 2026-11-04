@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cards Zones Club — Secure Market</title>
+    <title>Cards Zones Club — Secure Market Portal</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
@@ -53,6 +53,12 @@
         .btn-buy { background-color: #38b000; color: #fff; border: none; width: 100%; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; margin-top: 10px; text-transform: uppercase; }
         .btn-buy:hover { background-color: #2e9000; }
 
+        .notice-box { background: #1b263b; border: 1px solid #415a77; padding: 18px; border-radius: 6px; margin-bottom: 20px; font-size: 12px; line-height: 1.6; color: #adb5bd; }
+        .notice-box h3 { color: #ffb703; margin-top: 0; font-size: 14px; text-transform: uppercase; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; color: #fff; }
+        .form-group input { width: 100%; padding: 8px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-family: monospace; }
+
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; }
         .crypto-modal { background: #1b263b; border: 1px solid #38b000; padding: 25px; border-radius: 8px; width: 90%; max-width: 450px; }
         .crypto-modal h3 { color: #38b000; margin-top: 0; font-size: 16px; text-transform: uppercase; border-bottom: 1px solid #415a77; padding-bottom: 8px; }
@@ -85,16 +91,19 @@
             <li onclick="switchView('store', 'ssn', this)">🆔 SSN / DOB Records</li>
             <li onclick="switchView('store', 'proxies', this)">🔒 Elite Proxies</li>
             <li onclick="switchView('store', 'rdp_vpn', this)">🌐 Secure RDP & VPN</li>
+            <li style="border-top: 1px solid #415a77; margin-top: 8px; padding-top: 10px; color: #ffb703; font-weight: bold; font-size: 11px;">[ PARTNERS & POLICIES ]</li>
+            <li onclick="switchView('tool', 'partner_form', this)">🤝 Seller Partner Program</li>
+            <li onclick="switchView('tool', 'important_notes', this)">📋 Important Security & Rules</li>
         </ul>
     </div>
 
     <div id="crypto-modal" class="modal-overlay">
         <div class="crypto-modal">
             <h3>Select Cryptocurrency for Deposit</h3>
-            <p style="font-size: 11px; color: #adb5bd; margin-bottom: 15px;">Choose your preferred coin to generate the secure deposit address.</p>
+            <p style="font-size: 11px; color: #adb5bd; margin-bottom: 15px;">Choose your coin for secure automated deposit.</p>
             
             <div class="crypto-option" onclick="selectCrypto('BTC')">
-              <span>⚡ Bitcoin (BTC)</span>
+              <span>⚡ Bitcoin (BTC - xpub/zpub)</span>
               <span style="color: #38b000; font-weight: bold;">Select</span>
             </div>
             <div class="crypto-option" onclick="selectCrypto('XMR')">
@@ -113,7 +122,7 @@
             <div id="deposit-address-box" class="deposit-box">
                 <div id="deposit-title" style="font-weight: bold; color: #fff;"></div>
                 <div class="crypto-address" id="deposit-address-val"></div>
-                <p style="margin-top: 8px; font-size: 10px; color: #ff4d4d;">Send exact amount. Balance updates after network confirmation.</p>
+                <p style="margin-top: 8px; font-size: 10px; color: #ff4d4d;">Send exact amount. Balance updates automatically.</p>
             </div>
 
             <button onclick="closeCryptoModal()" style="background: #d90429; color: #fff; border: none; width: 100%; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 11px; text-transform: uppercase;">Close Portal</button>
@@ -140,16 +149,17 @@
             
             <div id="admin-panel-box" class="admin-banner">
                 <h3 style="color: #ffb703; margin: 0 0 4px 0; font-size: 13px;">⚡ Owner & Admin Control Panel</h3>
-                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Root privileges active. Full system and database access unlocked.</p>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Root privileges active. 24/7 Fraud Monitoring live (Scanning for flash/suspicious txns).</p>
                 <button onclick="alert('Root database manager initialized.')" style="background: #ffb703; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Open Root Manager</button>
             </div>
 
             <div id="seller-panel-box" class="seller-banner">
                 <h3 style="color: #48cae4; margin: 0 0 4px 0; font-size: 13px;">🛍️ Official Vendor Injection Panel</h3>
-                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Strict category filters active. Upload listings inside authorized partitions.</p>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">All category additions (CC, Dumps, Fullz, SSN) are instantly broadcasted to our Telegram Bot.</p>
                 <button onclick="alert('Asset injector ready.')" style="background: #48cae4; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Inject New Asset</button>
             </div>
 
+            <!-- STORE VIEW -->
             <div id="section-store" class="view-section active-content">
                 <h2 class="section-title" id="partition-title">Catalog: All Assets</h2>
                 <div class="grid-cards" id="store-catalog-grid">
@@ -165,12 +175,48 @@
                         <div class="card-detail">Price: $35.00 USD</div>
                         <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
                     </div>
-                    <div class="card-item">
-                        <div class="card-title">[RDP] Admin Access Server</div>
-                        <div class="card-detail">Location: EU / High-Speed 1Gbps</div>
-                        <div class="card-detail">Price: $20.00 USD</div>
-                        <button class="btn-buy" onclick="alert('Escrow acquisition successful.')">Acquire Asset</button>
+                </div>
+            </div>
+
+            <!-- PARTNER / SELLER APPLICATION FORM VIEW -->
+            <div id="section-partner_form" class="view-section">
+                <h2 class="section-title">Seller Partner Program Application</h2>
+                <div class="notice-box">
+                    <p>Want to become an Official Seller on Cards Zones Club? Fill out the partnership application below. Our team reviews all requests daily.</p>
+                    <div class="form-group">
+                        <label>Your Full Name / Vendor Name:</label>
+                        <input type="text" id="p-name" placeholder="Enter vendor name">
                     </div>
+                    <div class="form-group">
+                        <label>Email Address:</label>
+                        <input type="email" id="p-email" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram Username (e.g. @username):</label>
+                        <input type="text" id="p-tg" placeholder="@yourtelegram">
+                    </div>
+                    <button class="btn-buy" onclick="submitPartnerForm()" style="margin-top: 10px;">Submit Partner Application</button>
+                </div>
+            </div>
+
+            <!-- IMPORTANT SECURITY & POLICIES VIEW -->
+            <div id="section-important_notes" class="view-section">
+                <h2 class="section-title">Important Security Notes & Policies</h2>
+                <div class="notice-box">
+                    <h3>⚠️ 36-Digit Private Key Loss Warning</h3>
+                    <p>Your 36-digit Private Key is the ONLY way to access your account. If lost, <strong>it cannot be recovered</strong> by administration under any circumstances. Keep it offline and secure.</p>
+                    
+                    <h3 style="margin-top: 15px;">⏳ Account Activation & Deposit Policy</h3>
+                    <p>Accounts registered without any deposit or activation within <strong>4 days</strong> will be automatically deleted from the system. Only accounts activated via a valid deposit maintain permanent logs and details on our secure servers.</p>
+
+                    <h3 style="margin-top: 15px;">🔄 Strict Refund Policy</h3>
+                    <p>Refunds are <strong>only applicable</strong> if a Credit Card (CC) is verified as <strong>Dead (Declined)</strong> or <strong>Expired</strong> at the time of purchase. No refunds will be issued for live working cards.</p>
+
+                    <h3 style="margin-top: 15px;">🛡️ 24/7 Real-Time Fraud Monitoring</h3>
+                    <p>Our autonomous security system actively monitors all buyers and sellers 24/7. Any flash payments, unauthorized script injections, or suspicious multi-accounting triggers an immediate system alert and lock.</p>
+
+                    <h3 style="margin-top: 15px;">☎️ Official Support & Helpdesk</h3>
+                    <p>For any disputes, vendor inquiries, or technical support, contact our official admin on Telegram exclusively at: <strong style="color: #38b000;">@Sheikhcarders</strong></p>
                 </div>
             </div>
 
@@ -205,7 +251,7 @@
             if (box && title && addrVal) {
                 box.style.display = 'block';
                 if (coin === 'BTC') {
-                    title.innerText = "Bitcoin (BTC) Deposit Address:";
+                    title.innerText = "Bitcoin (BTC) Deposit Address (xpub/zpub derived):";
                     addrVal.innerText = "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
                 } else if (coin === 'XMR') {
                     title.innerText = "Monero (XMR) Stealth Address:";
@@ -218,6 +264,21 @@
                     addrVal.innerText = "D8VzP9pA2s8jJvY42a7q6m5n8Xp2xy2kgdygjrs";
                 }
             }
+        }
+
+        function submitPartnerForm() {
+            let name = document.getElementById('p-name').value.trim();
+            let email = document.getElementById('p-email').value.trim();
+            let tg = document.getElementById('p-tg').value.trim();
+
+            if (!name || !email || !tg) {
+                alert("Please fill out all partnership form fields.");
+                return;
+            }
+            alert(`Application submitted successfully for vendor '${name}'! Our team will contact you via Telegram (${tg}).`);
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-email').value = '';
+            document.getElementById('p-tg').value = '';
         }
 
         function initializeSession() {
@@ -280,8 +341,16 @@
             document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
             if (element) element.classList.add('active');
 
-            let titleElem = document.getElementById('partition-title');
-            if (titleElem) titleElem.innerText = `Catalog: ${key.toUpperCase()}`;
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active-content'));
+
+            if (mode === 'store') {
+                document.getElementById('section-store').classList.add('active-content');
+                let titleElem = document.getElementById('partition-title');
+                if (titleElem) titleElem.innerText = `Catalog: ${key.toUpperCase()}`;
+            } else if (mode === 'tool') {
+                let targetSec = document.getElementById(`section-${key}`);
+                if (targetSec) targetSec.classList.add('active-content');
+            }
             toggleSidebar();
         }
 
