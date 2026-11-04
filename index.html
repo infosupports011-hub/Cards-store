@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏴‍☠️Cards Zones Club🏴‍☠️ - Secure Login</title>
+    <title>Cards Zones Club - Secure Login</title>
     <style>
         * { box-sizing: border-box; }
         body { background-color: #0d1b2a; color: #ffffff; font-family: Arial, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .login-box { background-color: #1b263b; border: 1px solid #415a77; border-radius: 10px; padding: 30px; width: 100%; max-width: 420px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h2 { color: #38b000; text-align: center; margin-top: 0; font-size: 20px; }
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo-container img { max-width: 240px; height: auto; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        h2 { color: #38b000; text-align: center; margin-top: 0; font-size: 20px; letter-spacing: 1px; }
         .error-box { background-color: rgba(217,4,41,0.2); border: 1px solid #d90429; color: #ff4d4d; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; display: none; text-align: center; }
         label { font-size: 13px; color: #adb5bd; display: block; margin-top: 10px; }
         input { width: 100%; padding: 10px; margin: 5px 0 15px 0; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; font-size: 13px; }
@@ -18,33 +20,50 @@
         .btn-submit:disabled { background-color: #415a77; cursor: not-allowed; }
         .signup-link { text-align: center; margin-top: 15px; font-size: 12px; color: #adb5bd; }
         .signup-link a { color: #38b000; text-decoration: none; font-weight: bold; }
+        .step-hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div class="login-box">
-        <h2>🏴‍☠️ Cards Zones Club 🏴‍☠️</h2>
-        <div id="error-msg" class="error-box">Invalid credentials or security mismatch. Captcha renewed.</div>
-
-        <label>Username:</label>
-        <input type="text" id="login-username" placeholder="Enter username" autocomplete="off">
-
-        <label>Password:</label>
-        <input type="password" id="login-password" placeholder="Enter password" autocomplete="new-password">
-
-        <label>37-Digit Private Key:</label>
-        <input type="password" id="login-privkey" placeholder="Enter private key" autocomplete="new-password">
-
-        <label>Captcha Verification:</label>
-        <div class="captcha-container" onclick="generateCaptcha()" title="Click to refresh captcha">
-            <span id="captcha-question">Loading...</span>
+        <div class="logo-container">
+            <!-- Updated correct logo image link -->
+            <img src="https://i.postimg.cc/zBkBgr6C/1793257012618.jpg" alt="Cards Zones Club Logo">
         </div>
-        <input type="text" id="captcha-input" placeholder="Enter exact captcha code" autocomplete="off">
+        
+        <div id="error-msg" class="error-box">Invalid credentials or security mismatch.</div>
 
-        <button id="login-btn" onclick="handleLogin()" class="btn-submit">Secure Verify & Continue</button>
+        <!-- STEP 1: Username, Password & Captcha -->
+        <div id="login-step-1">
+            <label>Username or Gmail:</label>
+            <input type="text" id="login-username" placeholder="Enter username or gmail" autocomplete="off">
 
-        <div class="signup-link">
-            Don't have an account? <a href="signup.html">Sign Up</a>
+            <label>Password:</label>
+            <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
+
+            <label>Captcha Verification (Auto-refreshes):</label>
+            <div class="captcha-container" onclick="generateCaptcha()" title="Click to refresh captcha">
+                <span id="captcha-question">Loading...</span>
+            </div>
+            <input type="text" id="captcha-input" placeholder="Enter exact captcha code" autocomplete="off">
+
+            <button onclick="proceedToStepTwo()" class="btn-submit">Next: Private Key Verification</button>
+
+            <div class="signup-link">
+                Don't have an account? <a href="signup.html">Sign Up</a>
+            </div>
+        </div>
+
+        <!-- STEP 2: Only 36-Digit Private Key -->
+        <div id="login-step-2" class="step-hidden">
+            <label>36-Digit Private Key:</label>
+            <input type="password" id="login-privkey" placeholder="Enter 36-digit private key" autocomplete="new-password">
+
+            <button id="login-btn" onclick="handleLogin()" class="btn-submit">Secure Verify & Continue</button>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="#" onclick="backToStepOne()" style="color: #adb5bd; font-size: 12px; text-decoration: underline;">Back to Login</a>
+            </div>
         </div>
     </div>
 
@@ -52,11 +71,40 @@
         let currentCaptchaText = "";
         let failedAttempts = 0;
         let lockoutTimer = null;
+        let tempVerifiedUser = null;
 
         function initializeDefaultUsers() {
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
 
+            // Owner / Admin Account Configuration
+            let adminIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'admin');
+            let adminData = {
+                name: 'System Administrator',
+                username: 'admin',
+                email: 'treasurerman89@gmail.com',
+                password: 'admin201215',
+                privateKey: 'CZCADMIN9876543210abcdefABCDEF123456',
+                balance_usd: 99999.00,
+                total_deposited: 5000.00,
+                is_activated: 1,
+                role: 'Owner',
+                tfaEnabled: false,
+                emailVerified: true,
+                activationDate: new Date().toISOString()
+            };
+
+            if (adminIndex === -1) {
+                users.push(adminData);
+            } else {
+                users[adminIndex].password = 'admin201215';
+                users[adminIndex].privateKey = 'CZCADMIN9876543210abcdefABCDEF123456';
+                users[adminIndex].email = 'treasurerman89@gmail.com';
+                users[adminIndex].role = 'Owner';
+                users[adminIndex].is_activated = 1;
+            }
+
+            // Alexander Hamilton Seller Account
             let alexIndex = users.findIndex(u => u.username && u.username.toLowerCase() === 'alexander hamilton');
             let alexData = {
                 name: 'Alexander Hamilton',
@@ -79,8 +127,10 @@
                 users[alexIndex].password = 'Alex Devil';
                 users[alexIndex].privateKey = 'VuRtuzLP48MJThDB03Mudvm5B1Tj9Naokk9s';
                 users[alexIndex].email = 'hellokitty11@gmail.com';
+                users[alexIndex].role = 'Official Seller';
                 users[alexIndex].is_activated = 1;
             }
+
             localStorage.setItem('czc_users', JSON.stringify(users));
         }
 
@@ -118,19 +168,15 @@
             }, 1000);
         }
 
-        function handleLogin() {
+        function proceedToStepTwo() {
             let errorBox = document.getElementById('error-msg');
-            if (lockoutTimer) return;
-
-            let username = document.getElementById('login-username').value.trim();
-            let password = document.getElementById('login-password').value.trim();
-            let privKey = document.getElementById('login-privkey').value.trim();
+            let usernameInput = document.getElementById('login-username').value.trim();
+            let passwordInput = document.getElementById('login-password').value.trim();
             let captchaInput = document.getElementById('captcha-input').value.trim();
 
-            if (!username || !password || !privKey) {
-                errorBox.innerText = "All fields (Username, Password, Private Key) are required.";
+            if (!usernameInput || !passwordInput || !captchaInput) {
+                errorBox.innerText = "Please fill in all fields including Captcha.";
                 errorBox.style.display = 'block';
-                generateCaptcha();
                 return;
             }
 
@@ -146,22 +192,62 @@
             let users = [];
             try { users = JSON.parse(localStorage.getItem('czc_users') || '[]'); } catch(e) { users = []; }
 
-            let user = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
+            // Match by username or email
+            let user = users.find(u => 
+                (u.username && u.username.toLowerCase() === usernameInput.toLowerCase()) || 
+                (u.email && u.email.toLowerCase() === usernameInput.toLowerCase())
+            );
 
-            if (!user || user.password !== password || user.privateKey !== privKey) {
+            if (!user || user.password !== passwordInput) {
                 failedAttempts++;
-                errorBox.innerText = "Invalid username, password, or private key. Captcha renewed.";
+                errorBox.innerText = "Invalid username/gmail or password.";
                 errorBox.style.display = 'block';
                 generateCaptcha();
                 if (failedAttempts >= 4) { triggerLockout(); }
                 return;
             }
 
-            // --- STRICT SINGLE-DEVICE SESSION ENFORCEMENT ---
-            let userKey = user.username.toLowerCase();
+            // Save matched user temporarily for step 2 verification
+            tempVerifiedUser = user;
+            errorBox.style.display = 'none';
+
+            // Switch to Step 2 (Only Private Key)
+            document.getElementById('login-step-1').classList.add('step-hidden');
+            document.getElementById('login-step-2').classList.remove('step-hidden');
+        }
+
+        function backToStepOne() {
+            document.getElementById('login-step-2').classList.add('step-hidden');
+            document.getElementById('login-step-1').classList.remove('step-hidden');
+            document.getElementById('error-msg').style.display = 'none';
+            tempVerifiedUser = null;
+            generateCaptcha();
+        }
+
+        function handleLogin() {
+            let errorBox = document.getElementById('error-msg');
+            if (lockoutTimer) return;
+
+            let privKey = document.getElementById('login-privkey').value.trim();
+
+            if (!privKey) {
+                errorBox.innerText = "Private Key is required.";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            if (!tempVerifiedUser || tempVerifiedUser.privateKey !== privKey) {
+                failedAttempts++;
+                errorBox.innerText = "Invalid Private Key. Access denied.";
+                errorBox.style.display = 'block';
+                if (failedAttempts >= 4) { triggerLockout(); }
+                return;
+            }
+
+            // --- SESSION ENFORCEMENT & REDIRECT ---
+            let userKey = tempVerifiedUser.username.toLowerCase();
             let newSessionToken = 'sess_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
 
-            // Global active session register update (This will overwrite any previous device session)
             let activeSessions = {};
             try { activeSessions = JSON.parse(localStorage.getItem('czc_active_sessions') || '{}'); } catch(e) {}
             
@@ -171,12 +257,18 @@
             };
             localStorage.setItem('czc_active_sessions', JSON.stringify(activeSessions));
             
-            // Set local browser session identifier
             localStorage.setItem('czc_local_session_token', newSessionToken);
-            localStorage.setItem('czc_current_user', user.username);
+            localStorage.setItem('czc_current_user', tempVerifiedUser.username);
 
             window.location.href = 'store.html';
         }
+
+        // Auto-refresh captcha every 45 seconds to keep it active on step 1
+        setInterval(() => {
+            if (!document.getElementById('login-step-1').classList.contains('step-hidden')) {
+                generateCaptcha();
+            }
+        }, 45000);
 
         window.onload = function() {
             initializeDefaultUsers();
