@@ -69,6 +69,7 @@
 
         .admin-banner { background: rgba(255, 183, 3, 0.05); border: 1px dashed #ffb703; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
         .seller-banner { background: rgba(72, 202, 228, 0.05); border: 1px dashed #48cae4; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        .seller-inbox { background: #0d1b2a; border: 1px solid #48cae4; padding: 15px; border-radius: 6px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -92,7 +93,7 @@
             <li onclick="switchView('store', 'proxies', this)">🔒 Elite Proxies</li>
             <li onclick="switchView('store', 'rdp_vpn', this)">🌐 Secure RDP & VPN</li>
             <li style="border-top: 1px solid #415a77; margin-top: 8px; padding-top: 10px; color: #ffb703; font-weight: bold; font-size: 11px;">[ PARTNERS & POLICIES ]</li>
-            <li onclick="switchView('tool', 'partner_form', this)">🤝 Seller Partner Program</li>
+            <li id="menu-partner-link" onclick="switchView('tool', 'partner_form', this)">🤝 Seller Partner Program</li>
             <li onclick="switchView('tool', 'important_notes', this)">📋 Important Security & Rules</li>
         </ul>
     </div>
@@ -147,16 +148,28 @@
 
         <div class="content-viewport">
             
+            <!-- Owner Admin Control Panel -->
             <div id="admin-panel-box" class="admin-banner">
-                <h3 style="color: #ffb703; margin: 0 0 4px 0; font-size: 13px;">⚡ Owner & Admin Control Panel</h3>
-                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Root privileges active. 24/7 Fraud Monitoring live (Scanning for flash/suspicious txns).</p>
-                <button onclick="alert('Root database manager initialized.')" style="background: #ffb703; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Open Root Manager</button>
+                <h3 style="color: #ffb703; margin: 0 0 4px 0; font-size: 13px;">⚡ Owner & Admin Root Control Panel</h3>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Full root access granted. Control marketplace parameters and toggle partner program access.</p>
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                    <button onclick="alert('Root database manager initialized.')" style="background: #ffb703; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Open Root Manager</button>
+                    <button onclick="togglePartnerProgram()" id="btn-toggle-partner" style="background: #38b000; color: #fff; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Toggle Partner Program: ON</button>
+                </div>
             </div>
 
+            <!-- Official Seller Injection Panel with Notification / Warning Inbox -->
             <div id="seller-panel-box" class="seller-banner">
                 <h3 style="color: #48cae4; margin: 0 0 4px 0; font-size: 13px;">🛍️ Official Vendor Injection Panel</h3>
-                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">All category additions (CC, Dumps, Fullz, SSN) are instantly broadcasted to our Telegram Bot.</p>
-                <button onclick="alert('Asset injector ready.')" style="background: #48cae4; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Inject New Asset</button>
+                <p style="font-size: 11px; color: #adb5bd; margin: 0 0 8px 0;">Welcome vendor! List items strictly within authorized categories.</p>
+                <button onclick="alert('Asset injector ready for product listing.')" style="background: #48cae4; color: #0d1b2a; border: none; padding: 4px 8px; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 3px;">Upload Categorized Product</button>
+                
+                <!-- Seller Warning & Notification Inbox Box -->
+                <div class="seller-inbox">
+                    <h4 style="color: #48cae4; margin-top: 0; font-size: 12px; text-transform: uppercase;">📬 Vendor Notification & Warning Inbox</h4>
+                    <p style="font-size: 11px; color: #e5e7eb; margin: 4px 0;">[SYSTEM ALERT] 24/7 Fraud Monitoring: No suspicious activity detected on your listings.</p>
+                    <p style="font-size: 11px; color: #f59e0b; margin: 4px 0;">[ADMIN NOTICE] Ensure all CC listings adhere to strict 1-hour refund policy guidelines.</p>
+                </div>
             </div>
 
             <!-- STORE VIEW -->
@@ -209,8 +222,11 @@
                     <h3 style="margin-top: 15px;">⏳ Account Activation & Deposit Policy</h3>
                     <p>Accounts registered without any deposit or activation within <strong>4 days</strong> will be automatically deleted from the system. Only accounts activated via a valid deposit maintain permanent logs and details on our secure servers.</p>
 
+                    <h3 style="margin-top: 15px;">🤝 Partner Program & Seller Rules</h3>
+                    <p>Official Sellers and partners are strictly prohibited from sharing or allowing anyone else to login to their vendor accounts. Any unauthorized account sharing will result in immediate termination from the Partner Program. You must inform administration in advance for any necessary access clearance.</p>
+
                     <h3 style="margin-top: 15px;">🔄 Strict Refund Policy</h3>
-                    <p>Refunds are <strong>only applicable</strong> if a Credit Card (CC) is verified as <strong>Dead (Declined)</strong> or <strong>Expired</strong> at the time of purchase. No refunds will be issued for live working cards.</p>
+                    <p>Refund requests for Credit Cards (CC) will be processed and eligible after <strong>1 hour</strong> from the time of purchase. Please review your items accordingly.</p>
 
                     <h3 style="margin-top: 15px;">🛡️ 24/7 Real-Time Fraud Monitoring</h3>
                     <p>Our autonomous security system actively monitors all buyers and sellers 24/7. Any flash payments, unauthorized script injections, or suspicious multi-accounting triggers an immediate system alert and lock.</p>
@@ -263,6 +279,24 @@
                     title.innerText = "Dogecoin (DOGE) Deposit Address:";
                     addrVal.innerText = "D8VzP9pA2s8jJvY42a7q6m5n8Xp2xy2kgdygjrs";
                 }
+            }
+        }
+
+        function togglePartnerProgram() {
+            let link = document.getElementById('menu-partner-link');
+            let btn = document.getElementById('btn-toggle-partner');
+            let currentState = localStorage.getItem('czc_partner_status') === 'disabled';
+            
+            if (currentState) {
+                localStorage.setItem('czc_partner_status', 'enabled');
+                if(link) link.style.display = 'block';
+                if(btn) { btn.innerText = "Toggle Partner Program: ON"; btn.style.background = "#38b000"; }
+                alert("Partner Program has been enabled.");
+            } else {
+                localStorage.setItem('czc_partner_status', 'disabled');
+                if(link) link.style.display = 'none';
+                if(btn) { btn.innerText = "Toggle Partner Program: OFF"; btn.style.background = "#d90429"; }
+                alert("Partner Program has been disabled by Owner.");
             }
         }
 
@@ -332,6 +366,14 @@
                         <span>Balance: <strong class="balance-text">$${(sessionProfile.balance_usd || 0).toFixed(2)} USD</strong></span>
                     `;
                 }
+
+                if (localStorage.getItem('czc_partner_status') === 'disabled') {
+                    let link = document.getElementById('menu-partner-link');
+                    let btn = document.getElementById('btn-toggle-partner');
+                    if(link) link.style.display = 'none';
+                    if(btn) { btn.innerText = "Toggle Partner Program: OFF"; btn.style.background = "#d90429"; }
+                }
+
             } catch(err) {
                 console.error("Session load error:", err);
             }
